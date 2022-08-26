@@ -1,6 +1,5 @@
 #pragma once
 #include "particle.h"
-#include <list>
 
 class scinti
 {
@@ -17,6 +16,6 @@ class scinti
             ndens_,
             atomweight_;
         void initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight);
-        // list<double> intersec(particle ptcl);
+        //std::vector<double> intersec(particle ptcl);
 };
 

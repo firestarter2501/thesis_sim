@@ -43,6 +43,7 @@ void particle::move_test(double dist)
     cout << "x: " << dist * sin(this->dir_theta_) * cos(this->dir_phi_) << "\ty: " << dist * sin(this->dir_theta_) * sin(this->dir_phi_) << "\tz: " << dist * cos(this->dir_theta_) << "\n" << "dist: " << sqrt(pow(dist * sin(this->dir_theta_) * cos(this->dir_phi_), 2) + pow(dist * sin(this->dir_theta_) * sin(this->dir_phi_), 2) + pow(dist * cos(this->dir_theta_), 2)) << endl;
 }
 
+// ‚Ü‚¾–¢Š®¬(turn_test‰ñ‚·‚Æ‚í‚©‚é)
 void particle::turn(double angle)
 {
     random_device randseed_gen;
