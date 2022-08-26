@@ -17,6 +17,6 @@ class scinti
             ndens_,
             atomweight_;
         void initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight);
-        list<double> intersec(particle ptcl);
+        // list<double> intersec(particle ptcl);
 };
 

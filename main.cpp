@@ -18,6 +18,5 @@ using namespace Eigen;
 
 int main()
 {
-    particle test = { 0, 0, 0, 0, 0, 0 };
-    test.move_test(5);
+    cout << SimdInstructionSetsInUse() << endl;
 }

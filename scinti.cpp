@@ -1,5 +1,9 @@
 #include "scinti.h"
 
+#define MEC2 510.99895 // MeV
+#define RELEC 2.8179403262 * pow(10, -13) // cm
+#define NUMA 6.02214076 * pow(10, 23) // mol^-1
+
 void scinti::initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight)
 {
     this->pt_x_ = x;
@@ -15,10 +19,10 @@ void scinti::initsinti(double x, double y, double z, double theta, double phi, d
     this->atomweight_ = atomweight;
 }
 
-vector<double> scinti::intersec(particle ptcl)
-{
+// vector<double> scinti::intersec(particle ptcl)
+// {
     // 直線の定義
     // 手前の判定面の定義と判定
     // 奥の判定面の定義と判定
     // 円筒面の定義と判定
-}
+// }
