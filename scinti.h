@@ -16,6 +16,6 @@ class scinti
             ndens_,
             atomweight_;
         void initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight);
-        //std::vector<double> intersec(particle ptcl);
+        std::vector<std::vector<double>> intersec(particle ptcl);
 };
 

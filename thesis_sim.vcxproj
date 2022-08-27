@@ -139,13 +139,19 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="scinti.cpp" />
+    <ClCompile Include="simfunc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="particle.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="scinti.h" />
+    <ClInclude Include="simfunc.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="thesis_sim.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
