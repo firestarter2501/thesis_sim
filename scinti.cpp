@@ -58,4 +58,27 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     {
         return return_point;
     }
+
+    double start_t = front_t, end_t = front_t + sqrt(2) * this->depth_, dist = sqrt(2) * this->depth_;
+    Vector3d move_point, u, v, w;
+    while (sqrt(pow(dist - this->rad_, 2)) < 0.01)
+    {
+        move_point << ptcl.pt_x_ + traject(0) * (end_t - start_t)/2, ptcl.pt_y_ + traject(1) * (end_t - start_t)/2, ptcl.pt_z_ + traject(2) * (end_t - start_t)/2;
+        u << scinti_backcenter(0) - scinti_frontcenter(0), scinti_backcenter(1) - scinti_frontcenter(1), scinti_backcenter(2) - scinti_frontcenter(2);
+        v << move_point(0) - scinti_frontcenter(0), move_point(1) - scinti_frontcenter(1), move_point(2) - scinti_frontcenter(2);
+        w = u.cross(v)/u.norm();
+        dist = w.norm();
+        if (dist < this->rad_)
+        {
+            end_t = (end_t - start_t) / 2;
+        }
+        else
+        {
+            start_t = (end_t - start_t) / 2;
+        }
+    }
+    return_point.at(2).at(0) = move_point(0);
+    return_point.at(2).at(1) = move_point(1);
+    return_point.at(2).at(2) = move_point(2);
+    return return_point;
 }
