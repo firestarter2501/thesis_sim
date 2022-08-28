@@ -1,7 +1,7 @@
 #pragma once
 
 // Œõ“d‹zû’f–ÊÏ‚ğ•Ô‚·ŠÖ”
-double pe_crosssec(double ene, int z, double atomweight, double sinti_density);
+double pe_crosssec(double ene, int z);
 
 // ƒRƒ“ƒvƒgƒ“U—‚·‚é‚Æ‚«‚ÌU—Œõq‚ÌƒGƒlƒ‹ƒM[‚ğ•Ô‚·ŠÖ”
 double scatphotonene(double ene, double angle);
@@ -13,3 +13,5 @@ double kleinnishinaeq(double ene, double angle);
 double cs_angle(double ene);
 
 void cs_angle_test(int num);
+
+double reactlen(double crosssec, double dens);

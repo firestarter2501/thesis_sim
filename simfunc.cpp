@@ -9,10 +9,8 @@
 #define RELEC 2.8179403262 * pow(10, -13) // cm
 #define NUMA 6.02214076 * pow(10, 23) // mol^-1
 
-using namespace std;
-
 // Œõ“d‹zû’f–ÊÏ‚ğ•Ô‚·ŠÖ”
-double pe_crosssec(double ene, int z, double atomweight, double sinti_density)
+double pe_crosssec(double ene, int z)
 {
     double cs_tomscat = (8 * M_PI * pow(RELEC, 2)) / 3,
         fsconst = 1.0 / 137.0,
@@ -38,10 +36,10 @@ double kleinnishinaeq(double ene, double angle)
 // von Neumann‚ÌŠü‹p–@‚ÅƒRƒ“ƒvƒgƒ“U—‚ÌŠp“x•ª•z‚ÉŠî‚Ã‚¢‚½U—Šp‚Ì—”‚ğ•Ô‚·ŠÖ”
 double cs_angle(double ene)
 {
-    random_device randseed_gen;
-    mt19937 randengine(randseed_gen());
-    uniform_real_distribution<> initprob(0.0, 1.0);
-    uniform_real_distribution<> initangle(0.0, M_PI);
+    std::random_device randseed_gen;
+    std::mt19937 randengine(randseed_gen());
+    std::uniform_real_distribution<> initprob(0.0, 1.0);
+    std::uniform_real_distribution<> initangle(0.0, M_PI);
     double max_crosssec = kleinnishinaeq(ene, 0.0),
         crosssec,
         randangle,
@@ -59,8 +57,8 @@ double cs_angle(double ene)
 
 void cs_angle_test(int num)
 {
-    ofstream cs_angle_1kev_result("cs_angle_1kev.dat"), cs_angle_100kev_result("cs_angle_100kev.dat"), cs_angle_500kev_result("cs_angle_500kev.dat"), cs_angle_2000kev_result("cs_angle_2000kev.dat"), cs_angle_10000kev_result("cs_angle_10000kev.dat");
-    vector<int> cs_angle_1kev, cs_angle_100kev, cs_angle_500kev, cs_angle_2000kev, cs_angle_10000kev;
+    std::ofstream cs_angle_1kev_result("cs_angle_1kev.dat"), cs_angle_100kev_result("cs_angle_100kev.dat"), cs_angle_500kev_result("cs_angle_500kev.dat"), cs_angle_2000kev_result("cs_angle_2000kev.dat"), cs_angle_10000kev_result("cs_angle_10000kev.dat");
+    std::vector<int> cs_angle_1kev, cs_angle_100kev, cs_angle_500kev, cs_angle_2000kev, cs_angle_10000kev;
     double dispparam = 10000;
 
     for (int arg = 0; arg <= 180; arg++)
@@ -89,4 +87,12 @@ void cs_angle_test(int num)
         cs_angle_2000kev_result << arg + 1 << "\t" << dispparam * cs_angle_2000kev.at(arg) / cs_angle_2000kev.at(0) << "\n";
         cs_angle_10000kev_result << arg + 1 << "\t" << dispparam * cs_angle_10000kev.at(arg) / cs_angle_10000kev.at(0) << "\n";
     }
+}
+
+double reactlen(double crosssec, double dens)
+{
+    std::random_device randseed_gen;
+    std::mt19937 randengine(randseed_gen());
+    std::uniform_real_distribution<> initprob(0.0, 1.0);
+    return -log(1 - initprob(randengine)) / (crosssec * dens);
 }

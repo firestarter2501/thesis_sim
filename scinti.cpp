@@ -4,8 +4,6 @@
 #define RELEC 2.8179403262 * pow(10, -13) // cm
 #define NUMA 6.02214076 * pow(10, 23) // mol^-1
 
-using namespace Eigen;
-
 void scinti::initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight)
 {
     this->pt_x_ = x;
@@ -24,7 +22,7 @@ void scinti::initsinti(double x, double y, double z, double theta, double phi, d
 std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 {
     std::vector<std::vector<double>> return_point = { {0, 0, 0}, {0, 0, 0}, {0, 0, 0} };
-    Vector3d traject, scinti_centerline, scinti_frontcenter, scinti_front_intersec, scinti_backcenter, scinti_back_intersec;
+    Eigen::Vector3d traject, scinti_centerline, scinti_frontcenter, scinti_front_intersec, scinti_backcenter, scinti_back_intersec;
 
     traject << sin(ptcl.dir_theta_) * cos(ptcl.dir_phi_), sin(ptcl.dir_theta_) * sin(ptcl.dir_phi_), cos(ptcl.dir_theta_);
     traject.normalize();
@@ -53,7 +51,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     }
 
     double start_t = front_t, end_t = front_t + sqrt(2) * this->depth_, dist = sqrt(2) * this->depth_;
-    Vector3d move_point, u, v, w;
+    Eigen::Vector3d move_point, u, v, w;
     while (sqrt(pow(dist - this->rad_, 2)) < 0.01)
     {
         move_point << ptcl.pt_x_ + traject(0) * (end_t - start_t)/2, ptcl.pt_y_ + traject(1) * (end_t - start_t)/2, ptcl.pt_z_ + traject(2) * (end_t - start_t)/2;
