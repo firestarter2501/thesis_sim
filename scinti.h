@@ -17,5 +17,7 @@ class scinti
             atomweight_;
         void initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight);
         std::vector<std::vector<double>> intersec(particle ptcl);
+        double intersec_dist(particle ptcl);
+        bool internal_judge(particle ptcl);
 };
 

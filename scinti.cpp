@@ -4,7 +4,6 @@
 #define RELEC 2.8179403262 * pow(10, -13) // cm
 #define NUMA 6.02214076 * pow(10, 23) // mol^-1
 
-using namespace std;
 using namespace Eigen;
 
 void scinti::initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight)
@@ -41,10 +40,6 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(0).at(1) = ptcl.pt_y_ + traject(1) * front_t;
         return_point.at(0).at(2) = ptcl.pt_z_ + traject(2) * front_t;
     }
-    else
-    {
-        return return_point;
-    }
 
     scinti_backcenter << (-this->depth_ / 2) * sin(this->dir_theta_) * cos(this->dir_phi_), (-this->depth_ / 2)* sin(this->dir_theta_)* sin(this->dir_phi_), (-this->depth_ / 2)* cos(this->dir_theta_);
     double back_t = (scinti_centerline(0) * (scinti_backcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_backcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_backcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
@@ -53,9 +48,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(1).at(0) = ptcl.pt_x_ + traject(0) * back_t;
         return_point.at(1).at(1) = ptcl.pt_y_ + traject(1) * back_t;
         return_point.at(1).at(2) = ptcl.pt_z_ + traject(2) * back_t;
-    }
-    else
-    {
+        
         return return_point;
     }
 
@@ -81,4 +74,32 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     return_point.at(2).at(1) = move_point(1);
     return_point.at(2).at(2) = move_point(2);
     return return_point;
+}
+
+double scinti::intersec_dist(particle ptcl)
+{
+    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
+    std::vector<double> zero_vector = { 0, 0, 0 };
+    if ((intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector)||(intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)||(intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector))
+    {
+        return std::max(sqrt(pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + pow(ptcl.pt_z_ - intersec.at(0).at(2), 2)), sqrt(pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + pow(ptcl.pt_z_ -intersec.at(1).at(2), 2)), sqrt(pow(ptcl.pt_x_ - intersec.at(2).at(0), 2) + pow(ptcl.pt_y_ - intersec.at(2).at(1), 2) + pow(ptcl.pt_z_ - intersec.at(2).at(2), 2)));
+    }
+    else
+    {
+        return std::max(sqrt(pow(intersec.at(0).at(0) - intersec.at(1).at(0), 2) + pow(intersec.at(0).at(1) - intersec.at(1).at(1), 2) + pow(intersec.at(0).at(2) - intersec.at(1).at(2), 2)), sqrt(pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2)));
+    }
+}
+
+bool scinti::internal_judge(particle ptcl)
+{
+    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
+    std::vector<double> zero_vector = { 0, 0, 0 };
+    if ((intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector) || (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector) || (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
