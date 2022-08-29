@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# C++実行ファイルの削除
+a.out
+
+# VSCode関連ファイルの削除
+.vscode
