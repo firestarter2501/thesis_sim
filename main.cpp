@@ -5,10 +5,6 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <omp.h>
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
 #include "simfunc.h"
 #include "particle.h"
 #include "scinti.h"

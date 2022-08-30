@@ -1,12 +1,8 @@
 #pragma once
-
 #include <iostream>
 #include <fstream>
 #include <random>
 #include <Eigen/Dense>
-
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 class particle
 {
