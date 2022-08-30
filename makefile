@@ -1,4 +1,4 @@
-PROG := thesis_sim
+PROG := sim.out
 SRCS := $(wildcard *.cpp)
 OBJS := $(SRCS:%.cpp=%.o)
 DEPS := $(SRCS:%.cpp=%.d)
@@ -13,7 +13,7 @@ $(PROG): $(OBJS)
 	$(CC) $(CCFLAGS) -o $@ $^ -O3 -fopenmp -mavx
 
 .cpp.o:
-	$(CC) $(CCFLAGS) $(INCLUDEPATH) -MMD -MP -MF $(<:%.cpp=%.d) -c $< -o $(<:%.cpp=%.o)
+	$(CC) $(CCFLAGS) $(INCLUDEPATH) -MMD -MP -MF $(<:%.cpp=%.d) -c $< -o $(<:%.cpp=%.o) -O3 -fopenmp -mavx
 
 .PHONY: clean
 clean:
