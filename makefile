@@ -5,7 +5,7 @@ DEPS := $(SRCS:%.cpp=%.d)
 
 CC := g++
 CCFLAGS := -std=c++20
-INCLUDEPATH := -I /usr/include/eigen3
+INCLUDEPATH := -I /usr/include/eigen3 -I /usr/local/include/eigen3
 
 all: $(DEPENDS) $(PROG)
 
