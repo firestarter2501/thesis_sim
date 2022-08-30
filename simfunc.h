@@ -1,4 +1,6 @@
 #pragma once
+#include <random>
+#include <fstream>
 
 // Œõ“d‹zû’f–ÊÏ‚ğ•Ô‚·ŠÖ”
 double pe_crosssec(double ene, int z);

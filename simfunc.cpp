@@ -1,6 +1,4 @@
 #include "simfunc.h"
-#include <random>
-#include <fstream>
 
 #define MEC2 510.99895 // MeV
 #define RELEC 2.8179403262 * pow(10, -13) // cm

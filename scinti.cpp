@@ -4,11 +4,11 @@
 #define RELEC 2.8179403262 * std::pow(10, -13) // cm
 #define NUMA 6.02214076 * std::pow(10, 23) // mol^-1
 
-void scinti::initsinti(double x, double y, double z, double theta, double phi, double depth, double dens, double atomweight)
+void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight)
 {
-    this->pt_x_ = x;
-    this->pt_y_ = y;
-    this->pt_z_ = z;
+    this->pt_x_ = pt_x;
+    this->pt_y_ = pt_y;
+    this->pt_z_ = pt_z;
     this->dir_theta_ = theta;
     this->dir_phi_ = phi;
     this->depth_ = depth;

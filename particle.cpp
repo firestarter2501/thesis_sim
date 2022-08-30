@@ -10,7 +10,7 @@ void particle::initptcl(double ene, double x, double y, double z)
     this->pt_x_ = x;
     this->pt_y_ = y;
     this->pt_z_ = z;
-    this->dir_theta_ = astd::cos(inittheta(randengine));
+    this->dir_theta_ = std::acos(inittheta(randengine));
     this->dir_phi_ = initphi(randengine) * M_PI;
 };
 
@@ -57,8 +57,8 @@ void particle::turn(double angle)
     axis.normalize();
     AxisAngle = Eigen::AngleAxisd(rotateangle, axis);
     point_out = AxisAngle * point_in;
-    this->dir_theta_ += atan(point_out(1, 0) / point_out(0, 0));
-    this->dir_phi_ += atan(sqrt(pow(point_out(0, 0), 2) + pow(point_out(1, 0), 2)) / point_out(2, 0));
+    this->dir_theta_ += std::atan(point_out(1, 0) / point_out(0, 0));
+    this->dir_phi_ += std::atan(sqrt(pow(point_out(0, 0), 2) + pow(point_out(1, 0), 2)) / point_out(2, 0));
 }
 
 void particle::turn_test(double angle)
@@ -70,5 +70,5 @@ void particle::turn_test(double angle)
     std::cout << "theta: " << before_theta << "\tphi: " << before_phi << "\ninput_angle: " << angle << std::endl;
     this->turn(angle);
     double after_x = dist * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), after_y = dist * std::sin(this->dir_theta_) * std::sin(this->dir_phi_), after_z = dist * std::cos(this->dir_theta_);
-    std::cout << "theta: " << this->dir_theta_ << "\tphi: " << this->dir_phi_ << "\nangle: " << astd::cos(((before_x * after_x) + (before_y * after_y) + (before_z * after_z)) / (sqrt(pow(before_x, 2) + pow(before_y, 2) + pow(before_z, 2)) * sqrt(pow(after_x, 2) + pow(after_y, 2) + pow(after_z, 2)))) << std::endl;
+    std::cout << "theta: " << this->dir_theta_ << "\tphi: " << this->dir_phi_ << "\nangle: " << std::acos(((before_x * after_x) + (before_y * after_y) + (before_z * after_z)) / (sqrt(pow(before_x, 2) + pow(before_y, 2) + pow(before_z, 2)) * sqrt(pow(after_x, 2) + pow(after_y, 2) + pow(after_z, 2)))) << std::endl;
 }
