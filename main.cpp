@@ -26,23 +26,26 @@ int main()
     while (std::getline(initptclconf, initline))
     {
         initptclconf_list.push_back(std::stod(initline));
+        std::cout << initline << std::endl;
     }
     for(int num = 0; num < initptclconf_list.size()/4; num++)
     {
         ray_list.push_back(particle());
         ray_list.back().initptcl(initptclconf_list.at(0+(num*4)), initptclconf_list.at(1+(num*4)), initptclconf_list.at(2+(num*4)), initptclconf_list.at(3+(num*4)));
     }
+    std::cout << "---" << std::endl;
     while (std::getline(initscinticonf, initline))
     {
         initscinticonf_list.push_back(std::stod(initline));
+        std::cout << initline << std::endl;
     }
     for(int num = 0; num < initscinticonf_list.size()/9; num++)
     {
         scintillator.push_back(scinti());
         scintillator.back().initscinti(initscinticonf_list.at(0+(num*9)), initscinticonf_list.at(1+(num*9)), initscinticonf_list.at(2+(num*9)), initscinticonf_list.at(3+(num*9))*M_PI, initscinticonf_list.at(4+(num*9))*M_PI, initscinticonf_list.at(5+(num*9)), initscinticonf_list.at(6+(num*9)), initscinticonf_list.at(7+(num*9)), initscinticonf_list.at(8+(num*9)));
     }
-
-    std::cout << "test" << std::endl;
+    std::cout << "---" << std::endl;
+    std::cout << scintillator.size() << std::endl;
 
     // for (int run = 0; run < run_count; run++)
     // {
