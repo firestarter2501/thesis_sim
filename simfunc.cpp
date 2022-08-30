@@ -19,15 +19,15 @@ double pe_crosssec(double ene, int z)
 double scatphotonene(double ene, double angle)
 {
     double alpha = ene / MEC2;
-    return ene / (1 + (alpha * (1 - cos(angle))));
+    return ene / (1 + (alpha * (1 - std::cos(angle))));
 }
 
 // ƒNƒ‰ƒCƒ“m‰È‚Ì®‚ğŒvZ‚·‚éŠÖ”
 double kleinnishinaeq(double ene, double angle)
 {
     double gamma = ene / MEC2;
-    return (pow(RELEC, 2) / 2) * (1 / pow(1 + gamma * (1 - cos(angle)), 2)) * (1 + pow(cos(angle), 2) + ((pow(gamma, 2) * pow(1 - cos(angle), 2)) / (1 + gamma * (1 - cos(angle)))));
-    // return pow(RELEC, 2)*pow(1/(1+gamma*(1-cos(angle))), 2)*((1+pow(cos(angle), 2))/2)*(1+((pow(gamma, 2)*pow(1-cos(angle), 2))/((1+pow(cos(angle), 2))*(1+gamma*(1-cos(angle))))));
+    return (pow(RELEC, 2) / 2) * (1 / pow(1 + gamma * (1 - std::cos(angle)), 2)) * (1 + pow(std::cos(angle), 2) + ((pow(gamma, 2) * pow(1 - std::cos(angle), 2)) / (1 + gamma * (1 - std::cos(angle)))));
+    // return pow(RELEC, 2)*pow(1/(1+gamma*(1-std::cos(angle))), 2)*((1+pow(std::cos(angle), 2))/2)*(1+((pow(gamma, 2)*pow(1-std::cos(angle), 2))/((1+pow(std::cos(angle), 2))*(1+gamma*(1-std::cos(angle))))));
 }
 
 // von Neumann‚ÌŠü‹p–@‚ÅƒRƒ“ƒvƒgƒ“U—‚ÌŠp“x•ª•z‚ÉŠî‚Ã‚¢‚½U—Šp‚Ì—”‚ğ•Ô‚·ŠÖ”
