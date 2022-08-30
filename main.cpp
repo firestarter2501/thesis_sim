@@ -53,11 +53,10 @@ int main()
     std::cout << "All Threads num: " << threads_num << std::endl;
  
     #pragma omp parallel for
-    for( int i = 0; i < 100000000000000000; ++i ){
+    for( int i = 0; i < 16; ++i ){
         // 並列する処理
         
         std::cout << "Thread No. " << omp_get_thread_num() << std::endl;
     }
- 
     return 0;
 }
