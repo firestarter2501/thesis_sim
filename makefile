@@ -4,7 +4,7 @@ OBJS := $(SRCS:%.cpp=%.o)
 DEPS := $(SRCS:%.cpp=%.d)
 
 CC := g++
-CCFLAGS := -std=c++20
+CCFLAGS := -std=c++17
 INCLUDEPATH := -I /usr/include/eigen3 -I /usr/local/include/eigen3
 
 all: $(DEPENDS) $(PROG)
