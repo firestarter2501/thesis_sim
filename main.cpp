@@ -49,6 +49,8 @@ int main()
     std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
     std::cout << "run loop defined " << run_count << std::endl;
+
+    #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
         std::vector<particle> photon;
@@ -59,6 +61,8 @@ int main()
             double total_traject_dist = 0;
             for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
+                std::string outfilename = "scinti_" + std::to_string(scinti_num) + ".dat";
+                std::ofstream scinti_data(outfilename, std::ios::app);
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
                 total_traject_dist += traject_dist;
                 if (traject_dist < 0.01)
@@ -69,14 +73,34 @@ int main()
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
                     cs_ang = cs_angle(photon.back().ene_),
                     cs_cs = kleinnishinaeq(photon.back().ene_, cs_ang),
-                    pe_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
+                    cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
                 if(traject_dist > std::max({pe_len, cs_len}))
                 {
+                    total_traject_dist = 0;
                     continue;
                 }
                 else
                 {
-                    if()
+                    {
+                    if(pe_len <= cs_len)
+                    {
+                        #pragma omp critical
+                        {
+                        scinti_data << photon.back().ene_ << "\n";
+                        }
+                        continue;
+                    }
+                    else
+                    {
+                        #pragma omp critical
+                        {
+                        scinti_data << photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang) << "\n";
+                        }
+                        photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
+                        photon.back().move(cs_len);
+                        photon.back().turn(cs_ang);
+                    }
+                    }
                 }
             }
             if (total_traject_dist < 0.01)
