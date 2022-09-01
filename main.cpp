@@ -56,6 +56,7 @@ int main()
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
+        printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
         while (0 < photon.back().ene_)
         {
             double total_traject_dist = 0;
@@ -81,7 +82,6 @@ int main()
                 }
                 else
                 {
-                    {
                     if(pe_len <= cs_len)
                     {
                         #pragma omp critical
@@ -99,7 +99,6 @@ int main()
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().move(cs_len);
                         photon.back().turn(cs_ang);
-                    }
                     }
                 }
             }
