@@ -20,4 +20,3 @@ class particle
         void turn(double angle);
         void turn_test(double angle);
 };
-

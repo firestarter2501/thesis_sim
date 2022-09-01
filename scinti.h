@@ -20,4 +20,3 @@ class scinti
         double intersec_dist(particle ptcl);
         bool internal_judge(particle ptcl);
 };
-
