@@ -56,7 +56,7 @@ int main()
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
-        printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
+        // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
         while (0 < photon.back().ene_)
         {
             double total_traject_dist = 0;
@@ -65,6 +65,10 @@ int main()
                 std::string outfilename = "scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
+                #pragma omp critical
+                {
+                std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
+                }
                 total_traject_dist += traject_dist;
                 if (traject_dist < 0.01)
                 {
@@ -88,6 +92,7 @@ int main()
                         {
                         scinti_data << photon.back().ene_ << "\n";
                         }
+                        total_traject_dist = 0;
                         continue;
                     }
                     else

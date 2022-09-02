@@ -29,6 +29,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 
     scinti_centerline << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_)* std::sin(this->dir_phi_), std::cos(this->dir_theta_);
     scinti_centerline.normalize();
+    std::cout << "scinti_ceneterline: " << scinti_centerline(0) << ", " << scinti_centerline(1) << ", " << scinti_centerline(2) << std::endl;
 
     scinti_frontcenter << (this->depth_/2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), (this->depth_ / 2) * std::sin(this->dir_theta_)* std::sin(this->dir_phi_), (this->depth_ / 2) * std::cos(this->dir_theta_);
     double front_t = (scinti_centerline(0)*(scinti_frontcenter(0)-ptcl.pt_x_) + scinti_centerline(1) * (scinti_frontcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_frontcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
@@ -37,6 +38,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(0).at(0) = ptcl.pt_x_ + traject(0) * front_t;
         return_point.at(0).at(1) = ptcl.pt_y_ + traject(1) * front_t;
         return_point.at(0).at(2) = ptcl.pt_z_ + traject(2) * front_t;
+        std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
     scinti_backcenter << (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), (-this->depth_ / 2)* std::sin(this->dir_theta_)* std::sin(this->dir_phi_), (-this->depth_ / 2)* std::cos(this->dir_theta_);
@@ -46,7 +48,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(1).at(0) = ptcl.pt_x_ + traject(0) * back_t;
         return_point.at(1).at(1) = ptcl.pt_y_ + traject(1) * back_t;
         return_point.at(1).at(2) = ptcl.pt_z_ + traject(2) * back_t;
-        
+        std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
         return return_point;
     }
 
@@ -71,6 +73,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     return_point.at(2).at(0) = move_point(0);
     return_point.at(2).at(1) = move_point(1);
     return_point.at(2).at(2) = move_point(2);
+    std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
     return return_point;
 }
 
