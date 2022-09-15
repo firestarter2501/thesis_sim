@@ -10,7 +10,7 @@ double pe_crosssec(double ene, int z)
     double cs_tomscat = (8 * M_PI * pow(RELEC, 2)) / 3,
         fsconst = 1.0 / 137.0,
         crosssecperatom = 4 * pow(fsconst, 4) * sqrt(2) * pow(z, 5) * cs_tomscat * pow(pow(MEC2, 2) / ene, 7 / 2);
-    return crosssecperatom;
+    return (pow(10, 14)/2.25)*crosssecperatom;
 }
 
 // コンプトン散乱するときの散乱光子のエネルギーを返す関数
@@ -24,7 +24,7 @@ double scatphotonene(double ene, double angle)
 double kleinnishinaeq(double ene, double angle)
 {
     double gamma = ene / MEC2;
-    return (pow(RELEC, 2) / 2) * (1 / pow(1 + gamma * (1 - std::cos(angle)), 2)) * (1 + pow(std::cos(angle), 2) + ((pow(gamma, 2) * pow(1 - std::cos(angle), 2)) / (1 + gamma * (1 - std::cos(angle)))));
+    return (pow(10, 25)/3.5)*(pow(RELEC, 2) / 2) * (1 / pow(1 + gamma * (1 - std::cos(angle)), 2)) * (1 + pow(std::cos(angle), 2) + ((pow(gamma, 2) * pow(1 - std::cos(angle), 2)) / (1 + gamma * (1 - std::cos(angle)))));
     // return pow(RELEC, 2)*pow(1/(1+gamma*(1-std::cos(angle))), 2)*((1+pow(std::cos(angle), 2))/2)*(1+((pow(gamma, 2)*pow(1-std::cos(angle), 2))/((1+pow(std::cos(angle), 2))*(1+gamma*(1-std::cos(angle))))));
 }
 
