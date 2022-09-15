@@ -41,7 +41,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
-    scinti_backcenter << (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), (-this->depth_ / 2)* std::sin(this->dir_theta_)* std::sin(this->dir_phi_), (-this->depth_ / 2)* std::cos(this->dir_theta_);
+    scinti_backcenter << (-this->depth_ / 2) * std::sin(-this->dir_theta_) * std::cos(-this->dir_phi_), (-this->depth_ / 2)* std::sin(-this->dir_theta_)* std::sin(-this->dir_phi_), (-this->depth_ / 2)* std::cos(-this->dir_theta_);
     double back_t = (scinti_centerline(0) * (scinti_backcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_backcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_backcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     if (std::sqrt(std::pow(scinti_backcenter(0) - (ptcl.pt_x_ + traject(0) * back_t), 2) + std::pow(scinti_backcenter(1) - (ptcl.pt_y_ + traject(1) * back_t), 2) + std::pow(scinti_backcenter(2) - (ptcl.pt_z_ + traject(2) * back_t), 2)) < this->rad_)
     {

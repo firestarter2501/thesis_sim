@@ -20,8 +20,8 @@ int main()
     std::vector<scinti> scintillator;
     std::vector<double> initptclconf_list;
     std::vector<double> initscinticonf_list;
-    std::ifstream initptclconf("initptcl.conf");
-    std::ifstream initscinticonf("initscinti.conf");
+    std::ifstream initptclconf("./data/initptcl.conf");
+    std::ifstream initscinticonf("./data/initscinti.conf");
     std::string initline;
     int run_count = 0;
     while (std::getline(initptclconf, initline))
@@ -62,7 +62,7 @@ int main()
             double total_traject_dist = 0;
             for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
-                std::string outfilename = "scinti_" + std::to_string(scinti_num) + ".dat";
+                std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
                 #pragma omp critical
