@@ -2,4 +2,5 @@
 *.d
 *.o
 *.dat
+*.png
 .vscode
