@@ -6,24 +6,42 @@
 
 void scinti::initcs(std::string conffilepath)
 {
-    std::string data_tmp;
-    std::string data_tab_tmp;
-    int vector_i = 0, vector_j = 0;
-    std::ifstream initcs(conffilepath);
-    
-    while(getline(initcs, data_tmp))
+    std::ifstream datafile(conffilepath);
+    std::string line;
+    while(getline(datafile, line))
     {
-        vector_j = 0;
-        std::istringstream i_stream(data_tmp);
-        while(getline(i_stream, data_tab_tmp, '\t'))
+        std::istringstream stream(line);
+        std::string field;
+        std::vector<double> tmpvec;
+        while(getline(stream, field, '\t'))
         {
-            this->crosssec_table_.at(vector_i).at(vector_j);
-            vector_j++;
+            tmpvec.push_back(std::stod(field));
         }
-        vector_i++;
+        this->crosssec_table_.push_back(tmpvec);
+        tmpvec = {};
     }
 }
 
+double scinti::crosssec(double ene, int type)
+{
+    if(ene < this->crosssec_table_.at(1).at(0))
+    {
+        double grad = this->crosssec_table_.at(1).at(type)-this->crosssec_table_.at(0).at(type);
+        double intercept = this->crosssec_table_.at(1).at(type) - grad * this->crosssec_table_.at(1).at(0);
+
+        return grad * ene + intercept;
+    }
+    int ene_line = 0;
+    while(this->crosssec_table_.at(ene_line).at(0) < ene)
+    {
+        ene_line++;
+    }
+
+    double grad = this->crosssec_table_.at(ene_line).at(type)-this->crosssec_table_.at(ene_line-1).at(type);
+    double intercept = this->crosssec_table_.at(ene_line).at(type) - grad * this->crosssec_table_.at(ene_line).at(0);
+
+    return grad * ene + intercept;
+}
 
 void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight)
 {

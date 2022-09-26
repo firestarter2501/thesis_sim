@@ -17,6 +17,7 @@ class scinti
             atomweight_;
         std::vector<std::vector<double>> crosssec_table_;
         void initcs(std::string conffilepath);
+        double crosssec(double ene, int type);
         void initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight);
         std::vector<std::vector<double>> intersec(particle ptcl);
         double intersec_dist(particle ptcl);
