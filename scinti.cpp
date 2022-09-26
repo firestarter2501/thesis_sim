@@ -24,15 +24,20 @@ void scinti::initcs(std::string conffilepath)
 
 double scinti::crosssec(double ene, int type)
 {
+    // std::cout << "test1" << std::endl;
     if(this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
     {
         return 0;
     }
     int ene_line = 0;
+    // std::cout << "test2" << std::endl;
     while(this->crosssec_table_.at(ene_line).at(0) < ene)
     {
+        // std::cout << "test3" << std::endl;
         ene_line++;
     }
+
+    // std::cout << "test4" << std::endl;
 
     double cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*(ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)));
 

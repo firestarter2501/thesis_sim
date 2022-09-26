@@ -49,6 +49,7 @@ int main()
     std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
     std::cout << "run loop defined " << run_count << std::endl;
+    scintillator.back().initcs("./data/initcs_nai.conf");
 
     // // cstest
     // std::ofstream cs_pe("./data/cs_pe.dat");
@@ -80,7 +81,7 @@ int main()
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
-        // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
+        printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
         while (0 < photon.back().ene_)
         {
             // 2次反応をなくすかどうか
@@ -104,10 +105,10 @@ int main()
                 {
                     continue;
                 }
-                double pe_cs = pe_crosssec(photon.back().ene_, scintillator.at(scinti_num).z_),
+                double pe_cs = scintillator.back().crosssec(photon.back().ene_, 1),
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
                     cs_ang = cs_angle(photon.back().ene_),
-                    cs_cs = kleinnishinaeq(photon.back().ene_, cs_ang),
+                    cs_cs = scintillator.back().crosssec(photon.back().ene_, 2),
                     cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
                 if(traject_dist > std::max({pe_len, cs_len}))
                 {
