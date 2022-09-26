@@ -4,3 +4,4 @@
 *.dat
 *.png
 .vscode
+.DS_Store
