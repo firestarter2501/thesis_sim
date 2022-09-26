@@ -33,7 +33,6 @@ double scinti::crosssec(double ene, int type)
     {
         ene_line++;
     }
-    std::cout << ene << ":" << ene_line << std::endl;
 
     double cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*(ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)));
 
