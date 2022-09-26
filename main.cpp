@@ -49,31 +49,33 @@ int main()
     std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
     std::cout << "run loop defined " << run_count << std::endl;
+    // std::cout << "test1" << std::endl;
     scintillator.back().initcs("./data/initcs_nai.conf");
+    // std::cout << "test2" << std::endl;
 
-    // // cstest
-    // std::ofstream cs_pe("./data/cs_pe.dat");
-    // std::ofstream cs_cs("./data/cs_cs.dat");
-    // std::ofstream cs_pp("./data/cs_pp.dat");
+    // cstest
+    std::ofstream cs_pe("./data/cs_pe.dat");
+    std::ofstream cs_cs("./data/cs_cs.dat");
+    std::ofstream cs_pp("./data/cs_pp.dat");
 
-    // scintillator.back().initcs("./data/initcs_nai.conf");
-    // std::cout << scintillator.back().crosssec_table_.size() << "\t" << scintillator.back().crosssec_table_.at(0).size() << std::endl;
+    scintillator.back().initcs("./data/initcs_nai.conf");
+    std::cout << scintillator.back().crosssec_table_.size() << "\t" << scintillator.back().crosssec_table_.at(0).size() << std::endl;
 
-    // for(int i = 0; i < 45; i++)
-    // {
-    //     for(int j = 0; j < 4; j++)
-    //     {
-    //         std::cout << scintillator.back().crosssec_table_.at(i).at(j) << "\t";
-    //     }
-    //     std::cout << "\n";
-    // }
+    for(int i = 0; i < 45; i++)
+    {
+        for(int j = 0; j < 4; j++)
+        {
+            std::cout << scintillator.back().crosssec_table_.at(i).at(j) << "\t";
+        }
+        std::cout << "\n";
+    }
 
-    // for(int ene = 10; ene < 100000-1; ene++)
-    // {
-    //     cs_pe << ene << "\t" << scintillator.back().crosssec(ene, 1) << "\n";
-    //     cs_cs << ene << "\t" << scintillator.back().crosssec(ene, 2) << "\n";
-    //     cs_pp << ene << "\t" << scintillator.back().crosssec(ene, 3) << "\n";
-    // }
+    for(int ene = 10; ene < 100000; ene++)
+    {
+        cs_pe << ene << "\t" << scintillator.back().crosssec(ene, 1) << "\n";
+        cs_cs << ene << "\t" << scintillator.back().crosssec(ene, 2) << "\n";
+        cs_pp << ene << "\t" << scintillator.back().crosssec(ene, 3) << "\n";
+    }
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
@@ -81,7 +83,7 @@ int main()
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
-        printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
+        // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
         while (0 < photon.back().ene_)
         {
             // 2次反応をなくすかどうか
