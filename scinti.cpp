@@ -24,23 +24,27 @@ void scinti::initcs(std::string conffilepath)
 
 double scinti::crosssec(double ene, int type)
 {
-    if(ene < this->crosssec_table_.at(1).at(0))
+    if(this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
     {
-        double grad = this->crosssec_table_.at(1).at(type)-this->crosssec_table_.at(0).at(type);
-        double intercept = this->crosssec_table_.at(1).at(type) - grad * this->crosssec_table_.at(1).at(0);
-
-        return grad * ene + intercept;
+        return 0;
     }
     int ene_line = 0;
     while(this->crosssec_table_.at(ene_line).at(0) < ene)
     {
         ene_line++;
     }
+    std::cout << ene << ":" << ene_line << std::endl;
 
-    double grad = this->crosssec_table_.at(ene_line).at(type)-this->crosssec_table_.at(ene_line-1).at(type);
-    double intercept = this->crosssec_table_.at(ene_line).at(type) - grad * this->crosssec_table_.at(ene_line).at(0);
+    double cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*(ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)));
 
-    return grad * ene + intercept;
+    if(cs_tmp < 0.001)
+    {
+        return 0;
+    }
+    else
+    {
+        return cs_tmp;
+    }
 }
 
 void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight)

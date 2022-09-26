@@ -50,97 +50,97 @@ int main()
     std::cin >> run_count;
     std::cout << "run loop defined " << run_count << std::endl;
 
-    // test
-    std::ofstream cs_pe("./data/cs_pe.dat");
-    std::ofstream cs_cs("./data/cs_cs.dat");
-    std::ofstream cs_pp("./data/cs_pp.dat");
+    // // cstest
+    // std::ofstream cs_pe("./data/cs_pe.dat");
+    // std::ofstream cs_cs("./data/cs_cs.dat");
+    // std::ofstream cs_pp("./data/cs_pp.dat");
 
-    scintillator.back().initcs("./data/initcs_nai.conf");
-    std::cout << scintillator.back().crosssec_table_.size() << "\t" << scintillator.back().crosssec_table_.at(0).size() << std::endl;
+    // scintillator.back().initcs("./data/initcs_nai.conf");
+    // std::cout << scintillator.back().crosssec_table_.size() << "\t" << scintillator.back().crosssec_table_.at(0).size() << std::endl;
 
-    for(int i = 0; i < 45; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-            std::cout << scintillator.back().crosssec_table_.at(i).at(j) << "\t";
-        }
-        std::cout << "\n";
-    }
-
-    for(int ene = 10; ene < 100000; ene++)
-    {
-        cs_pe << ene << "\t" << scintillator.back().crosssec(ene, 1) << "\n";
-        cs_cs << ene << "\t" << scintillator.back().crosssec(ene, 2) << "\n";
-        cs_pp << ene << "\t" << scintillator.back().crosssec(ene, 3) << "\n";
-    }
-
-    // #pragma omp parallel for
-    // for (int run = 0; run < run_count; run++)
+    // for(int i = 0; i < 45; i++)
     // {
-    //     std::vector<particle> photon;
-    //     photon.push_back(ray_list.at(0));
-    //     photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
-    //     // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
-    //     while (0 < photon.back().ene_)
+    //     for(int j = 0; j < 4; j++)
     //     {
-    //         // 2次反応をなくすかどうか
-    //         // if(photon.back().ene_ != ray_list.back().ene_)
-    //         // {
-    //         //     break;
-    //         // }
-
-    //         double total_traject_dist = 0;
-    //         for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
-    //         {
-    //             std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
-    //             std::ofstream scinti_data(outfilename, std::ios::app);
-    //             double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
-    //             #pragma omp critical
-    //             {
-    //             // std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
-    //             }
-    //             total_traject_dist += traject_dist;
-    //             if (traject_dist < 0.01)
-    //             {
-    //                 continue;
-    //             }
-    //             double pe_cs = pe_crosssec(photon.back().ene_, scintillator.at(scinti_num).z_),
-    //                 pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
-    //                 cs_ang = cs_angle(photon.back().ene_),
-    //                 cs_cs = kleinnishinaeq(photon.back().ene_, cs_ang),
-    //                 cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
-    //             if(traject_dist > std::max({pe_len, cs_len}))
-    //             {
-    //                 total_traject_dist = 0;
-    //                 continue;
-    //             }
-    //             else
-    //             {
-    //                 if(pe_len <= cs_len)
-    //                 {
-    //                     #pragma omp critical
-    //                     {
-    //                     scinti_data << photon.back().ene_ << "\n";
-    //                     }
-    //                     total_traject_dist = 0;
-    //                     continue;
-    //                 }
-    //                 else
-    //                 {
-    //                     #pragma omp critical
-    //                     {
-    //                     scinti_data << photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang) << "\n";
-    //                     }
-    //                     photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
-    //                     photon.back().move(cs_len);
-    //                     photon.back().turn(cs_ang);
-    //                 }
-    //             }
-    //         }
-    //         if (total_traject_dist < 0.01)
-    //         {
-    //             break;
-    //         }
+    //         std::cout << scintillator.back().crosssec_table_.at(i).at(j) << "\t";
     //     }
+    //     std::cout << "\n";
     // }
+
+    // for(int ene = 10; ene < 100000-1; ene++)
+    // {
+    //     cs_pe << ene << "\t" << scintillator.back().crosssec(ene, 1) << "\n";
+    //     cs_cs << ene << "\t" << scintillator.back().crosssec(ene, 2) << "\n";
+    //     cs_pp << ene << "\t" << scintillator.back().crosssec(ene, 3) << "\n";
+    // }
+
+    #pragma omp parallel for
+    for (int run = 0; run < run_count; run++)
+    {
+        std::vector<particle> photon;
+        photon.push_back(ray_list.at(0));
+        photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
+        // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
+        while (0 < photon.back().ene_)
+        {
+            // 2次反応をなくすかどうか
+            // if(photon.back().ene_ != ray_list.back().ene_)
+            // {
+            //     break;
+            // }
+
+            double total_traject_dist = 0;
+            for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
+            {
+                std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
+                std::ofstream scinti_data(outfilename, std::ios::app);
+                double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
+                #pragma omp critical
+                {
+                // std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
+                }
+                total_traject_dist += traject_dist;
+                if (traject_dist < 0.01)
+                {
+                    continue;
+                }
+                double pe_cs = pe_crosssec(photon.back().ene_, scintillator.at(scinti_num).z_),
+                    pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
+                    cs_ang = cs_angle(photon.back().ene_),
+                    cs_cs = kleinnishinaeq(photon.back().ene_, cs_ang),
+                    cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
+                if(traject_dist > std::max({pe_len, cs_len}))
+                {
+                    total_traject_dist = 0;
+                    continue;
+                }
+                else
+                {
+                    if(pe_len <= cs_len)
+                    {
+                        #pragma omp critical
+                        {
+                        scinti_data << photon.back().ene_ << "\n";
+                        }
+                        total_traject_dist = 0;
+                        continue;
+                    }
+                    else
+                    {
+                        #pragma omp critical
+                        {
+                        scinti_data << photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang) << "\n";
+                        }
+                        photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
+                        photon.back().move(cs_len);
+                        photon.back().turn(cs_ang);
+                    }
+                }
+            }
+            if (total_traject_dist < 0.01)
+            {
+                break;
+            }
+        }
+    }
 }
