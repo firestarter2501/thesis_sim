@@ -1,6 +1,6 @@
 #include "scinti.h"
 
-#define MEC2 510.99895 // MeV
+#define MEC2 510.99895 // keV
 #define RELEC 2.8179403262 * std::pow(10, -13) // cm
 #define NUMA 6.02214076 * std::pow(10, 23) // mol^-1
 
