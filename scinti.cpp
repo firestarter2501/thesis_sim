@@ -4,6 +4,27 @@
 #define RELEC 2.8179403262 * std::pow(10, -13) // cm
 #define NUMA 6.02214076 * std::pow(10, 23) // mol^-1
 
+void scinti::initcs(std::string conffilepath)
+{
+    std::string data_tmp;
+    std::string data_tab_tmp;
+    int vector_i = 0, vector_j = 0;
+    std::ifstream initcs(conffilepath);
+    
+    while(getline(initcs, data_tmp))
+    {
+        vector_j = 0;
+        std::istringstream i_stream(data_tmp);
+        while(getline(i_stream, data_tab_tmp, '\t'))
+        {
+            this->crosssec_table_.at(vector_i).at(vector_j);
+            vector_j++;
+        }
+        vector_i++;
+    }
+}
+
+
 void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight)
 {
     this->pt_x_ = pt_x;
