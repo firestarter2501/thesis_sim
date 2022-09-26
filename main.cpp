@@ -67,7 +67,7 @@ int main()
         std::cout << "\n";
     }
 
-    for(int ene = 0; ene < 100000; ene++)
+    for(int ene = 10; ene < 100000; ene++)
     {
         cs_pe << ene << "\t" << scintillator.back().crosssec(ene, 1) << "\n";
         cs_cs << ene << "\t" << scintillator.back().crosssec(ene, 2) << "\n";
