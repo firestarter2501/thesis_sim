@@ -63,21 +63,20 @@ int main()
         while (0 < photon.back().ene_)
         {
             // 2次反応をなくすかどうか
-            // if(photon.back().ene_ != ray_list.back().ene_)
-            // {
-            //     break;
-            // }
+            if(photon.back().ene_ != ray_list.back().ene_)
+            {
+                break;
+            }
 
             double total_traject_dist = 0;
             for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
-                double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
-                #pragma omp critical
-                {
+                double traject_dist = scintillator.at(scinti_num).intersec_dist(ray_list.back(), photon.back());
+                std::cout << "photon_ene: " << photon.back().ene_ << " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
                 std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
-                }
+                std::cout << "---" << std::endl;
                 total_traject_dist += traject_dist;
                 if (traject_dist < 0.01)
                 {

@@ -21,6 +21,6 @@ class scinti
         double crosssec(double ene, int type);
         void initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight);
         std::vector<std::vector<double>> intersec(particle ptcl);
-        double intersec_dist(particle ptcl);
+        double intersec_dist(particle initptcl, particle ptcl);
         bool internal_judge(particle ptcl);
 };

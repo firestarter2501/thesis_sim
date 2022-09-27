@@ -114,18 +114,18 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(1).at(0) = limtozero(ptcl.pt_x_ + traject(0) * back_t);
         return_point.at(1).at(1) = limtozero(ptcl.pt_y_ + traject(1) * back_t);
         return_point.at(1).at(2) = limtozero(ptcl.pt_z_ + traject(2) * back_t);
-        // std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
+        std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
         return return_point;
     }
 
     else if(frontflag == true)
     {
         double move_t = front_t, dist = std::sqrt(2) * this->depth_;
-        std::cout << "move_t: " << move_t << std::endl;
+        // std::cout << "move_t: " << move_t << std::endl;
         Eigen::Vector3d move_point, u, v, w;
         while (std::abs(dist - this->rad_) > 0.01)
         {
-            std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
+            // std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
             if(move_t > 0)
             {
                 move_t += 0.001;
@@ -145,40 +145,70 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
             w = u.cross(v)/u.norm();
             dist = w.norm();
             std::cout << "dist: " << dist << std::endl;
-            std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
+            // std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
         }
         
         return_point.at(2).at(0) = limtozero(move_point(0));
         return_point.at(2).at(1) = limtozero(move_point(1));
         return_point.at(2).at(2) = limtozero(move_point(2));
         std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
-        std::cout << "---" << std::endl;
         return return_point;
     }
     return return_point;
 }
 
-double scinti::intersec_dist(particle ptcl)
+double scinti::intersec_dist(particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
     std::vector<double> zero_vector = { 0, 0, 0 };
-    if ((intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector)||(intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)||(intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector))
+    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector)
     {
-        return std::max({std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2)), std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2)), std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(2).at(2), 2))});
+        std::cout << "front only" << std::endl;
+        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
+        {
+            return 0;
+        }
+        
+        return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
     }
 
-    else if (intersec.at(0) != zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)
+    if (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)
     {
+        std::cout << "back only" << std::endl;
+        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
+        {
+            return 0;
+        }
+
+        return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
+    }
+    
+    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector)
+    {
+        std::cout << "side only" << std::endl;
+        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
+        {
+            return 0;
+        }
+
+        return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
+    }
+    
+    if (intersec.at(0) != zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)
+    {
+        std::cout << "front back" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(1).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(1).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(1).at(2), 2));
     }
 
-    else if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector)
+    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector)
     {
+        std::cout << "front side" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2));
     }
 
     else
     {
+        std::cout << "else" << std::endl;
         return 0;
     }
 }

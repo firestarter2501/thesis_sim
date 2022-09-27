@@ -10,7 +10,13 @@ void particle::initptcl(double ene, double x, double y, double z)
     this->pt_x_ = x;
     this->pt_y_ = y;
     this->pt_z_ = z;
-    this->dir_theta_ = std::acos(inittheta(randengine));
+    double theta = std::acos(inittheta(randengine));
+    while (theta < 0 || M_PI < theta)
+    {
+        theta = std::acos(inittheta(randengine));
+    }
+    
+    this->dir_theta_ = theta;
     this->dir_phi_ = initphi(randengine) * M_PI;
 };
 
