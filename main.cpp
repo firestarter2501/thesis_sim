@@ -74,19 +74,20 @@ int main()
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(ray_list.back(), photon.back());
-                std::cout << "photon_ene: " << photon.back().ene_ << " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
-                std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
-                std::cout << "---" << std::endl;
                 total_traject_dist += traject_dist;
                 if (traject_dist < 0.01)
                 {
                     continue;
                 }
-                double pe_cs = scintillator.back().crosssec(photon.back().ene_, 1),
+                double pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
                     cs_ang = cs_angle(photon.back().ene_),
-                    cs_cs = scintillator.back().crosssec(photon.back().ene_, 2),
+                    cs_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 2),
                     cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
+                std::cout << "photon_ene: " << photon.back().ene_ << " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
+                std::cout << "traject_len: " << traject_dist << std::endl;
+                std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len << std::endl;
+                std::cout << "---" << std::endl;
                 if(traject_dist > std::max({pe_len, cs_len}))
                 {
                     total_traject_dist = 0;
