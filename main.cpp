@@ -45,37 +45,13 @@ int main()
         scintillator.push_back(scinti());
         scintillator.back().initscinti(initscinticonf_list.at(0+(num*9)), initscinticonf_list.at(1+(num*9)), initscinticonf_list.at(2+(num*9)), initscinticonf_list.at(3+(num*9))*M_PI, initscinticonf_list.at(4+(num*9))*M_PI, initscinticonf_list.at(5+(num*9)), initscinticonf_list.at(6+(num*9)), initscinticonf_list.at(7+(num*9)), initscinticonf_list.at(8+(num*9)));
     }
+    scintillator.back().initcs("./data/initcs_nai.conf");
     std::cout << "loaded " << scintillator.size() << " scintillator." << std::endl;
     std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
     std::cout << "run loop defined " << run_count << std::endl;
-    // std::cout << "test1" << std::endl;
-    scintillator.back().initcs("./data/initcs_nai.conf");
-    // std::cout << "test2" << std::endl;
 
-    // cstest
-    std::ofstream cs_pe("./data/cs_pe.dat");
-    std::ofstream cs_cs("./data/cs_cs.dat");
-    std::ofstream cs_pp("./data/cs_pp.dat");
-
-    scintillator.back().initcs("./data/initcs_nai.conf");
-    std::cout << scintillator.back().crosssec_table_.size() << "\t" << scintillator.back().crosssec_table_.at(0).size() << std::endl;
-
-    for(int i = 0; i < 45; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-            std::cout << scintillator.back().crosssec_table_.at(i).at(j) << "\t";
-        }
-        std::cout << "\n";
-    }
-
-    for(int ene = 10; ene < 100000; ene++)
-    {
-        cs_pe << ene << "\t" << scintillator.back().crosssec(ene, 1) << "\n";
-        cs_cs << ene << "\t" << scintillator.back().crosssec(ene, 2) << "\n";
-        cs_pp << ene << "\t" << scintillator.back().crosssec(ene, 3) << "\n";
-    }
+    // crosssec_test(scintillator.back());
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
