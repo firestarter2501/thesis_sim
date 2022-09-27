@@ -4,6 +4,18 @@
 #define RELEC 2.8179403262 * std::pow(10, -13) // cm
 #define NUMA 6.02214076 * std::pow(10, 23) // mol^-1
 
+double scinti::limtozero(double num)
+{
+    if (num < 0.00000001)
+    {
+        return 0;
+    }
+    else
+    {
+        return num;
+    }
+}
+
 void scinti::initcs(std::string conffilepath)
 {
     std::ifstream datafile(conffilepath);
@@ -87,11 +99,11 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     double front_t = (scinti_centerline(0)*(scinti_frontcenter(0)-ptcl.pt_x_) + scinti_centerline(1) * (scinti_frontcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_frontcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     if (std::sqrt(std::pow(scinti_frontcenter(0) - (ptcl.pt_x_ + traject(0)*front_t), 2) + std::pow(scinti_frontcenter(1) - (ptcl.pt_y_ + traject(1) * front_t), 2) + std::pow(scinti_frontcenter(2) - (ptcl.pt_z_ + traject(2) * front_t), 2)) < this->rad_)
     {
-        return_point.at(0).at(0) = ptcl.pt_x_ + traject(0) * front_t;
-        return_point.at(0).at(1) = ptcl.pt_y_ + traject(1) * front_t;
-        return_point.at(0).at(2) = ptcl.pt_z_ + traject(2) * front_t;
+        return_point.at(0).at(0) = limtozero(ptcl.pt_x_ + traject(0) * front_t);
+        return_point.at(0).at(1) = limtozero(ptcl.pt_y_ + traject(1) * front_t);
+        return_point.at(0).at(2) = limtozero(ptcl.pt_z_ + traject(2) * front_t);
         frontflag = true;
-        // std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
+        std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
     scinti_backcenter << this->pt_x_ + (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), this->pt_y_ + (-this->depth_ / 2)* std::sin(this->dir_theta_)* std::sin(this->dir_phi_), this->pt_z_ + (-this->depth_ / 2)* std::cos(this->dir_theta_);
@@ -99,9 +111,9 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     double back_t = (scinti_centerline(0) * (scinti_backcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_backcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_backcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     if (std::sqrt(std::pow(scinti_backcenter(0) - (ptcl.pt_x_ + traject(0) * back_t), 2) + std::pow(scinti_backcenter(1) - (ptcl.pt_y_ + traject(1) * back_t), 2) + std::pow(scinti_backcenter(2) - (ptcl.pt_z_ + traject(2) * back_t), 2)) < this->rad_)
     {
-        return_point.at(1).at(0) = ptcl.pt_x_ + traject(0) * back_t;
-        return_point.at(1).at(1) = ptcl.pt_y_ + traject(1) * back_t;
-        return_point.at(1).at(2) = ptcl.pt_z_ + traject(2) * back_t;
+        return_point.at(1).at(0) = limtozero(ptcl.pt_x_ + traject(0) * back_t);
+        return_point.at(1).at(1) = limtozero(ptcl.pt_y_ + traject(1) * back_t);
+        return_point.at(1).at(2) = limtozero(ptcl.pt_z_ + traject(2) * back_t);
         // std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
         return return_point;
     }
@@ -109,11 +121,11 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     else if(frontflag == true)
     {
         double move_t = front_t, dist = std::sqrt(2) * this->depth_;
-        // std::cout << "move_t: " << move_t << std::endl;
+        std::cout << "move_t: " << move_t << std::endl;
         Eigen::Vector3d move_point, u, v, w;
         while (std::abs(dist - this->rad_) > 0.01)
         {
-            // std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
+            std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
             if(move_t > 0)
             {
                 move_t += 0.001;
@@ -132,13 +144,15 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
             v << move_point(0) - scinti_frontcenter(0), move_point(1) - scinti_frontcenter(1), move_point(2) - scinti_frontcenter(2);
             w = u.cross(v)/u.norm();
             dist = w.norm();
-            // std::cout << "dist: " << dist << std::endl;
-            // std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
+            std::cout << "dist: " << dist << std::endl;
+            std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
         }
-        return_point.at(2).at(0) = move_point(0);
-        return_point.at(2).at(1) = move_point(1);
-        return_point.at(2).at(2) = move_point(2);
-        // std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
+        
+        return_point.at(2).at(0) = limtozero(move_point(0));
+        return_point.at(2).at(1) = limtozero(move_point(1));
+        return_point.at(2).at(2) = limtozero(move_point(2));
+        std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
+        std::cout << "---" << std::endl;
         return return_point;
     }
     return return_point;
@@ -162,8 +176,8 @@ double scinti::intersec_dist(particle ptcl)
     {
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2));
     }
-    else
 
+    else
     {
         return 0;
     }

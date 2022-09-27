@@ -3,6 +3,7 @@
 
 class scinti
 {
+    double limtozero(double num);
     public:
         double pt_x_,
             pt_y_,

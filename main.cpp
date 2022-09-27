@@ -76,7 +76,7 @@ int main()
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back());
                 #pragma omp critical
                 {
-                // std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
+                std::cout << "traject_len: " << traject_dist << std::endl << std::endl;
                 }
                 total_traject_dist += traject_dist;
                 if (traject_dist < 0.01)
