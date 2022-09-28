@@ -165,7 +165,7 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
     std::vector<double> zero_vector = { 0, 0, 0 };
-    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector)
+    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector)
     {
         std::cout << "front only" << std::endl;
         if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
@@ -176,7 +176,7 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
         return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
     }
 
-    if (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)
+    if (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector)
     {
         std::cout << "back only" << std::endl;
         if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
@@ -187,7 +187,7 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
     }
     
-    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector)
+    if ((intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector) || (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector))
     {
         std::cout << "side only" << std::endl;
         if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
@@ -214,19 +214,5 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
     {
         std::cout << "else" << std::endl;
         return 0;
-    }
-}
-
-bool scinti::internal_judge(particle ptcl)
-{
-    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
-    std::vector<double> zero_vector = { 0, 0, 0 };
-    if ((intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector) || (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector) || (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
     }
 }
