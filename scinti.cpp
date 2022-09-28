@@ -6,7 +6,7 @@
 
 double scinti::limtozero(double num)
 {
-    if (num < 0.00000001)
+    if (0 < num && num < 0.00000001)
     {
         return 0;
     }
@@ -118,42 +118,42 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return return_point;
     }
 
-    else if(frontflag == true)
-    {
-        double move_t = front_t, dist = std::sqrt(2) * this->depth_;
-        // std::cout << "move_t: " << move_t << std::endl;
-        Eigen::Vector3d move_point, u, v, w;
-        while (std::abs(dist - this->rad_) > 0.01)
-        {
-            // std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
-            if(move_t > 0)
-            {
-                move_t += 0.001;
-            }
-            else
-            {
-                move_t -= 0.001;
-            }
+    // else if(frontflag == true)
+    // {
+    //     double move_t = front_t, dist = std::sqrt(2) * this->depth_;
+    //     // std::cout << "move_t: " << move_t << std::endl;
+    //     Eigen::Vector3d move_point, u, v, w;
+    //     while (/*std::abs(dist - this->rad_) > 0.01*/true)
+    //     {
+    //         std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
+    //         if(move_t > 0)
+    //         {
+    //             move_t += 0.001;
+    //         }
+    //         else
+    //         {
+    //             move_t -= 0.001;
+    //         }
 
-            if(dist > this->rad_)
-            {
-                break;
-            }
-            move_point << traject(0) * move_t, traject(1) * move_t, traject(2) * move_t;
-            u << scinti_backcenter(0) - scinti_frontcenter(0), scinti_backcenter(1) - scinti_frontcenter(1), scinti_backcenter(2) - scinti_frontcenter(2);
-            v << move_point(0) - scinti_frontcenter(0), move_point(1) - scinti_frontcenter(1), move_point(2) - scinti_frontcenter(2);
-            w = u.cross(v)/u.norm();
-            dist = w.norm();
-            std::cout << "dist: " << dist << std::endl;
-            // std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
-        }
+    //         if(dist > this->rad_)
+    //         {
+    //             break;
+    //         }
+    //         move_point << traject(0) * move_t, traject(1) * move_t, traject(2) * move_t;
+    //         u << scinti_backcenter(0) - scinti_frontcenter(0), scinti_backcenter(1) - scinti_frontcenter(1), scinti_backcenter(2) - scinti_frontcenter(2);
+    //         v << move_point(0) - scinti_frontcenter(0), move_point(1) - scinti_frontcenter(1), move_point(2) - scinti_frontcenter(2);
+    //         w = u.cross(v)/u.norm();
+    //         dist = w.norm();
+    //         std::cout << "dist: " << dist << std::endl;
+    //         std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
+    //     }
         
-        return_point.at(2).at(0) = limtozero(move_point(0));
-        return_point.at(2).at(1) = limtozero(move_point(1));
-        return_point.at(2).at(2) = limtozero(move_point(2));
-        std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
-        return return_point;
-    }
+    //     return_point.at(2).at(0) = limtozero(move_point(0));
+    //     return_point.at(2).at(1) = limtozero(move_point(1));
+    //     return_point.at(2).at(2) = limtozero(move_point(2));
+    //     std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
+    //     return return_point;
+    // }
     return return_point;
 }
 
