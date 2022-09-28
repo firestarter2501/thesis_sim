@@ -187,9 +187,9 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
     }
     
-    if ((intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector) || (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector))
+    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector)
     {
-        std::cout << "side only" << std::endl;
+        std::cout << "side1 only" << std::endl;
         if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
         {
             return 0;
@@ -197,17 +197,34 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
 
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
     }
+
+    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector)
+    {
+        std::cout << "side2 only" << std::endl;
+        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
+        {
+            return 0;
+        }
+
+        return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(3).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(3).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(3).at(2), 2));
+    }
     
-    if (intersec.at(0) != zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector)
+    if (intersec.at(0) != zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector)
     {
         std::cout << "front back" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(1).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(1).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(1).at(2), 2));
     }
 
-    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector)
+    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector)
     {
-        std::cout << "front side" << std::endl;
+        std::cout << "front side1" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2));
+    }
+
+    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector)
+    {
+        std::cout << "front side2" << std::endl;
+        return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(3).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(3).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(3).at(2), 2));
     }
 
     else
