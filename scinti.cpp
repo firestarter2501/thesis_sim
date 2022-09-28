@@ -80,9 +80,8 @@ void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, dou
 
 std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 {
-    std::vector<std::vector<double>> return_point = { {0, 0, 0}, {0, 0, 0}, {0, 0, 0} };
+    std::vector<std::vector<double>> return_point = { {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0} };
     Eigen::Vector3d traject, scinti_centerline, scinti_frontcenter, scinti_front_intersec, scinti_backcenter, scinti_back_intersec;
-    bool frontflag = false;
 
     traject << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
     traject.normalize();
@@ -102,7 +101,6 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(0).at(0) = limtozero(ptcl.pt_x_ + traject(0) * front_t);
         return_point.at(0).at(1) = limtozero(ptcl.pt_y_ + traject(1) * front_t);
         return_point.at(0).at(2) = limtozero(ptcl.pt_z_ + traject(2) * front_t);
-        frontflag = true;
         std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
@@ -115,45 +113,51 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(1).at(1) = limtozero(ptcl.pt_y_ + traject(1) * back_t);
         return_point.at(1).at(2) = limtozero(ptcl.pt_z_ + traject(2) * back_t);
         std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
-        return return_point;
     }
 
-    // else if(frontflag == true)
-    // {
-    //     double move_t = front_t, dist = std::sqrt(2) * this->depth_;
-    //     // std::cout << "move_t: " << move_t << std::endl;
-    //     Eigen::Vector3d move_point, u, v, w;
-    //     while (/*std::abs(dist - this->rad_) > 0.01*/true)
-    //     {
-    //         std::cout << "whileflag: " << std::abs(dist - this->rad_) << std::endl;
-    //         if(move_t > 0)
-    //         {
-    //             move_t += 0.001;
-    //         }
-    //         else
-    //         {
-    //             move_t -= 0.001;
-    //         }
+    Eigen::Vector3d p, p2, vecs, v;   
+    p << scinti_front_intersec(0) - ptcl.pt_x_, scinti_front_intersec(1) - ptcl.pt_y_, scinti_front_intersec(2) - ptcl.pt_z_;
+    p2 << scinti_backcenter(0) - ptcl.pt_x_, scinti_backcenter(1) - ptcl.pt_y_, scinti_backcenter(2) - ptcl.pt_z_;
+    vecs << p2(0) - p(0), p2(1) - p(1), p2(2) - p(2);
+    v = traject;
+    double Dvv = v.dot(v),
+        Dsv = vecs.dot(v),
+        Dpv = p.dot(v),
+        Dss = vecs.dot(vecs),
+        Dps = p.dot(vecs),
+        Dpp = p.dot(p),
+        rr = this->rad_*this->rad_;
+    if (Dss == 0)
+    {
+        std::cout << "void cilinder" << std::endl;
+        return return_point;
+    }
+    double A = Dvv - Dsv * Dsv / Dss,
+        B = Dpv - Dps * Dsv / Dss,
+        C = Dpp - Dps * Dps / Dss - rr; 
+    if (A == 0)
+    {
+        return return_point;
+    }
+    double ds = B * B - A * C;
+    if (ds < 0)
+    {
+        std::cout << "no collision" << std::endl;
+        return return_point;
+    }
+    ds = sqrt(ds);
+    double a1 = (B - ds) / A,
+        a2 = (B + ds) / A;
+    return_point.at(2).at(0) = limtozero(ptcl.pt_x_ + a1 * v(0));
+    return_point.at(2).at(1) = limtozero(ptcl.pt_y_ + a1 * v(1));
+    return_point.at(2).at(2) = limtozero(ptcl.pt_z_ + a1 * v(2));
+    return_point.at(3).at(0) = limtozero(ptcl.pt_x_ + a1 * v(0));
+    return_point.at(3).at(1) = limtozero(ptcl.pt_y_ + a1 * v(1));
+    return_point.at(3).at(2) = limtozero(ptcl.pt_z_ + a1 * v(2));
 
-    //         if(dist > this->rad_)
-    //         {
-    //             break;
-    //         }
-    //         move_point << traject(0) * move_t, traject(1) * move_t, traject(2) * move_t;
-    //         u << scinti_backcenter(0) - scinti_frontcenter(0), scinti_backcenter(1) - scinti_frontcenter(1), scinti_backcenter(2) - scinti_frontcenter(2);
-    //         v << move_point(0) - scinti_frontcenter(0), move_point(1) - scinti_frontcenter(1), move_point(2) - scinti_frontcenter(2);
-    //         w = u.cross(v)/u.norm();
-    //         dist = w.norm();
-    //         std::cout << "dist: " << dist << std::endl;
-    //         std::cout << "move_point: " << move_point(0) << ", " << move_point(1) << ", " << move_point(2) << std::endl;
-    //     }
-        
-    //     return_point.at(2).at(0) = limtozero(move_point(0));
-    //     return_point.at(2).at(1) = limtozero(move_point(1));
-    //     return_point.at(2).at(2) = limtozero(move_point(2));
-    //     std::cout << "side: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
-    //     return return_point;
-    // }
+    std::cout << "side1: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
+    std::cout << "side2: " << return_point.at(3).at(0) << ", " << return_point.at(3).at(1) << ", " << return_point.at(3).at(2) << std::endl;
+    
     return return_point;
 }
 
