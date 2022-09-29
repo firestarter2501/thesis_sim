@@ -138,12 +138,12 @@ double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<doub
         ptcldir.normalize();
         type1dir.normalize();
         type2dir.normalize();
-        if (std::abs(ptcldir(0)-type1dir(0)) <= 0.00001 && std::abs(ptcldir(1)-type1dir(1)) <= 0.00001 && std::abs(ptcldir(2)-type1dir(2)) <= 0.00001)
+        if (limtozero(std::abs(ptcldir(0)-type1dir(0))) == 0 && limtozero(std::abs(ptcldir(1)-type1dir(1))) == 0 && limtozero(std::abs(ptcldir(2)-type1dir(2))) == 0)
         {
             std::cout << "ptcl " << showfacetype(type1) << std::endl;
             return std::sqrt(std::pow(intersec.at(type1).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type1).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type1).at(2) - ptcl.pt_z_, 2));
         }
-        if (std::abs(ptcldir(0)-type2dir(0)) <= 0.00001 && std::abs(ptcldir(1)-type2dir(1)) <= 0.00001 && std::abs(ptcldir(2)-type2dir(2)) <= 0.00001)
+        if (limtozero(std::abs(ptcldir(0)-type2dir(0))) == 0 && limtozero(std::abs(ptcldir(1)-type2dir(1))) == 0 && limtozero(std::abs(ptcldir(2)-type2dir(2))) == 0)
         {
             std::cout << "ptcl " << showfacetype(type2) << std::endl;
             return std::sqrt(std::pow(intersec.at(type2).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type2).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type2).at(2) - ptcl.pt_z_, 2));
@@ -385,7 +385,7 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
 
     else
     {
-        std::cout << "else" << std::endl;
-        return 0;
+        std::cout << "outside" << std::endl;
+        return -1;
     }
 }
