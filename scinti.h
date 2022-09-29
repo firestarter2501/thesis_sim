@@ -9,6 +9,7 @@ class scinti
     std::vector<std::vector<double>> intersec(particle ptcl);
     std::vector<bool> bcrangecheck(std::vector<std::vector<double>> intersecvec);
     bool zeroveccheck(std::vector<double> vec);
+    std::string showfacetype(int type);
     double ptclfacedist(std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2);
     public:
         double pt_x_,

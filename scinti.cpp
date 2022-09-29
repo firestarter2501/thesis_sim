@@ -102,6 +102,30 @@ bool scinti::zeroveccheck(std::vector<double> vec)
     }
 }
 
+std::string scinti::showfacetype(int type)
+{
+    if (type == 0)
+    {
+        return "front";
+    }
+    if (type == 1)
+    {
+        return "back";
+    }
+    if (type == 2)
+    {
+        return "side1";
+    }
+    if (type == 3)
+    {
+        return "side2";
+    }
+    else
+    {
+        return "facetypeerror";
+    }
+}
+
 double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2)
 {
     if (!initpointcheck(initptcl, ptcl) || (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))))
@@ -115,23 +139,23 @@ double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<doub
         type2dir.normalize();
         if (std::abs(ptcldir(0)-type1dir(0)) <= 0.00001 && std::abs(ptcldir(1)-type1dir(1)) <= 0.00001 && std::abs(ptcldir(2)-type1dir(2)) <= 0.00001)
         {
-            std::cout << "ptcl, type1:" << type1 << std::endl;
+            std::cout << "ptcl " << showfacetype(type1) << std::endl;
             return std::sqrt(std::pow(intersec.at(type1).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type1).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type1).at(2) - ptcl.pt_z_, 2));
         }
         if (std::abs(ptcldir(0)-type2dir(0)) <= 0.00001 && std::abs(ptcldir(1)-type2dir(1)) <= 0.00001 && std::abs(ptcldir(2)-type2dir(2)) <= 0.00001)
         {
-            std::cout << "ptcl, type2:" << type2 << std::endl;
+            std::cout << "ptcl " << showfacetype(type2) << std::endl;
             return std::sqrt(std::pow(intersec.at(type2).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type2).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type2).at(2) - ptcl.pt_z_, 2));
         }
         else
         {
-            std::cout << "error(" << type1 << ", " << type2 << ")" << std::endl;
+            std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
             return 0;
         }
     }
     else
     {
-        std::cout << "type1: " << type1 << " type2: " << type2 << std::endl;
+        std::cout << showfacetype(type1) << " " << showfacetype(type2) << std::endl;
         return std::sqrt(std::pow(intersec.at(type1).at(0) - intersec.at(type2).at(0), 2) + std::pow(intersec.at(type1).at(1) - intersec.at(type2).at(1), 2) + std::pow(intersec.at(type1).at(2) - intersec.at(type2).at(2), 2));
     }
 }
