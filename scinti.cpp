@@ -45,6 +45,63 @@ bool scinti::initpointcheck(particle initptcl, particle ptcl)
     }
 }
 
+std::vector<bool> scinti::bcrangecheck(std::vector<std::vector<double>> intersecvec)
+{
+    std::vector<double> bc = scintibc();
+    std::vector<bool> returnvec;
+
+    if (((std::min({bc.at(0), bc.at(1)}) < intersecvec.at(0).at(0)) && (intersecvec.at(0).at(0) < std::max({bc.at(0), bc.at(1)}))) && ((std::min({bc.at(2), bc.at(3)}) < intersecvec.at(0).at(1)) && (intersecvec.at(0).at(1) < std::max({bc.at(2), bc.at(3)}))) && ((std::min({bc.at(4), bc.at(5)}) < intersecvec.at(0).at(2)) && (intersecvec.at(0).at(2) < std::max({bc.at(4), bc.at(5)}))))
+    {
+        returnvec.push_back(true);
+    }
+    else
+    {
+        returnvec.push_back(false);
+    }
+
+    if (((std::min({bc.at(6), bc.at(7)}) < intersecvec.at(1).at(0)) && (intersecvec.at(1).at(0) < std::max({bc.at(6), bc.at(7)}))) && ((std::min({bc.at(8), bc.at(9)}) < intersecvec.at(1).at(1)) && (intersecvec.at(1).at(1) < std::max({bc.at(8), bc.at(9)}))) && ((std::min({bc.at(10), bc.at(11)}) < intersecvec.at(1).at(2)) && (intersecvec.at(1).at(2) < std::max({bc.at(10), bc.at(11)}))))
+    {
+        returnvec.push_back(true);
+    }
+    else
+    {
+        returnvec.push_back(false);
+    }
+
+    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) < intersecvec.at(2).at(0)) && (intersecvec.at(2).at(0) < std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) < intersecvec.at(2).at(1)) && (intersecvec.at(2).at(1) < std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) < intersecvec.at(2).at(2)) && (intersecvec.at(2).at(2) < std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
+    {
+        returnvec.push_back(true);
+    }
+    else
+    {
+        returnvec.push_back(false);
+    }
+
+    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) < intersecvec.at(3).at(0)) && (intersecvec.at(3).at(0) < std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) < intersecvec.at(3).at(1)) && (intersecvec.at(3).at(1) < std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) < intersecvec.at(3).at(2)) && (intersecvec.at(3).at(2) < std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
+    {
+        returnvec.push_back(true);
+    }
+    else
+    {
+        returnvec.push_back(false);
+    }
+
+    return returnvec;
+}
+
+bool scinti::zeroveccheck(std::vector<double> vec)
+{
+    std::vector<double> zero_vector = { 0, 0, 0 };
+    if (vec == zero_vector)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void scinti::initcs(std::string conffilepath)
 {
     std::ifstream datafile(conffilepath);
@@ -186,9 +243,9 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     return_point.at(2).at(0) = limtozero(ptcl.pt_x_ + a1 * v(0));
     return_point.at(2).at(1) = limtozero(ptcl.pt_y_ + a1 * v(1));
     return_point.at(2).at(2) = limtozero(ptcl.pt_z_ + a1 * v(2));
-    return_point.at(3).at(0) = limtozero(ptcl.pt_x_ + a1 * v(0));
-    return_point.at(3).at(1) = limtozero(ptcl.pt_y_ + a1 * v(1));
-    return_point.at(3).at(2) = limtozero(ptcl.pt_z_ + a1 * v(2));
+    return_point.at(3).at(0) = limtozero(ptcl.pt_x_ + a2 * v(0));
+    return_point.at(3).at(1) = limtozero(ptcl.pt_y_ + a2 * v(1));
+    return_point.at(3).at(2) = limtozero(ptcl.pt_z_ + a2 * v(2));
 
     std::cout << "side1: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
     std::cout << "side2: " << return_point.at(3).at(0) << ", " << return_point.at(3).at(1) << ", " << return_point.at(3).at(2) << std::endl;
@@ -199,44 +256,44 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 double scinti::intersec_dist(particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
-    std::vector<double> zero_vector = { 0, 0, 0 };
-    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector && !initpointcheck(initptcl, ptcl))
+    std::vector<bool> enablecheck = bcrangecheck(intersec);
+    if (enablecheck.at(0) && !enablecheck.at(1) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
     }
 
-    if (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector && !initpointcheck(initptcl, ptcl))
+    if (!enablecheck.at(0) && enablecheck.at(1) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "back only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
     }
     
-    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector && !initpointcheck(initptcl, ptcl))
+    if (!enablecheck.at(0) && !enablecheck.at(1) && enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "side1 only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
     }
 
-    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector && !initpointcheck(initptcl, ptcl))
+    if (!enablecheck.at(0) && !enablecheck.at(1) && !enablecheck.at(2) && enablecheck.at(3))
     {
         std::cout << "side2 only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(3).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(3).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(3).at(2), 2));
     }
     
-    if (intersec.at(0) != zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector)
+    if (enablecheck.at(0) && enablecheck.at(1) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front back" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(1).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(1).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(1).at(2), 2));
     }
 
-    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector)
+    if (enablecheck.at(0) && !enablecheck.at(1) && enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front side1" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2));
     }
 
-    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector)
+    if (enablecheck.at(0) && !enablecheck.at(1) && !enablecheck.at(2) && enablecheck.at(3))
     {
         std::cout << "front side2" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(3).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(3).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(3).at(2), 2));
