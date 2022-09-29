@@ -51,7 +51,12 @@ int main()
     std::cin >> run_count;
     std::cout << "run loop defined " << run_count << std::endl;
 
+    // 断面積の出力
     // crosssec_test(scintillator.back());
+
+    // eigen並列処理無効化
+    // Eigen::setNbThreads(1);
+    // Eigen::initParallel();
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
@@ -84,7 +89,7 @@ int main()
                     cs_ang = cs_angle(photon.back().ene_),
                     cs_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 2),
                     cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
-                std::cout << "photon_ene: " << photon.back().ene_ << " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
+                std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
                 std::cout << "traject_len: " << traject_dist << std::endl;
                 std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len << std::endl;
                 std::cout << "---" << std::endl;
