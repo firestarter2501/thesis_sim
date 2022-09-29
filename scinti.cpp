@@ -50,7 +50,7 @@ std::vector<bool> scinti::bcrangecheck(std::vector<std::vector<double>> intersec
     std::vector<double> bc = scintibc();
     std::vector<bool> returnvec;
 
-    if (((std::min({bc.at(0), bc.at(1)}) < intersecvec.at(0).at(0)) && (intersecvec.at(0).at(0) < std::max({bc.at(0), bc.at(1)}))) && ((std::min({bc.at(2), bc.at(3)}) < intersecvec.at(0).at(1)) && (intersecvec.at(0).at(1) < std::max({bc.at(2), bc.at(3)}))) && ((std::min({bc.at(4), bc.at(5)}) < intersecvec.at(0).at(2)) && (intersecvec.at(0).at(2) < std::max({bc.at(4), bc.at(5)}))))
+    if (((std::min({bc.at(0), bc.at(1)}) <= intersecvec.at(0).at(0)) && (intersecvec.at(0).at(0) <= std::max({bc.at(0), bc.at(1)}))) && ((std::min({bc.at(2), bc.at(3)}) <= intersecvec.at(0).at(1)) && (intersecvec.at(0).at(1) <= std::max({bc.at(2), bc.at(3)}))) && ((std::min({bc.at(4), bc.at(5)}) <= intersecvec.at(0).at(2)) && (intersecvec.at(0).at(2) <= std::max({bc.at(4), bc.at(5)}))))
     {
         returnvec.push_back(true);
     }
@@ -59,7 +59,7 @@ std::vector<bool> scinti::bcrangecheck(std::vector<std::vector<double>> intersec
         returnvec.push_back(false);
     }
 
-    if (((std::min({bc.at(6), bc.at(7)}) < intersecvec.at(1).at(0)) && (intersecvec.at(1).at(0) < std::max({bc.at(6), bc.at(7)}))) && ((std::min({bc.at(8), bc.at(9)}) < intersecvec.at(1).at(1)) && (intersecvec.at(1).at(1) < std::max({bc.at(8), bc.at(9)}))) && ((std::min({bc.at(10), bc.at(11)}) < intersecvec.at(1).at(2)) && (intersecvec.at(1).at(2) < std::max({bc.at(10), bc.at(11)}))))
+    if (((std::min({bc.at(6), bc.at(7)}) <= intersecvec.at(1).at(0)) && (intersecvec.at(1).at(0) <= std::max({bc.at(6), bc.at(7)}))) && ((std::min({bc.at(8), bc.at(9)}) <= intersecvec.at(1).at(1)) && (intersecvec.at(1).at(1) <= std::max({bc.at(8), bc.at(9)}))) && ((std::min({bc.at(10), bc.at(11)}) <= intersecvec.at(1).at(2)) && (intersecvec.at(1).at(2) <= std::max({bc.at(10), bc.at(11)}))))
     {
         returnvec.push_back(true);
     }
@@ -68,7 +68,7 @@ std::vector<bool> scinti::bcrangecheck(std::vector<std::vector<double>> intersec
         returnvec.push_back(false);
     }
 
-    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) < intersecvec.at(2).at(0)) && (intersecvec.at(2).at(0) < std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) < intersecvec.at(2).at(1)) && (intersecvec.at(2).at(1) < std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) < intersecvec.at(2).at(2)) && (intersecvec.at(2).at(2) < std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
+    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= intersecvec.at(2).at(0)) && (intersecvec.at(2).at(0) <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= intersecvec.at(2).at(1)) && (intersecvec.at(2).at(1) <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= intersecvec.at(2).at(2)) && (intersecvec.at(2).at(2) <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
     {
         returnvec.push_back(true);
     }
@@ -77,7 +77,7 @@ std::vector<bool> scinti::bcrangecheck(std::vector<std::vector<double>> intersec
         returnvec.push_back(false);
     }
 
-    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) < intersecvec.at(3).at(0)) && (intersecvec.at(3).at(0) < std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) < intersecvec.at(3).at(1)) && (intersecvec.at(3).at(1) < std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) < intersecvec.at(3).at(2)) && (intersecvec.at(3).at(2) < std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
+    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= intersecvec.at(3).at(0)) && (intersecvec.at(3).at(0) <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= intersecvec.at(3).at(1)) && (intersecvec.at(3).at(1) <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= intersecvec.at(3).at(2)) && (intersecvec.at(3).at(2) <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
     {
         returnvec.push_back(true);
     }
@@ -94,11 +94,11 @@ bool scinti::zeroveccheck(std::vector<double> vec)
     std::vector<double> zero_vector = { 0, 0, 0 };
     if (vec == zero_vector)
     {
-        return true;
+        return false;
     }
     else
     {
-        return false;
+        return true;
     }
 }
 
@@ -257,43 +257,43 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
     std::vector<bool> enablecheck = bcrangecheck(intersec);
-    if (enablecheck.at(0) && !enablecheck.at(1) && !enablecheck.at(2) && !enablecheck.at(3))
+    if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
     }
 
-    if (!enablecheck.at(0) && enablecheck.at(1) && !enablecheck.at(2) && !enablecheck.at(3))
+    if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "back only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
     }
     
-    if (!enablecheck.at(0) && !enablecheck.at(1) && enablecheck.at(2) && !enablecheck.at(3))
+    if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "side1 only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
     }
 
-    if (!enablecheck.at(0) && !enablecheck.at(1) && !enablecheck.at(2) && enablecheck.at(3))
+    if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
     {
         std::cout << "side2 only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(3).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(3).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(3).at(2), 2));
     }
     
-    if (enablecheck.at(0) && enablecheck.at(1) && !enablecheck.at(2) && !enablecheck.at(3))
+    if (zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front back" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(1).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(1).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(1).at(2), 2));
     }
 
-    if (enablecheck.at(0) && !enablecheck.at(1) && enablecheck.at(2) && !enablecheck.at(3))
+    if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front side1" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2));
     }
 
-    if (enablecheck.at(0) && !enablecheck.at(1) && !enablecheck.at(2) && enablecheck.at(3))
+    if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
     {
         std::cout << "front side2" << std::endl;
         return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(3).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(3).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(3).at(2), 2));
