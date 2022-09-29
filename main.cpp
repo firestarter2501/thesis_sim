@@ -61,68 +61,100 @@ int main()
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
+        double sum_ene = 0;
+        std::cout << "----------\nrun: " << run << std::endl;
+        bool break_flag = false;
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
         // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
-        while (0 < photon.back().ene_)
+        while (0 <= photon.back().ene_)
         {
-            // 2次反応をなくすかどうか
-            // if(photon.back().ene_ != ray_list.back().ene_)
-            // {
-            //     break;
-            // }
-
-            double total_traject_dist = 0;
             for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
+                if (photon.back().ene_ <= 0)
+                {
+                    break_flag = true;
+                    // break;
+                }
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
-                double traject_dist = scintillator.at(scinti_num).intersec_dist(ray_list.back(), photon.back());
-                total_traject_dist += traject_dist;
-                if (traject_dist < 0.01)
-                {
-                    continue;
-                }
-                double pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
+                double traject_dist = scintillator.at(scinti_num).intersec_dist(ray_list.back(), photon.back()),
+                    pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
                     cs_ang = cs_angle(photon.back().ene_),
                     cs_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 2),
-                    cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_);
-                std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
-                std::cout << "traject_len: " << traject_dist << std::endl;
-                std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len << std::endl;
-                std::cout << "-----" << std::endl;
-                if(traject_dist > std::max({pe_len, cs_len}))
+                    cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_),
+                    pp_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 3),
+                    pp_len = reactlen(pp_cs, scintillator.at(scinti_num).dens_);
+                
+                if(traject_dist > std::max({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
-                    total_traject_dist = 0;
-                    continue;
+                    break_flag = true;
+                    std::cout << "test1" << std::endl;
                 }
                 else
                 {
-                    if(pe_len <= cs_len)
+                    // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                    if(pe_len <= cs_len && pe_len <= pp_len)
                     {
-                        #pragma omp critical
-                        {
-                        scinti_data << photon.back().ene_ << "\n";
-                        }
-                        total_traject_dist = 0;
-                        continue;
+                        sum_ene += photon.back().ene_;
+                        break_flag = true;
+                        std::cout << "test2" << std::endl;
+                        // break;
                     }
-                    else
+                    else if(cs_len <= pe_len && cs_len <= pp_len)
                     {
-                        #pragma omp critical
-                        {
-                        scinti_data << photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang) << "\n";
-                        }
+                        sum_ene += photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().move(cs_len);
                         photon.back().turn(cs_ang);
+                        std::cout << "test3" << std::endl;
                     }
+                    else if (pp_len <= pe_len && pp_len <= cs_len)
+                    {
+                        photon.back().ene_ = 510.99895;
+                        photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
+                        photon.back().move(pp_len);
+                        std::cout << "test4" << std::endl;
+                    }
+                    else
+                    {
+                        // std::cout << "error" << std::endl;
+                        break_flag = true;
+                        std::cout << "test5" << std::endl;
+                        // break;
+                    }
+                    // std::cout << "sum_ene: " << sum_ene << std::endl;
+                }
+
+                // 2次反応以降
+                if(photon.back().pt_x_ != ray_list.back().pt_x_ && photon.back().pt_y_ != ray_list.back().pt_y_ && photon.back().pt_z_ != ray_list.back().pt_z_)
+                {
+                    break_flag = true;
+                }
+
+                if (break_flag)
+                {
+                    if (sum_ene != 0)
+                    {
+                        std::cout << "sum_ene: " << sum_ene << std::endl;
+                        #pragma omp critical
+                        {
+                            scinti_data << sum_ene << "\n";
+                        }
+                    }
+                    std::cout << "test6" << std::endl;
+                    sum_ene = 0;
+                    // std::cout << "reset sum_ene: " << sum_ene << std::endl;
+                    break;
                 }
             }
-            if (total_traject_dist < 0.01)
+            std::cout << "test7" << std::endl;
+            if (break_flag)
             {
+                break_flag = false;
+                // std::cout << "test8" << std::endl;
                 break;
             }
         }

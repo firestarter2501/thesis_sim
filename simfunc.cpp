@@ -117,3 +117,11 @@ double reactlen(double crosssec, double dens)
     std::uniform_real_distribution<> initprob(0.0, 1.0);
     return -log(1 - initprob(randengine)) / (crosssec * dens);
 }
+
+void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len)
+{
+    std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
+    std::cout << "traject_len: " << traject_dist << std::endl;
+    std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len<< " pp_len: " << pp_len << std::endl;
+    std::cout << "-----" << std::endl;
+}
