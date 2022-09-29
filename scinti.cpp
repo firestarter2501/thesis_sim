@@ -16,6 +16,35 @@ double scinti::limtozero(double num)
     }
 }
 
+std::vector<double> scinti::scintibc()
+{
+    double f_l_x = this->pt_x_ - (sqrt(2) * this->rad_ * sin((M_PI/4)-(M_PI-this->dir_phi_))),
+        f_r_x = this->pt_x_ + (sqrt(2) * this->rad_ * sin((M_PI/4)+(M_PI-this->dir_phi_))),
+        f_l_y = this->pt_y_ - (sqrt(2) * this->rad_ * sin((M_PI/2)-(M_PI-this->dir_phi_)-(M_PI/4))),
+        f_r_y = this->pt_y_ - (sqrt(2) * this->rad_ * sin((M_PI-this->dir_phi_)-(M_PI/4))),
+        f_t_z = this->pt_z_ + (sqrt(2) * this->rad_ * sin((M_PI/4)-((M_PI/2)-this->dir_theta_))),
+        f_u_z = this->pt_z_ - (sqrt(2) * this->rad_ * sin((M_PI/4)+((M_PI/2)-this->dir_theta_))),
+        b_l_x = this->pt_x_ - (sqrt(2) * this->rad_ * sin((M_PI/4)+(M_PI-this->dir_phi_))),
+        b_r_x = this->pt_x_ + (sqrt(2) * this->rad_ * sin((M_PI/4)-(M_PI-this->dir_phi_))),
+        b_l_y = this->pt_y_ + (sqrt(2) * this->rad_ * sin((M_PI-this->dir_phi_)-(M_PI/4))),
+        b_r_y = this->pt_y_ + (sqrt(2) * this->rad_ * sin((M_PI/2)-(M_PI-this->dir_phi_)-(M_PI/4))),
+        b_t_z = this->pt_z_ + (sqrt(2) * this->rad_ * sin((M_PI/4)+((M_PI/2)-this->dir_theta_))),
+        b_u_z = this->pt_z_ - (sqrt(2) * this->rad_ * sin((M_PI/4)-((M_PI/2)-this->dir_theta_)));
+    std::vector<double> return_vec = {f_l_x, f_r_x, f_l_y, f_r_y, f_t_z, f_u_z, b_l_x, b_r_x, b_l_y, b_r_y, b_t_z, b_u_z};
+    return return_vec;
+}
+
+bool scinti::initpointcheck(particle initptcl, particle ptcl)
+{
+    if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 void scinti::initcs(std::string conffilepath)
 {
     std::ifstream datafile(conffilepath);
@@ -98,9 +127,12 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     double front_t = (scinti_centerline(0)*(scinti_frontcenter(0)-ptcl.pt_x_) + scinti_centerline(1) * (scinti_frontcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_frontcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     if (std::sqrt(std::pow(scinti_frontcenter(0) - (ptcl.pt_x_ + traject(0)*front_t), 2) + std::pow(scinti_frontcenter(1) - (ptcl.pt_y_ + traject(1) * front_t), 2) + std::pow(scinti_frontcenter(2) - (ptcl.pt_z_ + traject(2) * front_t), 2)) < this->rad_)
     {
-        return_point.at(0).at(0) = limtozero(ptcl.pt_x_ + traject(0) * front_t);
-        return_point.at(0).at(1) = limtozero(ptcl.pt_y_ + traject(1) * front_t);
-        return_point.at(0).at(2) = limtozero(ptcl.pt_z_ + traject(2) * front_t);
+        double fx = limtozero(ptcl.pt_x_ + traject(0) * front_t),
+            fy = limtozero(ptcl.pt_y_ + traject(1) * front_t),
+            fz = limtozero(ptcl.pt_z_ + traject(2) * front_t);
+        return_point.at(0).at(0) = fx;
+        return_point.at(0).at(1) = fy;
+        return_point.at(0).at(2) = fz;
         std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
@@ -109,6 +141,9 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     double back_t = (scinti_centerline(0) * (scinti_backcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_backcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_backcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     if (std::sqrt(std::pow(scinti_backcenter(0) - (ptcl.pt_x_ + traject(0) * back_t), 2) + std::pow(scinti_backcenter(1) - (ptcl.pt_y_ + traject(1) * back_t), 2) + std::pow(scinti_backcenter(2) - (ptcl.pt_z_ + traject(2) * back_t), 2)) < this->rad_)
     {
+        double bx = limtozero(ptcl.pt_x_ + traject(0) * back_t),
+            by = limtozero(ptcl.pt_y_ + traject(1) * back_t),
+            bz = limtozero(ptcl.pt_z_ + traject(2) * back_t);
         return_point.at(1).at(0) = limtozero(ptcl.pt_x_ + traject(0) * back_t);
         return_point.at(1).at(1) = limtozero(ptcl.pt_y_ + traject(1) * back_t);
         return_point.at(1).at(2) = limtozero(ptcl.pt_z_ + traject(2) * back_t);
@@ -165,47 +200,27 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
     std::vector<double> zero_vector = { 0, 0, 0 };
-    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector)
+    if (intersec.at(0) != zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector && !initpointcheck(initptcl, ptcl))
     {
         std::cout << "front only" << std::endl;
-        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
-        {
-            return 0;
-        }
-        
         return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
     }
 
-    if (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector)
+    if (intersec.at(0) == zero_vector && intersec.at(1) != zero_vector && intersec.at(2) == zero_vector && intersec.at(3) == zero_vector && !initpointcheck(initptcl, ptcl))
     {
         std::cout << "back only" << std::endl;
-        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
-        {
-            return 0;
-        }
-
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
     }
     
-    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector)
+    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) != zero_vector && intersec.at(3) == zero_vector && !initpointcheck(initptcl, ptcl))
     {
         std::cout << "side1 only" << std::endl;
-        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
-        {
-            return 0;
-        }
-
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
     }
 
-    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector)
+    if (intersec.at(0) == zero_vector && intersec.at(1) == zero_vector && intersec.at(2) == zero_vector && intersec.at(3) != zero_vector && !initpointcheck(initptcl, ptcl))
     {
         std::cout << "side2 only" << std::endl;
-        if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
-        {
-            return 0;
-        }
-
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(3).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(3).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(3).at(2), 2));
     }
     

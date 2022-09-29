@@ -4,6 +4,8 @@
 class scinti
 {
     double limtozero(double num);
+    std::vector<double> scintibc();
+    bool initpointcheck(particle initptcl, particle ptcl);
     public:
         double pt_x_,
             pt_y_,
