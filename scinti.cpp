@@ -128,8 +128,9 @@ std::string scinti::showfacetype(int type)
 
 double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2)
 {
-    if (!initpointcheck(initptcl, ptcl) || (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))))
+    if (!initpointcheck(initptcl, ptcl) && (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))))
     {
+        std::cout << "congrats! it's not first collision!" << std::endl;
         Eigen::Vector3d ptcldir, type1dir, type2dir;
         ptcldir << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
         type1dir << intersec.at(type1).at(0) - ptcl.pt_x_, intersec.at(type1).at(1) - ptcl.pt_y_, intersec.at(type1).at(2) - ptcl.pt_z_;
