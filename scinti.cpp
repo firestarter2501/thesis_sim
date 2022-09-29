@@ -6,7 +6,7 @@
 
 double scinti::limtozero(double num)
 {
-    if (0 < num && num < 0.00000001)
+    if (0 < num && num < 0.0000000000000000000001)
     {
         return 0;
     }
@@ -102,6 +102,40 @@ bool scinti::zeroveccheck(std::vector<double> vec)
     }
 }
 
+double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2)
+{
+    if (!initpointcheck(initptcl, ptcl) || (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))))
+    {
+        Eigen::Vector3d ptcldir, type1dir, type2dir;
+        ptcldir << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
+        type1dir << intersec.at(type1).at(0) - ptcl.pt_x_, intersec.at(type1).at(1) - ptcl.pt_y_, intersec.at(type1).at(2) - ptcl.pt_z_;
+        type2dir << intersec.at(type2).at(0) - ptcl.pt_x_, intersec.at(type2).at(1) - ptcl.pt_y_, intersec.at(type2).at(2) - ptcl.pt_z_;
+        ptcldir.normalize();
+        type1dir.normalize();
+        type2dir.normalize();
+        if (std::abs(ptcldir(0)-type1dir(0)) <= 0.00001 && std::abs(ptcldir(1)-type1dir(1)) <= 0.00001 && std::abs(ptcldir(2)-type1dir(2)) <= 0.00001)
+        {
+            std::cout << "ptcl, type1:" << type1 << std::endl;
+            return std::sqrt(std::pow(intersec.at(type1).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type1).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type1).at(2) - ptcl.pt_z_, 2));
+        }
+        if (std::abs(ptcldir(0)-type2dir(0)) <= 0.00001 && std::abs(ptcldir(1)-type2dir(1)) <= 0.00001 && std::abs(ptcldir(2)-type2dir(2)) <= 0.00001)
+        {
+            std::cout << "ptcl, type2:" << type2 << std::endl;
+            return std::sqrt(std::pow(intersec.at(type2).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type2).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type2).at(2) - ptcl.pt_z_, 2));
+        }
+        else
+        {
+            std::cout << "error(" << type1 << ", " << type2 << ")" << std::endl;
+            return 0;
+        }
+    }
+    else
+    {
+        std::cout << "type1: " << type1 << " type2: " << type2 << std::endl;
+        return std::sqrt(std::pow(intersec.at(type1).at(0) - intersec.at(type2).at(0), 2) + std::pow(intersec.at(type1).at(1) - intersec.at(type2).at(1), 2) + std::pow(intersec.at(type1).at(2) - intersec.at(type2).at(2), 2));
+    }
+}
+
 void scinti::initcs(std::string conffilepath)
 {
     std::ifstream datafile(conffilepath);
@@ -190,7 +224,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(0).at(0) = fx;
         return_point.at(0).at(1) = fy;
         return_point.at(0).at(2) = fz;
-        std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
+        // std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
     scinti_backcenter << this->pt_x_ + (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), this->pt_y_ + (-this->depth_ / 2)* std::sin(this->dir_theta_)* std::sin(this->dir_phi_), this->pt_z_ + (-this->depth_ / 2)* std::cos(this->dir_theta_);
@@ -204,7 +238,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
         return_point.at(1).at(0) = limtozero(ptcl.pt_x_ + traject(0) * back_t);
         return_point.at(1).at(1) = limtozero(ptcl.pt_y_ + traject(1) * back_t);
         return_point.at(1).at(2) = limtozero(ptcl.pt_z_ + traject(2) * back_t);
-        std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
+        // std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
     }
 
     Eigen::Vector3d p, p2, vecs, v;   
@@ -234,7 +268,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     double ds = B * B - A * C;
     if (ds < 0)
     {
-        std::cout << "no collision" << std::endl;
+        std::cout << "side no collision" << std::endl;
         return return_point;
     }
     ds = sqrt(ds);
@@ -247,8 +281,8 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     return_point.at(3).at(1) = limtozero(ptcl.pt_y_ + a2 * v(1));
     return_point.at(3).at(2) = limtozero(ptcl.pt_z_ + a2 * v(2));
 
-    std::cout << "side1: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
-    std::cout << "side2: " << return_point.at(3).at(0) << ", " << return_point.at(3).at(1) << ", " << return_point.at(3).at(2) << std::endl;
+    // std::cout << "side1: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
+    // std::cout << "side2: " << return_point.at(3).at(0) << ", " << return_point.at(3).at(1) << ", " << return_point.at(3).at(2) << std::endl;
     
     return return_point;
 }
@@ -257,6 +291,19 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
     std::vector<bool> enablecheck = bcrangecheck(intersec);
+    std::vector<double> bc = scintibc();
+
+    // intersecの座標表示
+    std::cout << "---" << std::endl;
+    for (int i = 0; i < intersec.size(); i++)
+    {
+        for (int j = 0; j < intersec.at(0).size(); j++)
+        {
+            std::cout << intersec.at(i).at(j) << "\t";
+        }
+        std::cout << "\n";
+    }
+    
     if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
     {
         std::cout << "front only" << std::endl;
@@ -283,20 +330,32 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
     
     if (zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
     {
-        std::cout << "front back" << std::endl;
-        return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(1).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(1).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(1).at(2), 2));
+        return ptclfacedist(bc, intersec, initptcl, ptcl, 0, 1);
     }
 
     if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
     {
-        std::cout << "front side1" << std::endl;
-        return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(2).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(2).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(2).at(2), 2));
+        return ptclfacedist(bc, intersec, initptcl, ptcl, 0, 2);
     }
 
     if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
     {
-        std::cout << "front side2" << std::endl;
-        return std::sqrt(std::pow(intersec.at(0).at(0) - intersec.at(3).at(0), 2) + std::pow(intersec.at(0).at(1) - intersec.at(3).at(1), 2) + std::pow(intersec.at(0).at(2) - intersec.at(3).at(2), 2));
+        return ptclfacedist(bc, intersec, initptcl, ptcl, 0, 3);
+    }
+
+    if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
+    {
+        return ptclfacedist(bc, intersec, initptcl, ptcl, 1, 2);
+    }
+
+    if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
+    {
+        return ptclfacedist(bc, intersec, initptcl, ptcl, 1, 3);
+    }
+
+    if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && enablecheck.at(3))
+    {
+        return ptclfacedist(bc, intersec, initptcl, ptcl, 2, 3);
     }
 
     else

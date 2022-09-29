@@ -68,10 +68,10 @@ int main()
         while (0 < photon.back().ene_)
         {
             // 2次反応をなくすかどうか
-            if(photon.back().ene_ != ray_list.back().ene_)
-            {
-                break;
-            }
+            // if(photon.back().ene_ != ray_list.back().ene_)
+            // {
+            //     break;
+            // }
 
             double total_traject_dist = 0;
             for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
@@ -92,7 +92,7 @@ int main()
                 std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
                 std::cout << "traject_len: " << traject_dist << std::endl;
                 std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len << std::endl;
-                std::cout << "---" << std::endl;
+                std::cout << "-----" << std::endl;
                 if(traject_dist > std::max({pe_len, cs_len}))
                 {
                     total_traject_dist = 0;
