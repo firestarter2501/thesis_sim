@@ -58,6 +58,9 @@ int main()
     // eigen並列処理無効化
     // Eigen::setNbThreads(1);
     // Eigen::initParallel();
+    // particle test;
+    // test.initptcl(661.6, 0, 0, 0);
+    // test.turn_test(2.5);
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
@@ -92,6 +95,7 @@ int main()
                 if(traject_dist > std::max({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
                     break_flag = true;
+                    // break;
                     // std::cout << "outside or too short" << std::endl;
                 }
                 else
@@ -111,6 +115,7 @@ int main()
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().move(cs_len);
                         photon.back().turn(cs_ang);
+                        // photon.back().turn_test(cs_ang);
                         reactcount++;
                         // std::cout << "cs" << std::endl;
                         // std::cout << "sum_ene: " << sum_ene << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
@@ -132,14 +137,14 @@ int main()
                 }
 
                 // 2次反応以降無効化
-                if(reactcount >= 1)
-                {
-                    break_flag = true;
-                }
+                // if(reactcount >= 1)
+                // {
+                //     break_flag = true;
+                // }
 
                 if (break_flag)
                 {
-                    if (sum_ene != 0)
+                    if (0 < sum_ene)
                     {
                         // std::cout << "final sum_ene: " << sum_ene << " reactcount: " << reactcount << std::endl;
                         #pragma omp critical
