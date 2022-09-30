@@ -151,7 +151,7 @@ double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<doub
         else
         {
             // std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
-            return std::sqrt(std::pow(intersec.at(type1).at(0) - intersec.at(type2).at(0), 2) + std::pow(intersec.at(type1).at(1) - intersec.at(type2).at(1), 2) + std::pow(intersec.at(type1).at(2) - intersec.at(type2).at(2), 2));
+            return -1;
         }
     }
     else
@@ -182,23 +182,26 @@ void scinti::initcs(std::string conffilepath)
 double scinti::crosssec(double ene, int type)
 {
     // std::cout << "test1" << std::endl;
-    if(this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
+    if (this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
     {
         return 0;
     }
     int ene_line = 0;
     // std::cout << "test2" << std::endl;
-    while(this->crosssec_table_.at(ene_line).at(0) < ene)
+    while (this->crosssec_table_.at(ene_line+1).at(0) < ene)
     {
         // std::cout << "test3" << std::endl;
         ene_line++;
     }
+    
+    std::cout << "ene:" << ene << " ene_line:" << ene_line << std::endl;
 
     // std::cout << "test4" << std::endl;
 
-    double cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*(ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)));
+    double alpha = (ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)),
+        cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*alpha);
 
-    if(cs_tmp < 0.001)
+    if (limtozero(cs_tmp) == 0)
     {
         return 0;
     }

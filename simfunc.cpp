@@ -22,6 +22,8 @@ void crosssec_test(scinti scintillator)
         std::cout << "\n";
     }
 
+    std::cout << "------";
+
     for(int ene = 10; ene < 90000; ene++)
     {
         cs_pe << ene << "\t" << scintillator.crosssec(ene, 1) << "\n";
