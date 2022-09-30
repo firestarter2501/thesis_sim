@@ -194,7 +194,7 @@ double scinti::crosssec(double ene, int type)
         ene_line++;
     }
     
-    std::cout << "ene:" << ene << " ene_line:" << ene_line << std::endl;
+    // std::cout << "ene:" << ene << " ene_line:" << ene_line << std::endl;
 
     // std::cout << "test4" << std::endl;
 
