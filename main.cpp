@@ -13,6 +13,7 @@
 #define MEC2 510.99895 // keV
 #define RELEC 2.8179403262 * pow(10, -13) // cm
 #define NUMA 6.02214076 * pow(10, 23) // mol^-1
+#define PMTENESDEV 22
 
 int main()
 {
@@ -61,8 +62,8 @@ int main()
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
-        double sum_ene = 0;
-        std::cout << "----------\nrun: " << run << std::endl;
+        double sum_ene = 0, reactcount = 0;
+        // std::cout << "----------\nrun: " << run << std::endl;
         bool break_flag = false;
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
@@ -91,45 +92,47 @@ int main()
                 if(traject_dist > std::max({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
                     break_flag = true;
-                    std::cout << "test1" << std::endl;
+                    // std::cout << "outside or too short" << std::endl;
                 }
                 else
                 {
                     // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     if(pe_len <= cs_len && pe_len <= pp_len)
                     {
-                        sum_ene += photon.back().ene_;
+                        sum_ene += normdist(photon.back().ene_, PMTENESDEV);
+                        reactcount++;
                         break_flag = true;
-                        std::cout << "test2" << std::endl;
-                        // break;
+                        // std::cout << "pe" << std::endl;
+                        // std::cout << "sum_ene: " << sum_ene << std::endl;
                     }
                     else if(cs_len <= pe_len && cs_len <= pp_len)
                     {
-                        sum_ene += photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang);
+                        sum_ene += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTENESDEV);
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().move(cs_len);
                         photon.back().turn(cs_ang);
-                        std::cout << "test3" << std::endl;
+                        reactcount++;
+                        // std::cout << "cs" << std::endl;
+                        // std::cout << "sum_ene: " << sum_ene << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
                     }
                     else if (pp_len <= pe_len && pp_len <= cs_len)
                     {
-                        photon.back().ene_ = 510.99895;
+                        photon.back().ene_ = 510.99895, PMTENESDEV;
                         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
                         photon.back().move(pp_len);
-                        std::cout << "test4" << std::endl;
+                        reactcount++;
+                        // std::cout << "pp" << std::endl;
+                        // std::cout << "sum_ene: " << sum_ene << " pp_len: " << pp_len << std::endl;
                     }
                     else
                     {
-                        // std::cout << "error" << std::endl;
+                        // std::cout << "judge error" << std::endl;
                         break_flag = true;
-                        std::cout << "test5" << std::endl;
-                        // break;
                     }
-                    // std::cout << "sum_ene: " << sum_ene << std::endl;
                 }
 
-                // 2次反応以降
-                if(photon.back().pt_x_ != ray_list.back().pt_x_ && photon.back().pt_y_ != ray_list.back().pt_y_ && photon.back().pt_z_ != ray_list.back().pt_z_)
+                // 2次反応以降無効化
+                if(reactcount >= 1)
                 {
                     break_flag = true;
                 }
@@ -138,23 +141,24 @@ int main()
                 {
                     if (sum_ene != 0)
                     {
-                        std::cout << "sum_ene: " << sum_ene << std::endl;
+                        // std::cout << "final sum_ene: " << sum_ene << " reactcount: " << reactcount << std::endl;
                         #pragma omp critical
                         {
                             scinti_data << sum_ene << "\n";
                         }
                     }
-                    std::cout << "test6" << std::endl;
+                    // std::cout << "sum_ene check&add done" << std::endl;
                     sum_ene = 0;
-                    // std::cout << "reset sum_ene: " << sum_ene << std::endl;
+                    reactcount = 0;
+                    // std::cout << "reset sum_ene: " << sum_ene << " reactcount: " << reactcount << std::endl;
                     break;
                 }
             }
-            std::cout << "test7" << std::endl;
+            // std::cout << "scinti for break" << std::endl;
             if (break_flag)
             {
                 break_flag = false;
-                // std::cout << "test8" << std::endl;
+                // std::cout << "while break" << std::endl;
                 break;
             }
         }

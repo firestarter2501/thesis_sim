@@ -151,7 +151,7 @@ double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<doub
         else
         {
             // std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
-            return -1;
+            return std::sqrt(std::pow(intersec.at(type1).at(0) - intersec.at(type2).at(0), 2) + std::pow(intersec.at(type1).at(1) - intersec.at(type2).at(1), 2) + std::pow(intersec.at(type1).at(2) - intersec.at(type2).at(2), 2));
         }
     }
     else

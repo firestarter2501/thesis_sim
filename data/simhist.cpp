@@ -7,6 +7,7 @@ TH1S*hist=new TH1S("sim","sim",768,0,768);
 ifstream ifs("./scinti_0.dat");
 while(ifs>>x)
 hist->Fill(x);
+// c1->GetXaxis()->SetRangeUser(1,110000);;
 hist->Draw();
 gPad->SetLogy(1);
 }
