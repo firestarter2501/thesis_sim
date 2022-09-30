@@ -58,15 +58,17 @@ int main()
     // eigen並列処理無効化
     // Eigen::setNbThreads(1);
     // Eigen::initParallel();
+
     // particle test;
     // test.initptcl(661.6, 0, 0, 0);
-    // test.turn_test(2.5);
+    // test.turn_test(M_PI/3);
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
-        double sum_ene = 0, reactcount = 0;
-        // std::cout << "----------\nrun: " << run << std::endl;
+        double sum_ene = 0;
+        int reactcount = 0;
+        // std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
         bool break_flag = false;
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
@@ -83,7 +85,7 @@ int main()
                 }
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
-                double traject_dist = scintillator.at(scinti_num).intersec_dist(ray_list.back(), photon.back()),
+                double traject_dist = scintillator.at(scinti_num).intersec_dist(reactcount, ray_list.back(), photon.back()),
                     pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
                     cs_ang = cs_angle(photon.back().ene_),
@@ -91,23 +93,24 @@ int main()
                     cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_),
                     pp_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 3),
                     pp_len = reactlen(pp_cs, scintillator.at(scinti_num).dens_);
+                // std::cout << "initsum_ene: " << sum_ene << std::endl;
                 
                 if(traject_dist > std::max({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
                     break_flag = true;
-                    // break;
                     // std::cout << "outside or too short" << std::endl;
+                    // std::cout << "sum_ene: " << sum_ene << std::endl;
                 }
                 else
                 {
-                    // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     if(pe_len <= cs_len && pe_len <= pp_len)
                     {
                         sum_ene += normdist(photon.back().ene_, PMTENESDEV);
                         reactcount++;
                         break_flag = true;
-                        // std::cout << "pe" << std::endl;
+                        // std::cout << "---pe---" << std::endl;
                         // std::cout << "sum_ene: " << sum_ene << std::endl;
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else if(cs_len <= pe_len && cs_len <= pp_len)
                     {
@@ -115,32 +118,35 @@ int main()
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().move(cs_len);
                         photon.back().turn(cs_ang);
-                        // photon.back().turn_test(cs_ang);
                         reactcount++;
-                        // std::cout << "cs" << std::endl;
-                        // std::cout << "sum_ene: " << sum_ene << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
+                        // std::cout << "---cs---" << std::endl;
+                        // std::cout << " sum_ene: " << sum_ene << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else if (pp_len <= pe_len && pp_len <= cs_len)
                     {
-                        photon.back().ene_ = 510.99895, PMTENESDEV;
+                        photon.back().ene_ = MEC2;
                         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
                         photon.back().move(pp_len);
                         reactcount++;
-                        // std::cout << "pp" << std::endl;
+                        // std::cout << "---pp---" << std::endl;
                         // std::cout << "sum_ene: " << sum_ene << " pp_len: " << pp_len << std::endl;
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else
                     {
                         // std::cout << "judge error" << std::endl;
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                         break_flag = true;
                     }
                 }
 
                 // 2次反応以降無効化
-                // if(reactcount >= 1)
-                // {
-                //     break_flag = true;
-                // }
+                if(reactcount >= 1)
+                {
+                    break_flag = true;
+                    // std::cout << "break for first" << std::endl;
+                }
 
                 if (break_flag)
                 {
@@ -150,9 +156,9 @@ int main()
                         #pragma omp critical
                         {
                             scinti_data << sum_ene << "\n";
+                            // std::cout << "sum_ene check&add done" << std::endl;
                         }
                     }
-                    // std::cout << "sum_ene check&add done" << std::endl;
                     sum_ene = 0;
                     reactcount = 0;
                     // std::cout << "reset sum_ene: " << sum_ene << " reactcount: " << reactcount << std::endl;

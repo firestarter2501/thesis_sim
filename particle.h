@@ -6,6 +6,7 @@
 
 class particle
 {
+    double limtozero(double num);
     public:
         double ene_,
             pt_x_,

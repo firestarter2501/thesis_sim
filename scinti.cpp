@@ -31,6 +31,13 @@ std::vector<double> scinti::scintibc()
         b_t_z = this->pt_z_ + (sqrt(2) * this->rad_ * sin((M_PI/4)+((M_PI/2)-this->dir_theta_))),
         b_u_z = this->pt_z_ - (sqrt(2) * this->rad_ * sin((M_PI/4)-((M_PI/2)-this->dir_theta_)));
     std::vector<double> return_vec = {f_l_x, f_r_x, f_l_y, f_r_y, f_t_z, f_u_z, b_l_x, b_r_x, b_l_y, b_r_y, b_t_z, b_u_z};
+    
+    // for (int i = 0; i < return_vec.size(); i++)
+    // {
+    //     std::cout << return_vec.at(i) << ", ";
+    // }
+    // std::cout << std::endl;
+    
     return return_vec;
 }
 
@@ -126,9 +133,9 @@ std::string scinti::showfacetype(int type)
     }
 }
 
-double scinti::ptclfacedist(std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2)
+double scinti::ptclfacedist(int reactcount, std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2)
 {
-    if (!initpointcheck(initptcl, ptcl) && (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))))
+    if (!initpointcheck(initptcl, ptcl) && (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))) && reactcount >= 1)
     {
         // std::cout << "congrats! it's not first collision!" << std::endl;
         Eigen::Vector3d ptcldir, type1dir, type2dir;
@@ -315,7 +322,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     return return_point;
 }
 
-double scinti::intersec_dist(particle initptcl, particle ptcl)
+double scinti::intersec_dist(int reactcount, particle initptcl, particle ptcl)
 {
     std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
     std::vector<bool> enablecheck = bcrangecheck(intersec);
@@ -358,32 +365,32 @@ double scinti::intersec_dist(particle initptcl, particle ptcl)
     
     else if (zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
     {
-        return ptclfacedist(bc, intersec, initptcl, ptcl, 0, 1);
+        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 0, 1);
     }
 
     else if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
     {
-        return ptclfacedist(bc, intersec, initptcl, ptcl, 0, 2);
+        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 0, 2);
     }
 
     else if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
     {
-        return ptclfacedist(bc, intersec, initptcl, ptcl, 0, 3);
+        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 0, 3);
     }
 
     else if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
     {
-        return ptclfacedist(bc, intersec, initptcl, ptcl, 1, 2);
+        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 1, 2);
     }
 
     else if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
     {
-        return ptclfacedist(bc, intersec, initptcl, ptcl, 1, 3);
+        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 1, 3);
     }
 
     else if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && enablecheck.at(3))
     {
-        return ptclfacedist(bc, intersec, initptcl, ptcl, 2, 3);
+        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 2, 3);
     }
 
     else
