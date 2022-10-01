@@ -11,18 +11,18 @@ void crosssec_test(scinti scintillator)
     std::ofstream cs_pp("./data/cs_pp.dat");
 
     scintillator.initcs("./data/initcs_nai.conf");
-    std::cout << scintillator.crosssec_table_.size() << "\t" << scintillator.crosssec_table_.at(0).size() << std::endl;
+//std::cout << scintillator.crosssec_table_.size() << "\t" << scintillator.crosssec_table_.at(0).size() << std::endl;
 
     for(int i = 0; i < scintillator.crosssec_table_.size(); i++)
     {
         for(int j = 0; j < scintillator.crosssec_table_.at(0).size(); j++)
         {
-            std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
+        //std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
         }
-        std::cout << "\n";
+    //std::cout << "\n";
     }
 
-    std::cout << "------";
+//std::cout << "------";
 
     for(int ene = 10; ene < 90000; ene++)
     {
@@ -130,9 +130,9 @@ double normdist(double mean, double sdev)
 
 void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len)
 {
-    std::cout << "-info-" << std::endl;
-    std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
-    std::cout << "traject_len: " << traject_dist << std::endl;
-    std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len<< " pp_len: " << pp_len << std::endl;
-    std::cout << "---" << std::endl;
+//std::cout << "-info-" << std::endl;
+//std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
+//std::cout << "traject_len: " << traject_dist << std::endl;
+//std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len<< " pp_len: " << pp_len << std::endl;
+//std::cout << "---" << std::endl;
 }

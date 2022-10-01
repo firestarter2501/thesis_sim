@@ -55,7 +55,7 @@ void particle::move_test(double dist)
 {
     this->initptcl(0, 0, 0, 0);
     this->move(dist);
-    std::cout << "x: " << dist * std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\ty: " << dist * std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\tz: " << dist * std::cos(this->dir_theta_) << "\n" << "dist: " << sqrt(pow(dist * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), 2) + pow(dist * std::sin(this->dir_theta_) * std::sin(this->dir_phi_), 2) + pow(dist * std::cos(this->dir_theta_), 2)) << std::endl;
+//std::cout << "x: " << dist * std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\ty: " << dist * std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\tz: " << dist * std::cos(this->dir_theta_) << "\n" << "dist: " << sqrt(pow(dist * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), 2) + pow(dist * std::sin(this->dir_theta_) * std::sin(this->dir_phi_), 2) + pow(dist * std::cos(this->dir_theta_), 2)) << std::endl;
 }
 
 // ‚Ü‚¾–¢Š®¬(turn_test‰ñ‚·‚Æ‚í‚©‚é)
@@ -85,24 +85,31 @@ void particle::turn(double angle)
     // this->dir_phi_ += atan(nt(1)/nt(0));
 
     // ˆÈ‰º‰ñ“]s—ñ•û®
-    Eigen::Vector3d t, added_t, rotated_t;
-    Eigen::Matrix3d rot3d;
-    t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
-    t.normalize();
-    std::cout << "t: " << t(0) << ", " << t(1) << ", " << t(2) << std::endl;
-    added_t << limtozero(std::sin(this->dir_theta_+angle) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_+angle) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_+angle));
-    added_t.normalize();
-    std::cout << "added_t: " << added_t(0) << ", " << added_t(1) << ", " << added_t(2) << std::endl;
-    // rot3d = Eigen::AngleAxisd(randangle, t);
-    // rotated_t = rot3d * added_t;
-    rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
-    rotated_t.normalize();
-    std::cout << "rotated_t: " << rotated_t(0) << ", " << rotated_t(1) << ", " << rotated_t(2) << std::endl;
-    this->dir_theta_ += acos(rotated_t(2)/rotated_t.norm());
-    this->dir_phi_ += atan(rotated_t(1)/rotated_t(0));
+    // Eigen::Vector3d t, added_t, rotated_t;
+    // Eigen::Matrix3d rot3d;
+    // t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
+    // t.normalize();
+    // std::cout << "t: " << t(0) << ", " << t(1) << ", " << t(2) << std::endl;
+    // added_t << limtozero(10*std::sin(this->dir_theta_+angle) * std::cos(this->dir_phi_)), limtozero(10*std::sin(this->dir_theta_+angle) * std::sin(this->dir_phi_)), limtozero(10*std::cos(this->dir_theta_+angle));
+    // added_t.normalize();
+    // std::cout << "added_t: " << added_t(0) << ", " << added_t(1) << ", " << added_t(2) << std::endl;
+    // // rot3d = Eigen::AngleAxisd(randangle, t);
+    // // rotated_t = rot3d * added_t;
+    // rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
+    // // rotated_t.normalize();
+    // std::cout << "rotated_t: " << rotated_t(0) << ", " << rotated_t(1) << ", " << rotated_t(2) << std::endl;
+    // this->dir_theta_ += acos(rotated_t(2)/rotated_t.norm());
+    // this->dir_phi_ += atan(rotated_t(1)/rotated_t(0));
 
     // ˆÈ‰º‚»‚Ì‚Ü‚Ü‘«‚·•û®
-    // this->dir_theta_ += angle;
+    if (randangle > 1)
+    {
+        this->dir_theta_ += angle;
+    }
+    else
+    {
+        this->dir_theta_ -= angle;
+    }
 }
 
 void particle::turn_test(double theta, double phi, double angle)

@@ -35,7 +35,7 @@ std::vector<double> scinti::scintibc()
     // std::cout << "bc: ";
     // for (int i = 0; i < return_vec.size(); i++)
     // {
-    //     std::cout << return_vec.at(i) << ", ";
+    // //std::cout << return_vec.at(i) << ", ";
     // }
     // std::cout << std::endl;
     
@@ -138,7 +138,7 @@ double scinti::ptclfacedist(int reactcount, std::vector<double> bc, std::vector<
 {
     if (!initpointcheck(initptcl, ptcl) && (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))) && reactcount >= 1)
     {
-        std::cout << "congrats! it's not first collision!" << std::endl;
+    //std::cout << "congrats! it's not first collision!" << std::endl;
         Eigen::Vector3d ptcldir, type1dir, type2dir;
         ptcldir << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
         type1dir << intersec.at(type1).at(0) - ptcl.pt_x_, intersec.at(type1).at(1) - ptcl.pt_y_, intersec.at(type1).at(2) - ptcl.pt_z_;
@@ -148,28 +148,28 @@ double scinti::ptclfacedist(int reactcount, std::vector<double> bc, std::vector<
         type2dir.normalize();
         if (limtozero(std::abs(ptcldir(0)-type1dir(0))) == 0 && limtozero(std::abs(ptcldir(1)-type1dir(1))) == 0 && limtozero(std::abs(ptcldir(2)-type1dir(2))) == 0)
         {
-            std::cout << "ptcl " << showfacetype(type1) << std::endl;
+        //std::cout << "ptcl " << showfacetype(type1) << std::endl;
             return std::sqrt(std::pow(intersec.at(type1).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type1).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type1).at(2) - ptcl.pt_z_, 2));
         }
         else if (limtozero(std::abs(ptcldir(0)-type2dir(0))) == 0 && limtozero(std::abs(ptcldir(1)-type2dir(1))) == 0 && limtozero(std::abs(ptcldir(2)-type2dir(2))) == 0)
         {
-            std::cout << "ptcl " << showfacetype(type2) << std::endl;
+        //std::cout << "ptcl " << showfacetype(type2) << std::endl;
             return std::sqrt(std::pow(intersec.at(type2).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type2).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type2).at(2) - ptcl.pt_z_, 2));
         }
         else
         {
-            std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
+        //std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
             return -1;
         }
     }
     else if (initpointcheck(initptcl, ptcl) && !(((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))) && reactcount < 1)
     {
-        std::cout << showfacetype(type1) << " " << showfacetype(type2) << std::endl;
+    //std::cout << showfacetype(type1) << " " << showfacetype(type2) << std::endl;
         return std::sqrt(std::pow(intersec.at(type1).at(0) - intersec.at(type2).at(0), 2) + std::pow(intersec.at(type1).at(1) - intersec.at(type2).at(1), 2) + std::pow(intersec.at(type1).at(2) - intersec.at(type2).at(2), 2));
     }
     else
     {
-        std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
+    //std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
         return -1;
     }
 }
@@ -335,42 +335,42 @@ double scinti::intersec_dist(int reactcount, particle initptcl, particle ptcl)
     std::vector<double> bc = scintibc();
 
     // intersecの座標表示
-    std::cout << "---" << std::endl;
+//std::cout << "---" << std::endl;
     for (int i = 0; i < intersec.size(); i++)
     {
-        std::cout << showfacetype(i) << ": ";
+    //std::cout << showfacetype(i) << ": ";
         for (int j = 0; j < intersec.at(0).size(); j++)
         {
-            std::cout << intersec.at(i).at(j) << "\t";
+        //std::cout << intersec.at(i).at(j) << "\t";
         }
-        std::cout << "\n";
+    //std::cout << "\n";
     }
     
     if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3) && reactcount >= 1)
     {
-        std::cout << "congrats! it's not first collision!" << std::endl;
-        std::cout << "front only" << std::endl;
+    //std::cout << "congrats! it's not first collision!" << std::endl;
+    //std::cout << "front only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
     }
 
     else if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3) && reactcount >= 1)
     {
-        std::cout << "congrats! it's not first collision!" << std::endl;
-        std::cout << "back only" << std::endl;
+    //std::cout << "congrats! it's not first collision!" << std::endl;
+    //std::cout << "back only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
     }
     
     else if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3) && reactcount >= 1)
     {
-        std::cout << "congrats! it's not first collision!" << std::endl;
-        std::cout << "side1 only" << std::endl;
+    //std::cout << "congrats! it's not first collision!" << std::endl;
+    //std::cout << "side1 only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
     }
 
     else if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3) && reactcount >= 1)
     {
-        std::cout << "congrats! it's not first collision!" << std::endl;
-        std::cout << "side2 only" << std::endl;
+    //std::cout << "congrats! it's not first collision!" << std::endl;
+    //std::cout << "side2 only" << std::endl;
         return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(3).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(3).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(3).at(2), 2));
     }
     
@@ -406,7 +406,7 @@ double scinti::intersec_dist(int reactcount, particle initptcl, particle ptcl)
 
     else
     {
-        std::cout << "outside" << std::endl;
+    //std::cout << "outside" << std::endl;
         return -1;
     }
 }
