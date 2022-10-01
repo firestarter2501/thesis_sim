@@ -104,16 +104,20 @@ void particle::turn(double angle)
     // this->dir_theta_ += angle;
 }
 
-void particle::turn_test(double angle)
+void particle::turn_test(double theta, double phi, double angle)
 {
-    Eigen::Vector3d bt, at;
-    this->dir_theta_ = M_PI/2;
-    this->dir_phi_ = 0;
-    double before_theta = this->dir_theta_, before_phi = this->dir_phi_;
-    bt << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_) * std::sin(this->dir_phi_), std::cos(this->dir_theta_);
-    std::cout << "theta: " << before_theta << "\tphi: " << before_phi << "\ninput_angle: " << angle << std::endl;
-    this->turn(angle);
-    at << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_) * std::sin(this->dir_phi_), std::cos(this->dir_theta_);
-    std::cout << "theta: " << this->dir_theta_ << "\tphi: " << this->dir_phi_ << "\nangle: " << std::acos(bt.dot(at)/(bt.norm()*at.norm())) << std::endl;
-    std::cout << "---" << std::endl;
+    std::ofstream turn_rect_angle("./data/turn_rect_angle.dat");
+    turn_rect_angle << this->pt_x_ << "\t" << this->pt_y_ << "\t" << this->pt_z_ << "\n";
+    this->dir_theta_ = theta;
+    this->dir_phi_ = phi;
+    turn_rect_angle << std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\t" << std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\t" << std::cos(this->dir_theta_) << "\n";
+    
+    for (int i = 0; i < 2500; i++)
+    {
+        this->dir_theta_ = theta;
+        this->dir_phi_ = phi;
+        turn(angle);
+        turn_rect_angle << std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\t" << std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\t" << std::cos(this->dir_theta_) << "\n";
+    }
+    
 }

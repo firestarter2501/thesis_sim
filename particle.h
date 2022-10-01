@@ -19,5 +19,5 @@ class particle
         void move(double dist);
         void move_test(double dist);
         void turn(double angle);
-        void turn_test(double angle);
+        void turn_test(double theta, double phi, double angle);
 };
