@@ -85,6 +85,7 @@ int main()
                 }
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
+                // std::cout << "beforetraject_reactcount: " << reactcount << std::endl;
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(reactcount, ray_list.back(), photon.back()),
                     pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
@@ -128,7 +129,7 @@ int main()
                         photon.back().ene_ = MEC2;
                         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
                         photon.back().move(pp_len);
-                        reactcount++;
+                        // reactcount++;
                         // std::cout << "---pp---" << std::endl;
                         // std::cout << "sum_ene: " << sum_ene << " pp_len: " << pp_len << std::endl;
                         // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
@@ -136,17 +137,17 @@ int main()
                     else
                     {
                         // std::cout << "judge error" << std::endl;
-                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                        showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                         break_flag = true;
                     }
                 }
 
                 // 2次反応以降無効化
-                if(reactcount >= 1)
-                {
-                    break_flag = true;
-                    // std::cout << "break for first" << std::endl;
-                }
+                // if(reactcount >= 1)
+                // {
+                //     break_flag = true;
+                //     // std::cout << "break for first" << std::endl;
+                // }
 
                 if (break_flag)
                 {

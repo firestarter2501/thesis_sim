@@ -66,6 +66,7 @@ void particle::turn(double angle)
     std::mt19937 randengine(randseed_gen());
     std::uniform_real_distribution<> initrotate(0.0, 2.0);
     double randangle = initrotate(randengine)*M_PI;
+
     // ˆÈ‰º™R‚³‚ñ•û®
     // Eigen::Vector3d t, n, q, b, nt;
     // t << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_) * std::sin(this->dir_phi_), std::cos(this->dir_theta_);
@@ -82,6 +83,8 @@ void particle::turn(double angle)
     // std::cout << "nt(0):" << nt(0) << " nt(1):" << nt(1) << " nt(2):" << nt(2) << std::endl;
     // this->dir_theta_ += atan(nt(1)/nt(0));
     // this->dir_phi_ += atan(sqrt(pow(nt(0), 2)+pow(nt(1), 2))/nt(2));
+
+    // ˆÈ‰º‰ñ“]s—ñ•û®
     Eigen::Vector3d t, added_t, rotated_t;
     Eigen::Matrix3d rot3d;
     t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
@@ -96,6 +99,9 @@ void particle::turn(double angle)
     // std::cout << "rotated_t: " << rotated_t(0) << ", " << rotated_t(1) << ", " << rotated_t(2) << std::endl;
     this->dir_theta_ += atan(rotated_t(1)/rotated_t(0));
     this->dir_phi_ += atan(sqrt(pow(rotated_t(0), 2)+pow(rotated_t(1), 2))/rotated_t(2));
+
+    // ˆÈ‰º‚»‚Ì‚Ü‚Ü‘«‚·•û®
+    // this->dir_theta_ += angle;
 }
 
 void particle::turn_test(double angle)
