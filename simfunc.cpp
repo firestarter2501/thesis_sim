@@ -136,3 +136,14 @@ void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, 
 //std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len<< " pp_len: " << pp_len << std::endl;
 //std::cout << "---" << std::endl;
 }
+
+int randchoice(std::vector<double> probvec)
+{
+    std::random_device seed_gen;
+    std::mt19937 engine(seed_gen());
+    std::discrete_distribution<std::size_t> dist(
+        probvec.begin(),
+        probvec.end()
+    );
+    return dist(engine);
+}

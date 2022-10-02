@@ -23,4 +23,6 @@ double reactlen(double crosssec, double dens);
 
 double normdist(double mean, double sdev);
 
+int randchoice(std::vector<double> probvec);
+
 void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len);
