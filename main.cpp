@@ -87,16 +87,20 @@ int main()
                 std::ofstream scinti_data(outfilename, std::ios::app);
             //std::cout << "beforetraject_reactcount: " << reactcount << std::endl;
                 double traject_dist = scintillator.at(scinti_num).intersec_dist(reactcount, ray_list.back(), photon.back()),
-                    pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
+                    /*pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
                     pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
-                    cs_ang = cs_angle(photon.back().ene_),
-                    cs_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 2),
+                    */cs_ang = cs_angle(photon.back().ene_),
+                    /*cs_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 2),
                     cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_),
                     pp_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 3),
-                    pp_len = reactlen(pp_cs, scintillator.at(scinti_num).dens_);
+                    pp_len = reactlen(pp_cs, scintillator.at(scinti_num).dens_)*/
+                    len = reactlen(scintillator.at(scinti_num).crosssec(photon.back().ene_, 4), scintillator.at(scinti_num).dens_);
+                std::vector<double> prob = {0, scintillator.at(scinti_num).crosssec(photon.back().ene_, 1)/scintillator.at(scinti_num).crosssec(photon.back().ene_, 4), scintillator.at(scinti_num).crosssec(photon.back().ene_, 2)/scintillator.at(scinti_num).crosssec(photon.back().ene_, 4), scintillator.at(scinti_num).crosssec(photon.back().ene_, 3)/scintillator.at(scinti_num).crosssec(photon.back().ene_, 4)};
+                int reacttype = randchoice(prob);
+
             //std::cout << "before initsum_ene: " << sum_ene << std::endl;
                 
-                if(traject_dist > std::max({pe_len, cs_len, pp_len}) || traject_dist == -1)
+                if(traject_dist > len || traject_dist == -1)
                 {
                     break_flag = true;
                 //std::cout << "outside or too short" << std::endl;
@@ -104,50 +108,50 @@ int main()
                 }
                 else
                 {
-                    if(pe_len <= cs_len && pe_len <= pp_len)
+                    if (reacttype == 1)
                     {
                         sum_ene += normdist(photon.back().ene_, PMTENESDEV);
                         reactcount++;
                         break_flag = true;
                     //std::cout << "---pe---" << std::endl;
                     //std::cout << "sum_ene: " << sum_ene << std::endl;
-                        showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
-                    else if(cs_len <= pe_len && cs_len <= pp_len)
+                    else if(reacttype == 2)
                     {
                         sum_ene += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTENESDEV);
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
-                        photon.back().move(cs_len);
+                        photon.back().move(len);
                         photon.back().turn(cs_ang);
                         reactcount++;
                     //std::cout << "---cs---" << std::endl;
                     //std::cout << " sum_ene: " << sum_ene << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
-                        showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
-                    else if (pp_len <= pe_len && pp_len <= cs_len)
+                    else if (reacttype == 3)
                     {
                         photon.back().ene_ = MEC2;
                         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
-                        photon.back().move(pp_len);
+                        photon.back().move(len);
                         // reactcount++;
                     //std::cout << "---pp---" << std::endl;
                     //std::cout << "sum_ene: " << sum_ene << " pp_len: " << pp_len << std::endl;
-                        showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else
                     {
                     //std::cout << "judge error" << std::endl;
-                        showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                        // showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                         break_flag = true;
                     }
                 }
 
                 // 2次反応以降無効化
-                if(reactcount >= 1)
-                {
-                    break_flag = true;
-                    // std::cout << "break for first" << std::endl;
-                }
+                // if(reactcount >= 1)
+                // {
+                //     break_flag = true;
+                //     // std::cout << "break for first" << std::endl;
+                // }
 
                 if (break_flag)
                 {
