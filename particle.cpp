@@ -65,7 +65,6 @@ void particle::turn(double angle)
     std::random_device randseed_gen;
     std::mt19937 randengine(randseed_gen());
     std::uniform_real_distribution<> initrotate(0, 2);
-    double randangle = initrotate(randengine)*M_PI;
 
     // 以下杉山さん方式
     // Eigen::Vector3d t, n, q, b, nt;
@@ -87,43 +86,42 @@ void particle::turn(double angle)
     // 以下回転行列方式
     Eigen::Vector3d t, added_t, rotated_t;
     Eigen::Matrix3d rot3d;
-    double checkangle;
-    t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)/*-this->pt_x_*/), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)/*-this->pt_y_*/), limtozero(std::cos(this->dir_theta_)/*-this->pt_z_*/);
+    double distcheck, randangle;
+    t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
     t.normalize();
-    // std::cout << "t: " << t(0) << ", " << t(1) << ", " << t(2) << std::endl;
-    added_t << limtozero(std::sin(this->dir_theta_-angle) * std::cos(this->dir_phi_)/*-this->pt_x_*/), limtozero(std::sin(this->dir_theta_-angle) * std::sin(this->dir_phi_)/*-this->pt_y_*/), limtozero(std::cos(this->dir_theta_-angle)/*-this->pt_z_*/);
-    // added_t.normalize();
-    // std::cout << "added_t: " << added_t(0) << ", " << added_t(1) << ", " << added_t(2) << std::endl;
-    // do
-    // {
-        // ロドリゲスの回転公式
-        // rot3d = Eigen::AngleAxisd(randangle, t);
-        // rotated_t = rot3d * added_t;
-        // or...
-        rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
-
-        // rotated_t.normalize();
-        // std::cout << "rotated_t: " << rotated_t(0) << ", " << rotated_t(1) << ", " << rotated_t(2) << std::endl;
-
-        // クォータニオンによる回転方式
-        // Eigen::Quaterniond quat;
-        // quat = Eigen::AngleAxisd(randangle,t);
-        // rotated_t = quat*added_t;
-
-        this->dir_theta_ /*+*/= acos(rotated_t(2)/rotated_t.norm());
-        this->dir_phi_ /*+*/= atan(rotated_t(1)/rotated_t(0));
-        // checkangle = acos(t.dot(rotated_t)/(t.norm()*rotated_t.norm()));
-    // } while (limtozero(abs(angle - checkangle)) != 0);
-    
-    // 以下そのまま足す方式
-    // if (randangle > 1)
-    // {
-    //     this->dir_theta_ += angle;
-    // }
-    // else
-    // {
-    //     this->dir_theta_ -= angle;
-    // }
+    added_t << limtozero(std::sin(this->dir_theta_-angle) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_-angle) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_-angle));
+    randangle = initrotate(randengine)*M_PI;
+    rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
+    rotated_t.normalize();
+    distcheck = abs(t(0)*rotated_t(0)+t(1)*rotated_t(1)+t(2)*rotated_t(2))/t.norm();
+    // std::cout << distcheck << "/" << cos(angle) << std::endl;
+    if (limtozero(distcheck-cos(angle)) != 0)
+    {
+        Eigen::Vector3d t_flat, t_flat_mirror, zvec, t_vert1, t_vert2, t_vert1_mirror, t_vert2_mirror;
+        t_flat = -t;
+        t_flat(2) = 0;
+        t_flat_mirror = rotated_t - 2*(rotated_t.dot(t_flat))*t_flat;
+        zvec << 0, 0, 1;
+        t_vert1 = t_flat*cos(this->dir_phi_+M_PI/4) + (1-cos(this->dir_phi_+M_PI/4))*(t_flat.dot(zvec))*zvec + zvec.cross(t_flat)*sin(this->dir_phi_+M_PI/4);
+        t_vert1_mirror = t_flat_mirror - 2*(t_vert1.dot(t_flat_mirror))*t_flat_mirror;
+        t_vert2 = t_flat*cos(this->dir_phi_-M_PI/4) + (1-cos(this->dir_phi_-M_PI/4))*(t_flat.dot(zvec))*zvec + zvec.cross(t_flat)*sin(this->dir_phi_-M_PI/4);
+        t_vert2_mirror = t_flat_mirror - 2*(t_vert2.dot(t_flat_mirror))*t_flat_mirror;
+        if (t_vert1_mirror(0) <= 0)
+        {
+            this->dir_theta_ = acos(t_vert1_mirror(2)/t_vert1_mirror.norm());
+            this->dir_phi_ = atan(t_vert1_mirror(1)/t_vert1_mirror(0));
+        }
+        else
+        {
+            this->dir_theta_ = acos(t_vert2_mirror(2)/t_vert2_mirror.norm());
+            this->dir_phi_ = atan(t_vert2_mirror(1)/t_vert2_mirror(0));
+        }
+    }
+    else
+    {
+        this->dir_theta_ = acos(rotated_t(2)/rotated_t.norm());
+        this->dir_phi_ = atan(rotated_t(1)/rotated_t(0));
+    }
 }
 
 void particle::turn_test(double theta, double phi, double angle)
@@ -132,7 +130,7 @@ void particle::turn_test(double theta, double phi, double angle)
     turn_rect_angle << this->pt_x_ << "\t" << this->pt_y_ << "\t" << this->pt_z_ << "\n";
     this->dir_theta_ = theta;
     this->dir_phi_ = phi;
-    std::cout << "loadeddeg: " << this->dir_theta_ << ", " << this->dir_phi_ << std::endl;
+    // std::cout << "loadeddeg: " << this->dir_theta_ << ", " << this->dir_phi_ << std::endl;
     turn_rect_angle << std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\t" << std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\t" << std::cos(this->dir_theta_) << "\n";
     
     for (int i = 0; i < 2500; i++)
