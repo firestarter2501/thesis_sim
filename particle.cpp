@@ -64,7 +64,7 @@ void particle::turn(double angle)
     // std::cout << "loadeddeg: " << this->dir_theta_ << ", " << this->dir_phi_ << std::endl;
     std::random_device randseed_gen;
     std::mt19937 randengine(randseed_gen());
-    std::uniform_real_distribution<> initrotate(0.0, 2.0);
+    std::uniform_real_distribution<> initrotate(0, 2);
     double randangle = initrotate(randengine)*M_PI;
 
     // 以下杉山さん方式
@@ -85,31 +85,45 @@ void particle::turn(double angle)
     // this->dir_phi_ += atan(nt(1)/nt(0));
 
     // 以下回転行列方式
-    // Eigen::Vector3d t, added_t, rotated_t;
-    // Eigen::Matrix3d rot3d;
-    // t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
-    // t.normalize();
+    Eigen::Vector3d t, added_t, rotated_t;
+    Eigen::Matrix3d rot3d;
+    double checkangle;
+    t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)/*-this->pt_x_*/), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)/*-this->pt_y_*/), limtozero(std::cos(this->dir_theta_)/*-this->pt_z_*/);
+    t.normalize();
     // std::cout << "t: " << t(0) << ", " << t(1) << ", " << t(2) << std::endl;
-    // added_t << limtozero(10*std::sin(this->dir_theta_+angle) * std::cos(this->dir_phi_)), limtozero(10*std::sin(this->dir_theta_+angle) * std::sin(this->dir_phi_)), limtozero(10*std::cos(this->dir_theta_+angle));
+    added_t << limtozero(std::sin(this->dir_theta_-angle) * std::cos(this->dir_phi_)/*-this->pt_x_*/), limtozero(std::sin(this->dir_theta_-angle) * std::sin(this->dir_phi_)/*-this->pt_y_*/), limtozero(std::cos(this->dir_theta_-angle)/*-this->pt_z_*/);
     // added_t.normalize();
     // std::cout << "added_t: " << added_t(0) << ", " << added_t(1) << ", " << added_t(2) << std::endl;
-    // // rot3d = Eigen::AngleAxisd(randangle, t);
-    // // rotated_t = rot3d * added_t;
-    // rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
-    // // rotated_t.normalize();
-    // std::cout << "rotated_t: " << rotated_t(0) << ", " << rotated_t(1) << ", " << rotated_t(2) << std::endl;
-    // this->dir_theta_ += acos(rotated_t(2)/rotated_t.norm());
-    // this->dir_phi_ += atan(rotated_t(1)/rotated_t(0));
+    // do
+    // {
+        // ロドリゲスの回転公式
+        // rot3d = Eigen::AngleAxisd(randangle, t);
+        // rotated_t = rot3d * added_t;
+        // or...
+        rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
 
+        // rotated_t.normalize();
+        // std::cout << "rotated_t: " << rotated_t(0) << ", " << rotated_t(1) << ", " << rotated_t(2) << std::endl;
+
+        // クォータニオンによる回転方式
+        // Eigen::Quaterniond quat;
+        // quat = Eigen::AngleAxisd(randangle,t);
+        // rotated_t = quat*added_t;
+
+        this->dir_theta_ /*+*/= acos(rotated_t(2)/rotated_t.norm());
+        this->dir_phi_ /*+*/= atan(rotated_t(1)/rotated_t(0));
+        // checkangle = acos(t.dot(rotated_t)/(t.norm()*rotated_t.norm()));
+    // } while (limtozero(abs(angle - checkangle)) != 0);
+    
     // 以下そのまま足す方式
-    if (randangle > 1)
-    {
-        this->dir_theta_ += angle;
-    }
-    else
-    {
-        this->dir_theta_ -= angle;
-    }
+    // if (randangle > 1)
+    // {
+    //     this->dir_theta_ += angle;
+    // }
+    // else
+    // {
+    //     this->dir_theta_ -= angle;
+    // }
 }
 
 void particle::turn_test(double theta, double phi, double angle)
@@ -118,14 +132,15 @@ void particle::turn_test(double theta, double phi, double angle)
     turn_rect_angle << this->pt_x_ << "\t" << this->pt_y_ << "\t" << this->pt_z_ << "\n";
     this->dir_theta_ = theta;
     this->dir_phi_ = phi;
-    turn_rect_angle << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)) << "\t" << limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)) << "\t" << limtozero(std::cos(this->dir_theta_)) << "\n";
+    std::cout << "loadeddeg: " << this->dir_theta_ << ", " << this->dir_phi_ << std::endl;
+    turn_rect_angle << std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\t" << std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\t" << std::cos(this->dir_theta_) << "\n";
     
     for (int i = 0; i < 2500; i++)
     {
         this->dir_theta_ = theta;
         this->dir_phi_ = phi;
         turn(angle);
-        turn_rect_angle << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)) << "\t" << limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)) << "\t" << limtozero(std::cos(this->dir_theta_)) << "\n";
+        turn_rect_angle << std::sin(this->dir_theta_) * std::cos(this->dir_phi_) << "\t" << std::sin(this->dir_theta_) * std::sin(this->dir_phi_) << "\t" << std::cos(this->dir_theta_) << "\n";
     }
     
 }

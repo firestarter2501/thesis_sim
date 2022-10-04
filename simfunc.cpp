@@ -17,9 +17,9 @@ void crosssec_test(scinti scintillator)
     {
         for(int j = 0; j < scintillator.crosssec_table_.at(0).size(); j++)
         {
-        //std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
+        std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
         }
-    //std::cout << "\n";
+    std::cout << "\n";
     }
 
 //std::cout << "------";
