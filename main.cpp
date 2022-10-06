@@ -13,7 +13,8 @@
 #define MEC2 510.99895 // keV
 #define RELEC 2.8179403262 * pow(10, -13) // cm
 #define NUMA 6.02214076 * pow(10, 23) // mol^-1
-#define PMTENESDEV 22
+#define PMTSDEVSLOPE 0.018471
+#define PMTSDEVINTERSEC 12.2998905
 
 int main()
 {
@@ -108,7 +109,7 @@ int main()
                     //*std::cout << "before sum_ene: " << sum_ene << std::endl;
                     if(pe_len <= cs_len && pe_len <= pp_len)
                     {
-                        sum_ene += normdist(photon.back().ene_, PMTENESDEV);
+                        sum_ene += normdist(photon.back().ene_, lineareq(photon.back().ene_, PMTSDEVSLOPE, PMTSDEVINTERSEC));
                         reactcount++;
                         break_flag = true;
                         //*std::cout << "---pe---" << std::endl;
@@ -117,7 +118,7 @@ int main()
                     }
                     else if(cs_len <= pe_len && cs_len <= pp_len)
                     {
-                        sum_ene += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTENESDEV);
+                        sum_ene += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), lineareq(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTSDEVSLOPE, PMTSDEVINTERSEC));
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         photon.back().move(cs_len);
                         photon.back().turn(cs_ang);
@@ -145,11 +146,11 @@ int main()
                 }
 
                 // 2次反応以降無効化
-                if(reactcount >= 1)
-                {
-                    break_flag = true;
-                    // std::cout << "break for first" << std::endl;
-                }
+                // if(reactcount >= 1)
+                // {
+                //     break_flag = true;
+                //     // std::cout << "break for first" << std::endl;
+                // }
 
                 if (break_flag)
                 {

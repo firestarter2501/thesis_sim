@@ -148,3 +148,8 @@ int randchoice(std::vector<double> probvec)
     );
     return dist(engine);
 }
+
+double lineareq(double ene, double slope, double intersec)
+{
+    return (ene*slope)+intersec;
+}

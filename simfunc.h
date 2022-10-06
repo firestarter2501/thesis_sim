@@ -25,4 +25,6 @@ double normdist(double mean, double sdev);
 
 int randchoice(std::vector<double> probvec);
 
+double lineareq(double ene, double slope, double intersec);
+
 void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len);
