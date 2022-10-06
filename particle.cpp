@@ -84,7 +84,7 @@ void particle::turn(double angle)
     // this->dir_phi_ += atan(nt(1)/nt(0));
 
     // ˆÈ‰º‰ñ“]s—ñ•û®
-    Eigen::Vector3d t, added_t, rotated_t;
+    Eigen::Vector3d t, added_t, rotated_t, disttmp;
     Eigen::Matrix3d rot3d;
     double distcheck, randangle;
     t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
@@ -93,9 +93,10 @@ void particle::turn(double angle)
     randangle = initrotate(randengine)*M_PI;
     rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
     rotated_t.normalize();
-    distcheck = abs(t(0)*rotated_t(0)+t(1)*rotated_t(1)+t(2)*rotated_t(2))/t.norm();
-    // std::cout << distcheck << "/" << cos(angle) << std::endl;
-    if (limtozero(distcheck-cos(angle)) != 0)
+    disttmp = rotated_t - t;
+    distcheck = disttmp.norm();
+    std::cout << distcheck << "/" << 2*sin(angle/2) << std::endl;
+    if (limtozero(distcheck-2*sin(angle/2)) != 0)
     {
         Eigen::Vector3d t_flat, t_flat_mirror, zvec, t_vert1, t_vert2, t_vert1_mirror, t_vert2_mirror;
         t_flat = -t;
