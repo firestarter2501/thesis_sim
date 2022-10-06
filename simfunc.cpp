@@ -17,9 +17,9 @@ void crosssec_test(scinti scintillator)
     {
         for(int j = 0; j < scintillator.crosssec_table_.at(0).size(); j++)
         {
-        std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
+        //*std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
         }
-    std::cout << "\n";
+    //*std::cout << "\n";
     }
 
 //std::cout << "------";
@@ -76,11 +76,12 @@ double cs_angle(double ene)
         prob = 1.0 - (crosssec / max_crosssec);
     } while (randprob < prob);
     return randangle;
+    // return initangle(randengine);
 }
 
 void cs_angle_test(int num)
 {
-    std::ofstream cs_angle_1kev_result("cs_angle_1kev.dat"), cs_angle_100kev_result("cs_angle_100kev.dat"), cs_angle_500kev_result("cs_angle_500kev.dat"), cs_angle_2000kev_result("cs_angle_2000kev.dat"), cs_angle_10000kev_result("cs_angle_10000kev.dat");
+    std::ofstream cs_angle_1kev_result("./data/cs_angle_1kev.dat"), cs_angle_100kev_result("./data/cs_angle_100kev.dat"), cs_angle_500kev_result("./data/cs_angle_500kev.dat"), cs_angle_2000kev_result("./data/cs_angle_2000kev.dat"), cs_angle_10000kev_result("./data/cs_angle_10000kev.dat");
     std::vector<int> cs_angle_1kev, cs_angle_100kev, cs_angle_500kev, cs_angle_2000kev, cs_angle_10000kev;
     double dispparam = 10000;
 
@@ -130,11 +131,11 @@ double normdist(double mean, double sdev)
 
 void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len)
 {
-//std::cout << "-info-" << std::endl;
-//std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
-//std::cout << "traject_len: " << traject_dist << std::endl;
-//std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len<< " pp_len: " << pp_len << std::endl;
-//std::cout << "---" << std::endl;
+    //*std::cout << "-info-" << std::endl;
+    //*std::cout << "photon_ene: " << photon.back().ene_ <<" photon_x: " << photon.back().pt_x_ << " photon_y: " << photon.back().pt_y_ << " photon_z: " << photon.back().pt_z_ <<  " photon_theta: " << photon.back().dir_theta_ << " photon_phi: " << photon.back().dir_phi_ << std::endl;
+    //*std::cout << "traject_len: " << traject_dist << std::endl;
+    //*std::cout << "pe_len: " << pe_len << " cs_len: " << cs_len<< " pp_len: " << pp_len << std::endl;
+    //*std::cout << "---" << std::endl;
 }
 
 int randchoice(std::vector<double> probvec)
