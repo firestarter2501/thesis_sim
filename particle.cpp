@@ -83,46 +83,23 @@ void particle::turn(double angle)
     // this->dir_theta_ += acos(nt(2)/nt.norm());
     // this->dir_phi_ += atan(nt(1)/nt(0));
 
-    // ˆÈ‰º‰ñ“]s—ñ•û®
+    // ˆÈ‰ºEigen‰ñ“]s—ñ•û®
     Eigen::Vector3d t, added_t, rotated_t, disttmp;
-    Eigen::Matrix3d rot3d;
-    double distcheck, randangle;
-    t << limtozero(std::sin(this->dir_theta_) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_));
+    double randangle, tmp_theta, tmp_phi;
+    t << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_) * std::sin(this->dir_phi_), std::cos(this->dir_theta_);
     t.normalize();
-    added_t << limtozero(std::sin(this->dir_theta_-angle) * std::cos(this->dir_phi_)), limtozero(std::sin(this->dir_theta_-angle) * std::sin(this->dir_phi_)), limtozero(std::cos(this->dir_theta_-angle));
+    added_t << std::sin(this->dir_theta_-angle) * std::cos(this->dir_phi_), std::sin(this->dir_theta_-angle) * std::sin(this->dir_phi_), std::cos(this->dir_theta_-angle);
     randangle = initrotate(randengine)*M_PI;
     rotated_t = added_t*cos(randangle) + (1-cos(randangle))*(added_t.dot(t))*t + t.cross(added_t)*sin(randangle);
-    rotated_t.normalize();
-    disttmp = rotated_t - t;
-    distcheck = disttmp.norm();
-    std::cout << distcheck << "/" << 2*sin(angle/2) << std::endl;
-    if (limtozero(distcheck-2*sin(angle/2)) != 0)
+    tmp_theta = acos(rotated_t(2)/rotated_t.norm());
+    tmp_phi = atan(rotated_t(1)/rotated_t(0));
+    disttmp << std::sin(tmp_theta) * std::cos(tmp_phi), std::sin(tmp_theta) * std::sin(tmp_phi), std::cos(tmp_theta);
+    if (limtozero(abs(disttmp.dot(t) - cos(angle))) != 0)
     {
-        Eigen::Vector3d t_flat, t_flat_mirror, zvec, t_vert1, t_vert2, t_vert1_mirror, t_vert2_mirror;
-        t_flat = -t;
-        t_flat(2) = 0;
-        t_flat_mirror = rotated_t - 2*(rotated_t.dot(t_flat))*t_flat;
-        zvec << 0, 0, 1;
-        t_vert1 = t_flat*cos(this->dir_phi_+M_PI/4) + (1-cos(this->dir_phi_+M_PI/4))*(t_flat.dot(zvec))*zvec + zvec.cross(t_flat)*sin(this->dir_phi_+M_PI/4);
-        t_vert1_mirror = t_flat_mirror - 2*(t_vert1.dot(t_flat_mirror))*t_flat_mirror;
-        t_vert2 = t_flat*cos(this->dir_phi_-M_PI/4) + (1-cos(this->dir_phi_-M_PI/4))*(t_flat.dot(zvec))*zvec + zvec.cross(t_flat)*sin(this->dir_phi_-M_PI/4);
-        t_vert2_mirror = t_flat_mirror - 2*(t_vert2.dot(t_flat_mirror))*t_flat_mirror;
-        if (t_vert1_mirror(0) <= 0)
-        {
-            this->dir_theta_ = acos(t_vert1_mirror(2)/t_vert1_mirror.norm());
-            this->dir_phi_ = atan(t_vert1_mirror(1)/t_vert1_mirror(0));
-        }
-        else
-        {
-            this->dir_theta_ = acos(t_vert2_mirror(2)/t_vert2_mirror.norm());
-            this->dir_phi_ = atan(t_vert2_mirror(1)/t_vert2_mirror(0));
-        }
+        tmp_phi += M_PI;
     }
-    else
-    {
-        this->dir_theta_ = acos(rotated_t(2)/rotated_t.norm());
-        this->dir_phi_ = atan(rotated_t(1)/rotated_t(0));
-    }
+    this->dir_theta_ = tmp_theta;
+    this->dir_phi_ = tmp_phi;
 }
 
 void particle::turn_test(double theta, double phi, double angle)

@@ -59,9 +59,9 @@ int main()
     // Eigen::setNbThreads(1);
     // Eigen::initParallel();
 
-    particle test;
-    test.initptcl(661.6, 0, 0, 0);
-    test.turn_test(M_PI*2/3, M_PI/4, M_PI*3/4);
+    // particle test;
+    // test.initptcl(661.6, 0, 0, 0);
+    // test.turn_test(M_PI*1/3, M_PI*3/4, M_PI*3/6);
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
