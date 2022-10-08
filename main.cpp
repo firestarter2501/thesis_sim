@@ -48,9 +48,9 @@ int main()
     for(int num = 0; num < initscinticonf_list.size()/9; num++)
     {
         scintillator.push_back(scinti());
+        scintillator.back().initcs("./data/initcs_nai.conf");
         scintillator.back().initscinti(initscinticonf_list.at(0+(num*9)), initscinticonf_list.at(1+(num*9)), initscinticonf_list.at(2+(num*9)), initscinticonf_list.at(3+(num*9))*M_PI, initscinticonf_list.at(4+(num*9))*M_PI, initscinticonf_list.at(5+(num*9)), initscinticonf_list.at(6+(num*9)), initscinticonf_list.at(7+(num*9)), initscinticonf_list.at(8+(num*9)));
     }
-    scintillator.back().initcs("./data/initcs_nai.conf");
     std::cout << "loaded " << scintillator.size() << " scintillator." << std::endl;
     std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
@@ -83,6 +83,7 @@ int main()
         {
             for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
+                std::cout << std::endl << "--------------\nscinti_num: " << scinti_num << std::endl;
                 if (photon.back().ene_ <= 0)
                 {
                     break_flag = true;
