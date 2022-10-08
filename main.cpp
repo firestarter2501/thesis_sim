@@ -24,7 +24,10 @@ int main()
     std::vector<double> initscinticonf_list;
     std::ifstream initptclconf("./data/initptcl.conf");
     std::ifstream initscinticonf("./data/initscinti.conf");
+    std::ofstream ofstr("./data/sim.log");
+    std::streambuf* strbuf;
     std::string initline;
+    strbuf = std::cout.rdbuf(ofstr.rdbuf());
     int run_count = 0;
     while (std::getline(initptclconf, initline))
     {
@@ -101,7 +104,7 @@ int main()
                 if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
                     break_flag = true;
-                    std::cout << "outside or too short" << std::endl;
+                    std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
                     std::cout << "sum_ene: " << sum_ene << std::endl;
                 }
                 else

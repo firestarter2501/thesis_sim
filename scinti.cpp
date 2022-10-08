@@ -9,11 +9,18 @@ std::vector<bool> scinti::intersecenablecheck(std::vector<std::vector<double>> i
     std::vector<bool> returnvec;
     for (int i = 0; i < intersecvec.size(); i++)
     {
-        Eigen::Vector3d intersecpoint, scintipoint, centerdist;
+        Eigen::Vector3d intersecpoint, scintipoint, centerdist, ptcldir, intersecdir, dirnorm;
         intersecpoint << intersecvec.at(i).at(0), intersecvec.at(i).at(1), intersecvec.at(i).at(2);
         scintipoint << this->pt_x_, this->pt_y_, this->pt_z_;
         centerdist = intersecpoint - scintipoint;
-        if (std::abs(centerdist.norm()) <= std::sqrt(2)*this->rad_)
+
+        ptcldir << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
+        intersecdir << intersecvec.at(i).at(0) - ptcl.pt_x_, intersecvec.at(i).at(1) - ptcl.pt_y_, intersecvec.at(i).at(2) - ptcl.pt_z_;
+        ptcldir.normalize();
+        intersecdir.normalize();
+        dirnorm = intersecdir - ptcldir;
+        std::cout << "dirnorm.norm(): " << dirnorm.norm() << std::endl;
+        if (std::abs(centerdist.norm()) <= std::sqrt(2)*this->rad_ && dirnorm.norm() < 0.000001)
         {
             returnvec.push_back(true);
         }
