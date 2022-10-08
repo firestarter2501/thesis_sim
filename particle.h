@@ -3,6 +3,7 @@
 #include <fstream>
 #include <random>
 #include <Eigen/Dense>
+#include <algorithm>
 
 class particle
 {

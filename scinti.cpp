@@ -4,110 +4,25 @@
 #define RELEC 2.8179403262 * std::pow(10, -13) // cm
 #define NUMA 6.02214076 * std::pow(10, 23) // mol^-1
 
-double scinti::limtozero(double num)
+std::vector<bool> scinti::intersecenablecheck(std::vector<std::vector<double>> intersecvec, particle ptcl)
 {
-    if (0 < num && num < 0.0000000000000000000001)
-    {
-        return 0;
-    }
-    else
-    {
-        return num;
-    }
-}
-
-std::vector<double> scinti::scintibc()
-{
-    double f_l_x = this->pt_x_ - (sqrt(2) * this->rad_ * sin((M_PI/4)-(M_PI-this->dir_phi_))),
-        f_r_x = this->pt_x_ + (sqrt(2) * this->rad_ * sin((M_PI/4)+(M_PI-this->dir_phi_))),
-        f_l_y = this->pt_y_ - (sqrt(2) * this->rad_ * sin((M_PI/2)-(M_PI-this->dir_phi_)-(M_PI/4))),
-        f_r_y = this->pt_y_ - (sqrt(2) * this->rad_ * sin((M_PI-this->dir_phi_)-(M_PI/4))),
-        f_t_z = this->pt_z_ + (sqrt(2) * this->rad_ * sin((M_PI/4)-((M_PI/2)-this->dir_theta_))),
-        f_u_z = this->pt_z_ - (sqrt(2) * this->rad_ * sin((M_PI/4)+((M_PI/2)-this->dir_theta_))),
-        b_l_x = this->pt_x_ - (sqrt(2) * this->rad_ * sin((M_PI/4)+(M_PI-this->dir_phi_))),
-        b_r_x = this->pt_x_ + (sqrt(2) * this->rad_ * sin((M_PI/4)-(M_PI-this->dir_phi_))),
-        b_l_y = this->pt_y_ + (sqrt(2) * this->rad_ * sin((M_PI-this->dir_phi_)-(M_PI/4))),
-        b_r_y = this->pt_y_ + (sqrt(2) * this->rad_ * sin((M_PI/2)-(M_PI-this->dir_phi_)-(M_PI/4))),
-        b_t_z = this->pt_z_ + (sqrt(2) * this->rad_ * sin((M_PI/4)+((M_PI/2)-this->dir_theta_))),
-        b_u_z = this->pt_z_ - (sqrt(2) * this->rad_ * sin((M_PI/4)-((M_PI/2)-this->dir_theta_)));
-    std::vector<double> return_vec = {f_l_x, f_r_x, f_l_y, f_r_y, f_t_z, f_u_z, b_l_x, b_r_x, b_l_y, b_r_y, b_t_z, b_u_z};
-    
-    // std::cout << "bc: ";
-    // for (int i = 0; i < return_vec.size(); i++)
-    // {
-    // //std::cout << return_vec.at(i) << ", ";
-    // }
-    // std::cout << std::endl;
-    
-    return return_vec;
-}
-
-bool scinti::initpointcheck(particle initptcl, particle ptcl)
-{
-    if (ptcl.pt_x_ == initptcl.pt_x_ && ptcl.pt_y_ == initptcl.pt_y_ && ptcl.pt_z_ == initptcl.pt_z_)
-    {
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-std::vector<bool> scinti::bcrangecheck(std::vector<std::vector<double>> intersecvec)
-{
-    std::vector<double> bc = scintibc();
     std::vector<bool> returnvec;
-
-    if (((std::min({bc.at(0), bc.at(1)}) <= intersecvec.at(0).at(0)) && (intersecvec.at(0).at(0) <= std::max({bc.at(0), bc.at(1)}))) && ((std::min({bc.at(2), bc.at(3)}) <= intersecvec.at(0).at(1)) && (intersecvec.at(0).at(1) <= std::max({bc.at(2), bc.at(3)}))) && ((std::min({bc.at(4), bc.at(5)}) <= intersecvec.at(0).at(2)) && (intersecvec.at(0).at(2) <= std::max({bc.at(4), bc.at(5)}))))
+    for (int i = 0; i < intersecvec.size(); i++)
     {
-        returnvec.push_back(true);
+        Eigen::Vector3d intersecpoint, scintipoint, centerdist;
+        intersecpoint << intersecvec.at(i).at(0), intersecvec.at(i).at(1), intersecvec.at(i).at(2);
+        scintipoint << this->pt_x_, this->pt_y_, this->pt_z_;
+        centerdist = intersecpoint - scintipoint;
+        if (std::abs(centerdist.norm()) <= std::sqrt(2)*this->rad_)
+        {
+            returnvec.push_back(true);
+        }
+        else
+        {
+            returnvec.push_back(false);
+        }
     }
-    else
-    {
-        returnvec.push_back(false);
-    }
-
-    if (((std::min({bc.at(6), bc.at(7)}) <= intersecvec.at(1).at(0)) && (intersecvec.at(1).at(0) <= std::max({bc.at(6), bc.at(7)}))) && ((std::min({bc.at(8), bc.at(9)}) <= intersecvec.at(1).at(1)) && (intersecvec.at(1).at(1) <= std::max({bc.at(8), bc.at(9)}))) && ((std::min({bc.at(10), bc.at(11)}) <= intersecvec.at(1).at(2)) && (intersecvec.at(1).at(2) <= std::max({bc.at(10), bc.at(11)}))))
-    {
-        returnvec.push_back(true);
-    }
-    else
-    {
-        returnvec.push_back(false);
-    }
-
-    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= intersecvec.at(2).at(0)) && (intersecvec.at(2).at(0) <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= intersecvec.at(2).at(1)) && (intersecvec.at(2).at(1) <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= intersecvec.at(2).at(2)) && (intersecvec.at(2).at(2) <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
-    {
-        returnvec.push_back(true);
-    }
-    else
-    {
-        returnvec.push_back(false);
-    }
-
-    if (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= intersecvec.at(3).at(0)) && (intersecvec.at(3).at(0) <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= intersecvec.at(3).at(1)) && (intersecvec.at(3).at(1) <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= intersecvec.at(3).at(2)) && (intersecvec.at(3).at(2) <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}))))
-    {
-        returnvec.push_back(true);
-    }
-    else
-    {
-        returnvec.push_back(false);
-    }
-
     return returnvec;
-}
-
-bool scinti::zeroveccheck(std::vector<double> vec)
-{
-    std::vector<double> zero_vector = { 0, 0, 0 };
-    if (vec == zero_vector)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
 }
 
 std::string scinti::showfacetype(int type)
@@ -134,42 +49,55 @@ std::string scinti::showfacetype(int type)
     }
 }
 
-double scinti::ptclfacedist(int reactcount, std::vector<double> bc, std::vector<std::vector<double>> intersec, particle initptcl, particle ptcl, int type1, int type2)
+double scinti::intersec_dist(particle ptcl)
 {
-    if (!initpointcheck(initptcl, ptcl) && (((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))) && reactcount >= 1)
+    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
+    std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
+
+    // intersecの座標表示
+    for (int i = 0; i < intersec.size(); i++)
     {
-    //*std::cout << "congrats! it's not first collision!" << std::endl;
-        Eigen::Vector3d ptcldir, type1dir, type2dir;
-        ptcldir << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
-        type1dir << intersec.at(type1).at(0) - ptcl.pt_x_, intersec.at(type1).at(1) - ptcl.pt_y_, intersec.at(type1).at(2) - ptcl.pt_z_;
-        type2dir << intersec.at(type2).at(0) - ptcl.pt_x_, intersec.at(type2).at(1) - ptcl.pt_y_, intersec.at(type2).at(2) - ptcl.pt_z_;
-        ptcldir.normalize();
-        type1dir.normalize();
-        type2dir.normalize();
-        if (limtozero(std::abs(ptcldir(0)-type1dir(0))) == 0 && limtozero(std::abs(ptcldir(1)-type1dir(1))) == 0 && limtozero(std::abs(ptcldir(2)-type1dir(2))) == 0)
+        std::cout << showfacetype(i) << ": ";
+        for (int j = 0; j < intersec.at(0).size(); j++)
         {
-        //*std::cout << "ptcl " << showfacetype(type1) << std::endl;
-            return std::sqrt(std::pow(intersec.at(type1).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type1).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type1).at(2) - ptcl.pt_z_, 2));
+            std::cout << intersec.at(i).at(j) << "\t";
         }
-        else if (limtozero(std::abs(ptcldir(0)-type2dir(0))) == 0 && limtozero(std::abs(ptcldir(1)-type2dir(1))) == 0 && limtozero(std::abs(ptcldir(2)-type2dir(2))) == 0)
-        {
-        //*std::cout << "ptcl " << showfacetype(type2) << std::endl;
-            return std::sqrt(std::pow(intersec.at(type2).at(0) - ptcl.pt_x_, 2) + std::pow(intersec.at(type2).at(1) - ptcl.pt_y_, 2) + std::pow(intersec.at(type2).at(2) - ptcl.pt_z_, 2));
-        }
-        else
-        {
-        //*std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
-            return -1;
-        }
+        std::cout << enablecheck.at(i) << "\n";
     }
-    else if (initpointcheck(initptcl, ptcl) && !(((std::min({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}) <= ptcl.pt_x_) && (ptcl.pt_x_ <= std::max({bc.at(0), bc.at(1), bc.at(6), bc.at(7)}))) && ((std::min({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}) <= ptcl.pt_y_) && (ptcl.pt_y_ <= std::max({bc.at(2), bc.at(3), bc.at(8), bc.at(9)}))) && ((std::min({bc.at(4), bc.at(5), bc.at(10), bc.at(11)}) <= ptcl.pt_z_) && (ptcl.pt_z_ <= std::max({bc.at(4), bc.at(5), bc.at(10), bc.at(11)})))) && reactcount < 1)
+
+    int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
+    if (ec_truecount == 0)
     {
-    //*std::cout << showfacetype(type1) << " " << showfacetype(type2) << std::endl;
-        return std::sqrt(std::pow(intersec.at(type1).at(0) - intersec.at(type2).at(0), 2) + std::pow(intersec.at(type1).at(1) - intersec.at(type2).at(1), 2) + std::pow(intersec.at(type1).at(2) - intersec.at(type2).at(2), 2));
+        std::cout << "outside(all false)" << std::endl;
+        return -1;
+    }
+    else if (ec_truecount == 1)
+    {
+        auto ec_true = std::find(enablecheck.begin(), enablecheck.end(), true);
+        int type = std::distance(enablecheck.begin(), ec_true);
+        Eigen::Vector3d ptclvec, intersecvec, trajectvec;
+        ptclvec << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+        intersecvec << intersec.at(type).at(0), intersec.at(type).at(1), intersec.at(type).at(2);
+        trajectvec = intersecvec - ptclvec;
+        std::cout << "ptcl & " << showfacetype(type) << " dist: " << trajectvec.norm() << std::endl;
+        return trajectvec.norm();
+    }
+    else if (ec_truecount == 2)
+    {
+        auto ec_true1 = std::find(enablecheck.begin(), enablecheck.end(), true);
+        int type1 = std::distance(enablecheck.begin(), ec_true1);
+        auto ec_true2 = std::find(++ec_true1, enablecheck.end(), true);
+        int type2 = std::distance(enablecheck.begin(), ec_true2);
+        Eigen::Vector3d type1vec, type2vec, trajectvec;
+        type1vec << intersec.at(type1).at(0), intersec.at(type1).at(1), intersec.at(type1).at(2);
+        type2vec << intersec.at(type2).at(0), intersec.at(type2).at(1), intersec.at(type2).at(2);
+        trajectvec = type2vec - type1vec;
+        std::cout << showfacetype(type1) << " & " << showfacetype(type2) << " dist: " << trajectvec.norm() << std::endl;
+        return trajectvec.norm();
     }
     else
     {
-    //*std::cout << "error(" << showfacetype(type1) << " " << showfacetype(type2) << ")" << std::endl;
+        std::cout << "error(too many true)" << std::endl;
         return -1;
     }
 }
@@ -194,34 +122,22 @@ void scinti::initcs(std::string conffilepath)
 
 double scinti::crosssec(double ene, int type)
 {
-    // std::cout << "test1" << std::endl;
     if (this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
     {
         return 0;
     }
     int ene_line = 0;
-    // std::cout << "test2" << std::endl;
     while (this->crosssec_table_.at(ene_line+1).at(0) < ene)
     {
-        // std::cout << "test3" << std::endl;
         ene_line++;
     }
     
     // std::cout << "ene:" << ene << " ene_line:" << ene_line << std::endl;
 
-    // std::cout << "test4" << std::endl;
-
     double alpha = (ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)),
         cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*alpha);
+    return cs_tmp;
 
-    if (limtozero(cs_tmp) == 0)
-    {
-        return 0;
-    }
-    else
-    {
-        return cs_tmp;
-    }
 }
 
 void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight)
@@ -242,10 +158,12 @@ void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, dou
 std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 {
     std::vector<std::vector<double>> return_point = { {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0} };
-    Eigen::Vector3d traject, scinti_centerline, scinti_frontcenter, scinti_front_intersec, scinti_backcenter, scinti_back_intersec;
+    Eigen::Vector3d traject, ptclpoint, scinti_centerline, scinti_frontcenter, scinti_front_intersec, frontdist, scinti_backcenter, scinti_back_intersec, backdist;
 
     traject << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
     traject.normalize();
+
+    ptclpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
 
     // std::cout << "dir_theta_: " << this->dir_theta_ << ", dir_phi_: " << this->dir_phi_ << std::endl;
 
@@ -257,33 +175,34 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     // std::cout << "scinti_frontcenter: " << scinti_frontcenter(0) << ", " << scinti_frontcenter(1) << ", " << scinti_frontcenter(2) << std::endl;
 
     double front_t = (scinti_centerline(0)*(scinti_frontcenter(0)-ptcl.pt_x_) + scinti_centerline(1) * (scinti_frontcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_frontcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
-    if (std::sqrt(std::pow(scinti_frontcenter(0) - (ptcl.pt_x_ + traject(0)*front_t), 2) + std::pow(scinti_frontcenter(1) - (ptcl.pt_y_ + traject(1) * front_t), 2) + std::pow(scinti_frontcenter(2) - (ptcl.pt_z_ + traject(2) * front_t), 2)) < this->rad_)
+    scinti_front_intersec << ptcl.pt_x_ + traject(0) * front_t, ptcl.pt_y_ + traject(1) * front_t, ptcl.pt_z_ + traject(2) * front_t;
+
+    frontdist = scinti_front_intersec - scinti_frontcenter;
+    if (std::abs(frontdist.norm()) <= this->rad_)
     {
-        double fx = limtozero(ptcl.pt_x_ + traject(0) * front_t),
-            fy = limtozero(ptcl.pt_y_ + traject(1) * front_t),
-            fz = limtozero(ptcl.pt_z_ + traject(2) * front_t);
-        return_point.at(0).at(0) = fx;
-        return_point.at(0).at(1) = fy;
-        return_point.at(0).at(2) = fz;
+        return_point.at(0).at(0) = scinti_front_intersec(0);
+        return_point.at(0).at(1) = scinti_front_intersec(1);
+        return_point.at(0).at(2) = scinti_front_intersec(2);
         // std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
     }
 
     scinti_backcenter << this->pt_x_ + (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), this->pt_y_ + (-this->depth_ / 2)* std::sin(this->dir_theta_)* std::sin(this->dir_phi_), this->pt_z_ + (-this->depth_ / 2)* std::cos(this->dir_theta_);
     // std::cout << "scinti_backcenter: " << scinti_backcenter(0) << ", " << scinti_backcenter(1) << ", " << scinti_backcenter(2) << std::endl;
+
     double back_t = (scinti_centerline(0) * (scinti_backcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_backcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_backcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
-    if (std::sqrt(std::pow(scinti_backcenter(0) - (ptcl.pt_x_ + traject(0) * back_t), 2) + std::pow(scinti_backcenter(1) - (ptcl.pt_y_ + traject(1) * back_t), 2) + std::pow(scinti_backcenter(2) - (ptcl.pt_z_ + traject(2) * back_t), 2)) < this->rad_)
+    scinti_back_intersec << ptcl.pt_x_ + traject(0) * back_t, ptcl.pt_y_ + traject(1) * back_t, ptcl.pt_z_ + traject(2) * back_t;
+
+    backdist = scinti_back_intersec - scinti_backcenter;
+    if (std::abs(backdist.norm()) <= this->rad_)
     {
-        double bx = limtozero(ptcl.pt_x_ + traject(0) * back_t),
-            by = limtozero(ptcl.pt_y_ + traject(1) * back_t),
-            bz = limtozero(ptcl.pt_z_ + traject(2) * back_t);
-        return_point.at(1).at(0) = limtozero(ptcl.pt_x_ + traject(0) * back_t);
-        return_point.at(1).at(1) = limtozero(ptcl.pt_y_ + traject(1) * back_t);
-        return_point.at(1).at(2) = limtozero(ptcl.pt_z_ + traject(2) * back_t);
+        return_point.at(1).at(0) = scinti_back_intersec(0);
+        return_point.at(1).at(1) = scinti_back_intersec(1);
+        return_point.at(1).at(2) = scinti_back_intersec(2);
         // std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
     }
 
     Eigen::Vector3d p, p2, vecs, v;   
-    p << scinti_front_intersec(0) - ptcl.pt_x_, scinti_front_intersec(1) - ptcl.pt_y_, scinti_front_intersec(2) - ptcl.pt_z_;
+    p << scinti_frontcenter(0) - ptcl.pt_x_, scinti_frontcenter(1) - ptcl.pt_y_, scinti_frontcenter(2) - ptcl.pt_z_;
     p2 << scinti_backcenter(0) - ptcl.pt_x_, scinti_backcenter(1) - ptcl.pt_y_, scinti_backcenter(2) - ptcl.pt_z_;
     vecs << p2(0) - p(0), p2(1) - p(1), p2(2) - p(2);
     v = traject;
@@ -315,98 +234,15 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     ds = sqrt(ds);
     double a1 = (B - ds) / A,
         a2 = (B + ds) / A;
-    return_point.at(2).at(0) = limtozero(ptcl.pt_x_ + a1 * v(0));
-    return_point.at(2).at(1) = limtozero(ptcl.pt_y_ + a1 * v(1));
-    return_point.at(2).at(2) = limtozero(ptcl.pt_z_ + a1 * v(2));
-    return_point.at(3).at(0) = limtozero(ptcl.pt_x_ + a2 * v(0));
-    return_point.at(3).at(1) = limtozero(ptcl.pt_y_ + a2 * v(1));
-    return_point.at(3).at(2) = limtozero(ptcl.pt_z_ + a2 * v(2));
+    return_point.at(2).at(0) = ptcl.pt_x_ + a1 * v(0);
+    return_point.at(2).at(1) = ptcl.pt_y_ + a1 * v(1);
+    return_point.at(2).at(2) = ptcl.pt_z_ + a1 * v(2);
+    return_point.at(3).at(0) = ptcl.pt_x_ + a2 * v(0);
+    return_point.at(3).at(1) = ptcl.pt_y_ + a2 * v(1);
+    return_point.at(3).at(2) = ptcl.pt_z_ + a2 * v(2);
 
     // std::cout << "side1: " << return_point.at(2).at(0) << ", " << return_point.at(2).at(1) << ", " << return_point.at(2).at(2) << std::endl;
     // std::cout << "side2: " << return_point.at(3).at(0) << ", " << return_point.at(3).at(1) << ", " << return_point.at(3).at(2) << std::endl;
     
     return return_point;
-}
-
-double scinti::intersec_dist(int reactcount, particle initptcl, particle ptcl)
-{
-    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
-    std::vector<bool> enablecheck = bcrangecheck(intersec);
-    std::vector<double> bc = scintibc();
-
-    // intersecの座標表示
-//std::cout << "---" << std::endl;
-    for (int i = 0; i < intersec.size(); i++)
-    {
-    //*std::cout << showfacetype(i) << ": ";
-        for (int j = 0; j < intersec.at(0).size(); j++)
-        {
-        //*std::cout << intersec.at(i).at(j) << "\t";
-        }
-    //*std::cout << "\n";
-    }
-    
-    if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3) && reactcount >= 1)
-    {
-    //*std::cout << "congrats! it's not first collision!" << std::endl;
-    //*std::cout << "front only" << std::endl;
-        return std::sqrt(std::pow(ptcl.pt_x_ - intersec.at(0).at(0), 2) + std::pow(ptcl.pt_y_ - intersec.at(0).at(1), 2) + std::pow(ptcl.pt_z_ - intersec.at(0).at(2), 2));
-    }
-
-    else if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3) && reactcount >= 1)
-    {
-    //*std::cout << "congrats! it's not first collision!" << std::endl;
-    //*std::cout << "back only" << std::endl;
-        return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(1).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(1).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(1).at(2), 2));
-    }
-    
-    else if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3) && reactcount >= 1)
-    {
-    //*std::cout << "congrats! it's not first collision!" << std::endl;
-    //*std::cout << "side1 only" << std::endl;
-        return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(2).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(2).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(2).at(2), 2));
-    }
-
-    else if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3) && reactcount >= 1)
-    {
-    //*std::cout << "congrats! it's not first collision!" << std::endl;
-    //*std::cout << "side2 only" << std::endl;
-        return std::sqrt(std::pow(ptcl.pt_x_-intersec.at(3).at(0), 2) + std::pow(ptcl.pt_y_ -intersec.at(3).at(1), 2) + std::pow(ptcl.pt_z_ -intersec.at(3).at(2), 2));
-    }
-    
-    else if (zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && !enablecheck.at(3))
-    {
-        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 0, 1);
-    }
-
-    else if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
-    {
-        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 0, 2);
-    }
-
-    else if (zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
-    {
-        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 0, 3);
-    }
-
-    else if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && enablecheck.at(2) && !enablecheck.at(3))
-    {
-        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 1, 2);
-    }
-
-    else if (!zeroveccheck(intersec.at(0)) && zeroveccheck(intersec.at(1)) && !enablecheck.at(2) && enablecheck.at(3))
-    {
-        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 1, 3);
-    }
-
-    else if (!zeroveccheck(intersec.at(0)) && !zeroveccheck(intersec.at(1)) && enablecheck.at(2) && enablecheck.at(3))
-    {
-        return ptclfacedist(reactcount, bc, intersec, initptcl, ptcl, 2, 3);
-    }
-
-    else
-    {
-    //*std::cout << "outside" << std::endl;
-        return -1;
-    }
 }
