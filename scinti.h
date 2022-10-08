@@ -23,4 +23,5 @@ class scinti
         double crosssec(double ene, int type);
         void initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight);
         double intersec_dist(particle ptcl);
+        double ptclinsidecheck(particle ptcl);
 };

@@ -25,6 +25,37 @@ std::vector<bool> scinti::intersecenablecheck(std::vector<std::vector<double>> i
     return returnvec;
 }
 
+double scinti::ptclinsidecheck(particle ptcl)
+{
+    Eigen::Vector3d ptclpoint, scintipoint, centerdist;
+    ptclpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+    scintipoint << this->pt_x_, this->pt_y_, this->pt_z_;
+    centerdist = ptclpoint - scintipoint;
+
+    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
+    std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
+    int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
+
+    if (std::abs(centerdist.norm()) <= std::sqrt(2)*this->rad_ && ec_truecount != 2)
+    {
+        return 0;
+    }
+    else
+    {
+        auto ec_true1 = std::find(enablecheck.begin(), enablecheck.end(), true);
+        int type1 = std::distance(enablecheck.begin(), ec_true1);
+        auto ec_true2 = std::find(++ec_true1, enablecheck.end(), true);
+        int type2 = std::distance(enablecheck.begin(), ec_true2);
+        Eigen::Vector3d type1vec, type2vec, traject1vec, traject2vec;
+        type1vec << intersec.at(type1).at(0), intersec.at(type1).at(1), intersec.at(type1).at(2);
+        type2vec << intersec.at(type2).at(0), intersec.at(type2).at(1), intersec.at(type2).at(2);
+        traject1vec = type1vec - ptclpoint;
+        traject2vec = type2vec - ptclpoint;
+        std::cout << "ptclinsidecheck: " << std::min({ std::abs(traject1vec.norm()), std::abs(traject2vec.norm()) }) << std::endl;
+        return std::min({ std::abs(traject1vec.norm()), std::abs(traject2vec.norm()) });
+    }
+}
+
 std::string scinti::showfacetype(int type)
 {
     if (type == 0)

@@ -118,9 +118,15 @@ int main()
                     }
                     else if(cs_len <= pe_len && cs_len <= pp_len)
                     {
+                        showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                        Eigen::Vector3d beforepoint, afterpoint, moveddist;
                         sum_ene += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), lineareq(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTSDEVSLOPE, PMTSDEVINTERSEC));
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
-                        photon.back().move(cs_len);
+                        beforepoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
+                        photon.back().move(scintillator.at(scinti_num).ptclinsidecheck(photon.back()) + cs_len);
+                        afterpoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
+                        moveddist = afterpoint - beforepoint;
+                        std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                         photon.back().turn(cs_ang);
                         reactcount++;
                         std::cout << "---cs---" << std::endl;
@@ -129,9 +135,14 @@ int main()
                     }
                     else if (pp_len <= pe_len && pp_len <= cs_len)
                     {
+                        Eigen::Vector3d beforepoint, afterpoint, moveddist;
                         photon.back().ene_ = MEC2;
                         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
-                        photon.back().move(pp_len);
+                        beforepoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
+                        photon.back().move(scintillator.at(scinti_num).ptclinsidecheck(photon.back()) + pp_len);
+                        afterpoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
+                        moveddist = afterpoint - beforepoint;
+                        std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                         // reactcount++;
                         std::cout << "---pp---" << std::endl;
                         std::cout << "sum_ene: " << sum_ene << " pp_len: " << pp_len << std::endl;
