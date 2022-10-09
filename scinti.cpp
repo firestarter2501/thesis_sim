@@ -4,10 +4,12 @@
 #define RELEC 2.8179403262 * std::pow(10, -13) // cm
 #define NUMA 6.02214076 * std::pow(10, 23) // mol^-1
 
+using vsize_t = std::vector<int>::size_type;
+
 std::vector<bool> scinti::intersecenablecheck(std::vector<std::vector<double>> intersecvec, particle ptcl)
 {
     std::vector<bool> returnvec;
-    for (int i = 0; i < intersecvec.size(); i++)
+    for (vsize_t i = 0; i < intersecvec.size(); i++)
     {
         Eigen::Vector3d intersecpoint, scintipoint, centerdist, ptcldir, intersecdir, dirnorm;
         intersecpoint << intersecvec.at(i).at(0), intersecvec.at(i).at(1), intersecvec.at(i).at(2);
@@ -93,10 +95,10 @@ double scinti::intersec_dist(particle ptcl)
     std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
 
     // intersecの座標表示
-    for (int i = 0; i < intersec.size(); i++)
+    for (vsize_t i = 0; i < intersec.size(); i++)
     {
         std::cout << showfacetype(i) << ": ";
-        for (int j = 0; j < intersec.at(0).size(); j++)
+        for (vsize_t j = 0; j < intersec.at(0).size(); j++)
         {
             std::cout << intersec.at(i).at(j) << "\t";
         }

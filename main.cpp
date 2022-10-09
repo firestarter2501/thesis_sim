@@ -16,6 +16,8 @@
 #define PMTSDEVSLOPE 0.018471
 #define PMTSDEVINTERSEC 12.2998905
 
+using vsize_t = std::vector<int>::size_type;
+
 int main()
 {
     std::vector<particle> ray_list;
@@ -25,16 +27,16 @@ int main()
     std::ifstream initptclconf("./data/initptcl.conf");
     std::ifstream initscinticonf("./data/initscinti.conf");
     std::ofstream ofstr("./data/sim.log");
-    std::streambuf* strbuf;
+    // std::streambuf* strbuf;
     std::string initline;
-    strbuf = std::cout.rdbuf(ofstr.rdbuf());
+    /*strbuf = */std::cout.rdbuf(ofstr.rdbuf());
     int run_count = 0;
     while (std::getline(initptclconf, initline))
     {
         initptclconf_list.push_back(std::stod(initline));
         // std::cout << initline << std::endl;
     }
-    for(int num = 0; num < initptclconf_list.size()/4; num++)
+    for(vsize_t num = 0; num < initptclconf_list.size()/4; num++)
     {
         ray_list.push_back(particle());
         ray_list.back().initptcl(initptclconf_list.at(0+(num*4)), initptclconf_list.at(1+(num*4)), initptclconf_list.at(2+(num*4)), initptclconf_list.at(3+(num*4)));
@@ -45,7 +47,7 @@ int main()
         initscinticonf_list.push_back(std::stod(initline));
         // std::cout << initline << std::endl;
     }
-    for(int num = 0; num < initscinticonf_list.size()/9; num++)
+    for(vsize_t num = 0; num < initscinticonf_list.size()/9; num++)
     {
         scintillator.push_back(scinti());
         scintillator.back().initcs("./data/initcs_nai.conf");
@@ -81,7 +83,7 @@ int main()
         // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
         while (0 <= photon.back().ene_)
         {
-            for (int scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
+            for (vsize_t scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
                 std::cout << std::endl << "--------------\nscinti_num: " << scinti_num << std::endl;
                 if (photon.back().ene_ <= 0)
