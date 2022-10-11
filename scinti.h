@@ -18,7 +18,7 @@ class scinti
             dens_,
             ndens_,
             atomweight_,
-            ene_buffer;
+            ene_buffer_;
         std::vector<std::vector<double>> crosssec_table_;
         void initcs(std::string conffilepath);
         double crosssec(double ene, int type);

@@ -193,7 +193,7 @@ void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, dou
     this->dens_ = dens;
     this->ndens_ = (dens / atomweight) * NUMA;
     this->atomweight_ = atomweight;
-    this->ene_buffer = 0;
+    this->ene_buffer_ = 0;
 }
 
 std::vector<std::vector<double>> scinti::intersec(particle ptcl)

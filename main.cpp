@@ -73,65 +73,66 @@ int main()
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
-        double sum_ene = 0;
         int reactcount = 0;
         std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
         std::vector<bool> scinti_react(scintillator.size(), true);
+        std::vector<scinti> scinti_inloop = scintillator;
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
         // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
-        while (0 < photon.back().ene_ || 0 < std::count(scinti_react.begin(), scinti_react.end(), true))
+        while (/*0 < photon.back().ene_ || */0 < std::count(scinti_react.begin(), scinti_react.end(), true))
         {
-            for (vsize_t scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
+            for (vsize_t scinti_num = 0; scinti_num < scinti_inloop.size(); scinti_num++)
             {
                 std::cout << std::endl << "--------------\nscinti_num: " << scinti_num << std::endl;
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
                 std::cout << "beforetraject_reactcount: " << reactcount << std::endl;
-                double traject_dist = scintillator.at(scinti_num).intersec_dist(photon.back()),
-                    pe_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 1),
-                    pe_len = reactlen(pe_cs, scintillator.at(scinti_num).dens_),
+                double traject_dist = scinti_inloop.at(scinti_num).intersec_dist(photon.back()),
+                    pe_cs = scinti_inloop.at(scinti_num).crosssec(photon.back().ene_, 1),
+                    pe_len = reactlen(pe_cs, scinti_inloop.at(scinti_num).dens_),
                     cs_ang = cs_angle(photon.back().ene_),
-                    cs_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 2),
-                    cs_len = reactlen(cs_cs, scintillator.at(scinti_num).dens_),
-                    pp_cs = scintillator.at(scinti_num).crosssec(photon.back().ene_, 3),
-                    pp_len = reactlen(pp_cs, scintillator.at(scinti_num).dens_);
-                std::cout << "before initsum_ene: " << sum_ene << std::endl;
+                    cs_cs = scinti_inloop.at(scinti_num).crosssec(photon.back().ene_, 2),
+                    cs_len = reactlen(cs_cs, scinti_inloop.at(scinti_num).dens_),
+                    pp_cs = scinti_inloop.at(scinti_num).crosssec(photon.back().ene_, 3),
+                    pp_len = reactlen(pp_cs, scinti_inloop.at(scinti_num).dens_);
                 
                 if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
                     scinti_react.at(scinti_num) = false;
                     std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
-                    std::cout << "sum_ene: " << sum_ene << std::endl;
+                    showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
+                    std::cout << "ene_buffer_: " << scinti_inloop.at(scinti_num).ene_buffer_ << std::endl;
                 }
                 else
                 {
-                    std::cout << "before sum_ene: " << sum_ene << std::endl;
+                    std::cout << "before ene_buffer_: " << scinti_inloop.at(scinti_num).ene_buffer_ << std::endl;
                     if(pe_len <= cs_len && pe_len <= pp_len)
                     {
-                        sum_ene += normdist(photon.back().ene_, lineareq(photon.back().ene_, PMTSDEVSLOPE, PMTSDEVINTERSEC));
+                        scinti_inloop.at(scinti_num).ene_buffer_ += normdist(photon.back().ene_, lineareq(photon.back().ene_, PMTSDEVSLOPE, PMTSDEVINTERSEC));
                         reactcount++;
-                        scinti_react.at(scinti_num) = true;
+                        scinti_react.at(scinti_num) = false;
                         std::cout << "---pe---" << std::endl;
-                        std::cout << "sum_ene: " << sum_ene << std::endl;
+                        std::cout << "ene_buffer: " << scinti_inloop.at(scinti_num).ene_buffer_ << std::endl;
                         showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else if(cs_len <= pe_len && cs_len <= pp_len)
                     {
                         showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                         Eigen::Vector3d beforepoint, afterpoint, moveddist;
-                        sum_ene += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), lineareq(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTSDEVSLOPE, PMTSDEVINTERSEC));
+                        scinti_inloop.at(scinti_num).ene_buffer_ += normdist(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), lineareq(photon.back().ene_ - scatphotonene(photon.back().ene_, cs_ang), PMTSDEVSLOPE, PMTSDEVINTERSEC));
                         photon.back().ene_ = scatphotonene(photon.back().ene_, cs_ang);
                         beforepoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
-                        photon.back().move(scintillator.at(scinti_num).ptclinsidecheck(photon.back()) + cs_len);
+                        photon.back().move(scinti_inloop.at(scinti_num).ptclinsidecheck(photon.back()) + cs_len);
                         afterpoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
                         moveddist = afterpoint - beforepoint;
                         std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                         photon.back().turn(cs_ang);
                         reactcount++;
+                        scinti_react.at(scinti_num) = true;
                         std::cout << "---cs---" << std::endl;
-                        std::cout << "sum_ene: " << sum_ene << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
+                        std::cout << "ene_buffer_: " << scinti_inloop.at(scinti_num).ene_buffer_ << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
                         showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else if (pp_len <= pe_len && pp_len <= cs_len)
@@ -140,20 +141,21 @@ int main()
                         photon.back().ene_ = MEC2;
                         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
                         beforepoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
-                        photon.back().move(scintillator.at(scinti_num).ptclinsidecheck(photon.back()) + pp_len);
+                        photon.back().move(scinti_inloop.at(scinti_num).ptclinsidecheck(photon.back()) + pp_len);
                         afterpoint << photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_;
                         moveddist = afterpoint - beforepoint;
                         std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                         // reactcount++;
+                        scinti_react.at(scinti_num) = true;
                         std::cout << "---pp---" << std::endl;
-                        std::cout << "sum_ene: " << sum_ene << " pp_len: " << pp_len << std::endl;
+                        std::cout << "ene_buffer_: " << scinti_inloop.at(scinti_num).ene_buffer_ << " pp_len: " << pp_len << std::endl;
                         showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
                     }
                     else
                     {
                         std::cout << "judge error" << std::endl;
                         showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
-                        break_flag = true;
+                        scinti_react.at(scinti_num) = false;
                     }
                 }
 
@@ -164,30 +166,29 @@ int main()
                 //     // std::cout << "break for first" << std::endl;
                 // }
 
-                if (break_flag)
+                if (!scinti_react.at(scinti_num))
                 {
-                    if (0 < sum_ene)
+                    #pragma omp critical
                     {
-                        std::cout << "final sum_ene: " << sum_ene << " reactcount: " << reactcount << std::endl;
-                        #pragma omp critical
-                        {
-                            scinti_data << sum_ene << "\n";
-                            std::cout << "sum_ene check&add done" << std::endl;
-                        }
+                    if (0 < scinti_inloop.at(scinti_num).ene_buffer_)
+                    {
+                        std::cout << "final ene_buffer_: " << scinti_inloop.at(scinti_num).ene_buffer_ << " reactcount: " << reactcount << std::endl;
+                        scinti_data << scinti_inloop.at(scinti_num).ene_buffer_ << "\n";
+                        std::cout << "sum_ene check&add done" << std::endl;
                     }
-                    sum_ene = 0;
+                    }
+                    scinti_inloop.at(scinti_num).ene_buffer_ = 0;
                     reactcount = 0;
-                    std::cout << "reset sum_ene: " << sum_ene << " reactcount: " << reactcount << std::endl;
-                    break;
+                    std::cout << "reset ene_buffer_: " << scinti_inloop.at(scinti_num).ene_buffer_ << " reactcount: " << reactcount << std::endl;
+                    // break;
                 }
             }
             std::cout << "scinti for break" << std::endl;
-            if (break_flag)
-            {
-                break_flag = false;
-                std::cout << "while break" << std::endl;
-                break;
-            }
+            // if (std::count(scinti_react.begin(), scinti_react.end(), true) == 0)
+            // {
+            //     std::cout << "while break" << std::endl;
+            //     break;
+            // }
         }
     }
 }
