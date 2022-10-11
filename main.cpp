@@ -76,21 +76,16 @@ int main()
         double sum_ene = 0;
         int reactcount = 0;
         std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
-        bool break_flag = false;
+        std::vector<bool> scinti_react(scintillator.size(), true);
         std::vector<particle> photon;
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
         // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
-        while (0 <= photon.back().ene_)
+        while (0 < photon.back().ene_ || 0 < std::count(scinti_react.begin(), scinti_react.end(), true))
         {
             for (vsize_t scinti_num = 0; scinti_num < scintillator.size(); scinti_num++)
             {
                 std::cout << std::endl << "--------------\nscinti_num: " << scinti_num << std::endl;
-                if (photon.back().ene_ <= 0)
-                {
-                    break_flag = true;
-                    // break;
-                }
                 std::string outfilename = "./data/scinti_" + std::to_string(scinti_num) + ".dat";
                 std::ofstream scinti_data(outfilename, std::ios::app);
                 std::cout << "beforetraject_reactcount: " << reactcount << std::endl;
@@ -106,7 +101,7 @@ int main()
                 
                 if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1)
                 {
-                    break_flag = true;
+                    scinti_react.at(scinti_num) = false;
                     std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
                     std::cout << "sum_ene: " << sum_ene << std::endl;
                 }
@@ -117,7 +112,7 @@ int main()
                     {
                         sum_ene += normdist(photon.back().ene_, lineareq(photon.back().ene_, PMTSDEVSLOPE, PMTSDEVINTERSEC));
                         reactcount++;
-                        break_flag = true;
+                        scinti_react.at(scinti_num) = true;
                         std::cout << "---pe---" << std::endl;
                         std::cout << "sum_ene: " << sum_ene << std::endl;
                         showinfo(photon, traject_dist, pe_len, cs_len, pp_len);
