@@ -25,7 +25,8 @@ int main()
     std::vector<double> initptclconf_list;
     std::vector<double> initscinticonf_list;
     std::ifstream initptclconf("./data/initptcl.conf");
-    std::ifstream initscinticonf("./data/initscinti.conf");
+    // std::ifstream initscinticonf("./data/initscinti.conf");
+    std::ifstream initscinticonf("./data/initscinti2.conf");
     std::ofstream ofstr("./data/sim.log");
     // std::streambuf* strbuf;
     std::string initline;
@@ -81,7 +82,7 @@ int main()
         photon.push_back(ray_list.at(0));
         photon.back().initptcl(photon.back().ene_, photon.back().pt_x_, photon.back().pt_y_, photon.back().pt_z_);
         // printf("thread = %d, run = %2d\n", omp_get_thread_num(), run);
-        while (/*0 < photon.back().ene_ || */0 < std::count(scinti_react.begin(), scinti_react.end(), true))
+        while (0 < std::count(scinti_react.begin(), scinti_react.end(), true))
         {
             for (vsize_t scinti_num = 0; scinti_num < scinti_inloop.size(); scinti_num++)
             {
@@ -98,7 +99,7 @@ int main()
                     pp_cs = scinti_inloop.at(scinti_num).crosssec(photon.back().ene_, 3),
                     pp_len = reactlen(pp_cs, scinti_inloop.at(scinti_num).dens_);
                 
-                if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1)
+                if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1/**/ || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)/**/)
                 {
                     scinti_react.at(scinti_num) = false;
                     std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
