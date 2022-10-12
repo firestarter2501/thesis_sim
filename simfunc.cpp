@@ -4,33 +4,33 @@
 #define RELEC 2.8179403262 * pow(10, -13) // cm
 #define NUMA 6.02214076 * pow(10, 23) // mol^-1
 
-void crosssec_test(scinti scintillator)
-{
-    std::ofstream cs_pe("./data/cs_pe.dat");
-    std::ofstream cs_cs("./data/cs_cs.dat");
-    std::ofstream cs_pp("./data/cs_pp.dat");
+// void crosssec_test(scinti scintillator)
+// {
+//     std::ofstream cs_pe("./data/cs_pe.dat");
+//     std::ofstream cs_cs("./data/cs_cs.dat");
+//     std::ofstream cs_pp("./data/cs_pp.dat");
 
-    scintillator.initcs("./data/initcs_nai.conf");
-//std::cout << scintillator.crosssec_table_.size() << "\t" << scintillator.crosssec_table_.at(0).size() << std::endl;
+//     scintillator.initcs("./data/initcs_nai.conf");
+// //std::cout << scintillator.crosssec_table_.size() << "\t" << scintillator.crosssec_table_.at(0).size() << std::endl;
 
-    // for(int i = 0; i < scintillator.crosssec_table_.size(); i++)
-    // {
-    //     for(int j = 0; j < scintillator.crosssec_table_.at(0).size(); j++)
-    //     {
-    //     std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
-    //     }
-    // std::cout << "\n";
-    // }
+//     // for(int i = 0; i < scintillator.crosssec_table_.size(); i++)
+//     // {
+//     //     for(int j = 0; j < scintillator.crosssec_table_.at(0).size(); j++)
+//     //     {
+//     //     std::cout << scintillator.crosssec_table_.at(i).at(j) << "\t";
+//     //     }
+//     // std::cout << "\n";
+//     // }
 
-//std::cout << "------";
+// //std::cout << "------";
 
-    for(int ene = 10; ene < 90000; ene++)
-    {
-        cs_pe << ene << "\t" << scintillator.crosssec(ene, 1) << "\n";
-        cs_cs << ene << "\t" << scintillator.crosssec(ene, 2) << "\n";
-        cs_pp << ene << "\t" << scintillator.crosssec(ene, 3) << "\n";
-    }
-}
+//     for(int ene = 10; ene < 90000; ene++)
+//     {
+//         cs_pe << ene << "\t" << scintillator.crosssec(ene, 1) << "\n";
+//         cs_cs << ene << "\t" << scintillator.crosssec(ene, 2) << "\n";
+//         cs_pp << ene << "\t" << scintillator.crosssec(ene, 3) << "\n";
+//     }
+// }
 
 // Œõ“d‹zŽû’f–ÊÏ‚ð•Ô‚·ŠÖ”
 double pe_crosssec(double ene, int z)

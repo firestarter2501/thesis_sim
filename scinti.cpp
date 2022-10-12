@@ -161,7 +161,12 @@ void scinti::initcs(std::string conffilepath)
 }
 
 double scinti::crosssec(double ene, int type)
-{
+{            // 2次反応以降無効化
+            // if(reactcount >= 1)
+            // {
+            //     break_flag = true;
+            //     // std::cout << "break for first" << std::endl;
+            // }
     if (this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
     {
         return 0;
@@ -180,7 +185,7 @@ double scinti::crosssec(double ene, int type)
 
 }
 
-void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight)
+void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight, double pmtsdevslope, double pmtsdevintersec)
 {
     this->pt_x_ = pt_x;
     this->pt_y_ = pt_y;
@@ -193,6 +198,8 @@ void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, dou
     this->dens_ = dens;
     this->ndens_ = (dens / atomweight) * NUMA;
     this->atomweight_ = atomweight;
+    this->pmtsdevslope = pmtsdevslope;
+    this->pmtsdevintersec = pmtsdevintersec;
     this->ene_buffer_ = 0;
 }
 
@@ -286,4 +293,95 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     // std::cout << "side2: " << return_point.at(3).at(0) << ", " << return_point.at(3).at(1) << ", " << return_point.at(3).at(2) << std::endl;
     
     return return_point;
+}
+
+void scinti::scintillation(std::string initscinti, std::string initcs, particle &ptcl, bool &react_flag, bool &absorp_flag)
+{
+    std::ifstream initscinticonf("./data/"+initscinti+".conf");
+    std::vector<double> initscinticonf_list;
+    std::string initline;
+    while (std::getline(initscinticonf, initline))
+    {
+        initscinticonf_list.push_back(std::stod(initline));
+        // std::cout << initline << std::endl;
+    }
+    this->initcs("./data/"+initcs+".conf");
+    this->initscinti(initscinticonf_list.at(0), initscinticonf_list.at(1), initscinticonf_list.at(2), initscinticonf_list.at(3)*M_PI, initscinticonf_list.at(4)*M_PI, initscinticonf_list.at(5), initscinticonf_list.at(6), initscinticonf_list.at(7), initscinticonf_list.at(8), initscinticonf_list.at(9), initscinticonf_list.at(10));
+    
+    react_flag = true;
+    std::string outfilename = "./data/scinti_" + initscinti + ".dat";
+    std::ofstream scinti_data(outfilename, std::ios::app);
+    while (react_flag == true)
+    {
+        double traject_dist = this->intersec_dist(ptcl),
+            pe_cs = this->crosssec(ptcl.ene_, 1),
+            pe_len = reactlen(pe_cs, this->dens_),
+            cs_ang = cs_angle(ptcl.ene_),
+            cs_cs = this->crosssec(ptcl.ene_, 2),
+            cs_len = reactlen(cs_cs, this->dens_),
+            pp_cs = this->crosssec(ptcl.ene_, 3),
+            pp_len = reactlen(pp_cs, this->dens_);
+        
+        if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1/* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/)
+        {
+            react_flag = false;
+            std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
+            std::cout << "ene_buffer_: " << this->ene_buffer_ << std::endl;
+        }
+        else
+        {
+            std::cout << "before ene_buffer_: " << this->ene_buffer_ << std::endl;
+            if(pe_len <= cs_len && pe_len <= pp_len)
+            {
+                this->ene_buffer_ += normdist(ptcl.ene_, lineareq(ptcl.ene_, this->pmtsdevslope, this->pmtsdevintersec));
+                react_flag = false;
+                absorp_flag = true;
+                std::cout << "---pe---" << std::endl;
+                std::cout << "ene_buffer: " << this->ene_buffer_ << std::endl;
+            }
+            else if(cs_len <= pe_len && cs_len <= pp_len)
+            {
+                // Eigen::Vector3d beforepoint, afterpoint, moveddist;
+                this->ene_buffer_ += normdist(ptcl.ene_ - scatphotonene(ptcl.ene_, cs_ang), lineareq(ptcl.ene_ - scatphotonene(ptcl.ene_, cs_ang), this->pmtsdevslope, this->pmtsdevintersec));
+                ptcl.ene_ = scatphotonene(ptcl.ene_, cs_ang);
+                // beforepoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                ptcl.move(this->ptclinsidecheck(ptcl) + cs_len);
+                // afterpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                // moveddist = afterpoint - beforepoint;
+                // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
+                ptcl.turn(cs_ang);
+                react_flag = true;
+                std::cout << "---cs---" << std::endl;
+                std::cout << "ene_buffer_: " << this->ene_buffer_ << " cs_len: " << cs_len << " cs_ang: " << cs_ang  << std::endl;
+            }
+            else if (pp_len <= pe_len && pp_len <= cs_len)
+            {
+                // Eigen::Vector3d beforepoint, afterpoint, moveddist;
+                ptcl.ene_ = MEC2;
+                ptcl.initptcl(ptcl.ene_, ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_);
+                // beforepoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                ptcl.move(this->ptclinsidecheck(ptcl) + pp_len);
+                // afterpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                // moveddist = afterpoint - beforepoint;
+                // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
+                react_flag = true;
+                std::cout << "---pp---" << std::endl;
+                std::cout << "ene_buffer_: " << this->ene_buffer_ << " pp_len: " << pp_len << std::endl;
+            }
+            else
+            {
+                std::cout << "judge error" << std::endl;
+                react_flag = false;
+            }
+        }
+
+        if (!react_flag && 0 < this->ene_buffer_)
+        {
+            #pragma omp critical
+            {
+            scinti_data << this->ene_buffer_ << "\n";
+            std::cout << "sum_ene check&add done" << std::endl;
+            }
+        }
+    }
 }

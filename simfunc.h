@@ -3,7 +3,7 @@
 #include <fstream>
 #include "scinti.h"
 
-void crosssec_test(scinti scintillator);
+// void crosssec_test(scinti scintillator);
 
 // Œõ“d‹zû’f–ÊÏ‚ğ•Ô‚·ŠÖ”
 double pe_crosssec(double ene, int z);
