@@ -39,21 +39,30 @@ int main()
         std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
         particle ptcl = ray_list.back();
         ptcl.initptcl(ptcl.ene_, ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_);
+        std::vector<bool> react_flag;
+        bool tmp_react_flag = true;
         bool absorp_flag = false;
         /*以下に使用するオブジェクトを定義*/
         scinti scinti1;
-        bool scinti1_react_flag = true;
+        react_flag.push_back(true);
+
+        scinti scinti2;
+        react_flag.push_back(true);
 
         /*---------------------------*/
 
-        while (scinti1_react_flag)
+        while (0 < std::count(react_flag.begin(), react_flag.end(), true))
         {
             if (absorp_flag)
             {
                 break;
             }
             /*以下に使用するオブジェクトを配置*/
-            scinti1.scintillation("initscinti", "initcs_nai", ptcl, scinti1_react_flag, absorp_flag);
+            scinti1.scintillation("scinti1", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+            react_flag.at(0) = tmp_react_flag;
+
+            scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+            react_flag.at(1) = tmp_react_flag;
 
             /*---------------------------*/
         }
