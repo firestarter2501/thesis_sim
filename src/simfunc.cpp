@@ -6,11 +6,11 @@
 
 // void crosssec_test(scinti scintillator)
 // {
-//     std::ofstream cs_pe("./data/cs_pe.dat");
-//     std::ofstream cs_cs("./data/cs_cs.dat");
-//     std::ofstream cs_pp("./data/cs_pp.dat");
+//     std::ofstream cs_pe("../data/cs_pe.dat");
+//     std::ofstream cs_cs("../data/cs_cs.dat");
+//     std::ofstream cs_pp("../data/cs_pp.dat");
 
-//     scintillator.initcs("./data/initcs_nai.conf");
+//     scintillator.initcs("../data/initcs_nai.conf");
 // //std::cout << scintillator.crosssec_table_.size() << "\t" << scintillator.crosssec_table_.at(0).size() << std::endl;
 
 //     // for(int i = 0; i < scintillator.crosssec_table_.size(); i++)
@@ -81,7 +81,7 @@ double cs_angle(double ene)
 
 void cs_angle_test(int num)
 {
-    std::ofstream cs_angle_1kev_result("./data/cs_angle_1kev.dat"), cs_angle_100kev_result("./data/cs_angle_100kev.dat"), cs_angle_500kev_result("./data/cs_angle_500kev.dat"), cs_angle_2000kev_result("./data/cs_angle_2000kev.dat"), cs_angle_10000kev_result("./data/cs_angle_10000kev.dat");
+    std::ofstream cs_angle_1kev_result("../data/cs_angle_1kev.dat"), cs_angle_100kev_result("../data/cs_angle_100kev.dat"), cs_angle_500kev_result("../data/cs_angle_500kev.dat"), cs_angle_2000kev_result("../data/cs_angle_2000kev.dat"), cs_angle_10000kev_result("../data/cs_angle_10000kev.dat");
     std::vector<int> cs_angle_1kev, cs_angle_100kev, cs_angle_500kev, cs_angle_2000kev, cs_angle_10000kev;
     double dispparam = 10000;
 

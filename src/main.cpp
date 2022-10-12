@@ -12,8 +12,8 @@ int main()
 {
     std::vector<particle> ray_list;
     std::vector<double> initptclconf_list;
-    std::ifstream initptclconf("./data/initptcl.conf");
-    std::ofstream ofstr("./data/sim.log");
+    std::ifstream initptclconf("../data/initptcl.conf");
+    std::ofstream ofstr("../data/sim.log");
     // std::streambuf* strbuf;
     std::string initline;
     /*strbuf = */std::cout.rdbuf(ofstr.rdbuf());

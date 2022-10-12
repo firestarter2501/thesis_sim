@@ -104,7 +104,7 @@ void particle::turn(double angle)
 
 void particle::turn_test(double theta, double phi, double angle)
 {
-    std::ofstream turn_rect_angle("./data/turn_rect_angle.dat");
+    std::ofstream turn_rect_angle("../data/turn_rect_angle.dat");
     turn_rect_angle << this->pt_x_ << "\t" << this->pt_y_ << "\t" << this->pt_z_ << "\n";
     this->dir_theta_ = theta;
     this->dir_phi_ = phi;

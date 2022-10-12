@@ -297,7 +297,7 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 
 void scinti::scintillation(std::string initscinti, std::string initcs, particle &ptcl, bool &react_flag, bool &absorp_flag)
 {
-    std::ifstream initscinticonf("./data/"+initscinti+".conf");
+    std::ifstream initscinticonf("../data/"+initscinti+".conf");
     std::vector<double> initscinticonf_list;
     std::string initline;
     while (std::getline(initscinticonf, initline))
@@ -305,11 +305,11 @@ void scinti::scintillation(std::string initscinti, std::string initcs, particle 
         initscinticonf_list.push_back(std::stod(initline));
         // std::cout << initline << std::endl;
     }
-    this->initcs("./data/"+initcs+".conf");
+    this->initcs("../data/"+initcs+".conf");
     this->initscinti(initscinticonf_list.at(0), initscinticonf_list.at(1), initscinticonf_list.at(2), initscinticonf_list.at(3)*M_PI, initscinticonf_list.at(4)*M_PI, initscinticonf_list.at(5), initscinticonf_list.at(6), initscinticonf_list.at(7), initscinticonf_list.at(8), initscinticonf_list.at(9), initscinticonf_list.at(10));
     
     react_flag = true;
-    std::string outfilename = "./data/scinti_" + initscinti + ".dat";
+    std::string outfilename = "../data/scinti_" + initscinti + ".dat";
     std::ofstream scinti_data(outfilename, std::ios::app);
     while (react_flag == true)
     {
