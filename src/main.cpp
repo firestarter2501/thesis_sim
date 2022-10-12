@@ -46,8 +46,8 @@ int main()
         scinti scinti1;
         react_flag.push_back(true);
 
-        scinti scinti2;
-        react_flag.push_back(true);
+        // scinti scinti2;
+        // react_flag.push_back(true);
 
         /*---------------------------*/
 
@@ -61,8 +61,8 @@ int main()
             scinti1.scintillation("scinti1", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
             react_flag.at(0) = tmp_react_flag;
 
-            scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
-            react_flag.at(1) = tmp_react_flag;
+            // scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+            // react_flag.at(1) = tmp_react_flag;
 
             /*---------------------------*/
         }

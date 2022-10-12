@@ -309,6 +309,7 @@ void scinti::scintillation(std::string initscinti, std::string initcs, particle 
     this->initscinti(initscinticonf_list.at(0), initscinticonf_list.at(1), initscinticonf_list.at(2), initscinticonf_list.at(3)*M_PI, initscinticonf_list.at(4)*M_PI, initscinticonf_list.at(5), initscinticonf_list.at(6), initscinticonf_list.at(7), initscinticonf_list.at(8), initscinticonf_list.at(9), initscinticonf_list.at(10));
     
     react_flag = true;
+    int react_count = 0;
     std::string outfilename = "../data/scinti_" + initscinti + ".dat";
     std::ofstream scinti_data(outfilename, std::ios::app);
     while (react_flag == true)
@@ -322,7 +323,7 @@ void scinti::scintillation(std::string initscinti, std::string initcs, particle 
             pp_cs = this->crosssec(ptcl.ene_, 3),
             pp_len = reactlen(pp_cs, this->dens_);
         
-        if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1/* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/)
+        if(traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1/* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*//* || react_count >= 1*/)
         {
             react_flag = false;
             std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
@@ -330,6 +331,7 @@ void scinti::scintillation(std::string initscinti, std::string initcs, particle 
         }
         else
         {
+            react_count++;
             std::cout << "before ene_buffer_: " << this->ene_buffer_ << std::endl;
             if(pe_len <= cs_len && pe_len <= pp_len)
             {
