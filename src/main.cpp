@@ -68,11 +68,8 @@ int main()
             scinti1.scintillation("scinti1", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
             react_flag.at(0) = tmp_react_flag;
 
-            if (ray_list.back().ene_ <= ptcl.ene_)
-            {
-                scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
-                react_flag.at(1) = tmp_react_flag;
-            }
+            scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+            react_flag.at(1) = tmp_react_flag;
 
             /*---------------------------*/
         }
