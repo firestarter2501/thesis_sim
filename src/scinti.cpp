@@ -163,12 +163,10 @@ void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, dou
 std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 {
     std::vector<std::vector<double>> return_point = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-    Eigen::Vector3d traject, ptclpoint, scinti_centerline, scinti_frontcenter, scinti_front_intersec, frontdist, scinti_backcenter, scinti_back_intersec, backdist;
+    Eigen::Vector3d traject, scinti_centerline, scinti_frontcenter, scinti_front_intersec, frontdist, scinti_backcenter, scinti_back_intersec, backdist;
 
     traject << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
     traject.normalize();
-
-    ptclpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
 
     // std::cout << "dir_theta_: " << this->dir_theta_ << ", dir_phi_: " << this->dir_phi_ << std::endl;
 
@@ -181,15 +179,11 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
 
     double front_t = (scinti_centerline(0) * (scinti_frontcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_frontcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_frontcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     scinti_front_intersec << ptcl.pt_x_ + traject(0) * front_t, ptcl.pt_y_ + traject(1) * front_t, ptcl.pt_z_ + traject(2) * front_t;
-
-    frontdist = scinti_front_intersec - scinti_frontcenter;
-    if (std::abs(frontdist.norm()) <= this->rad_)
-    {
-        return_point.at(0).at(0) = scinti_front_intersec(0);
-        return_point.at(0).at(1) = scinti_front_intersec(1);
-        return_point.at(0).at(2) = scinti_front_intersec(2);
-        // std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
-    }
+        
+    return_point.at(0).at(0) = scinti_front_intersec(0);
+    return_point.at(0).at(1) = scinti_front_intersec(1);
+    return_point.at(0).at(2) = scinti_front_intersec(2);
+    // std::cout << "front: " << return_point.at(0).at(0) << ", " << return_point.at(0).at(1) << ", " << return_point.at(0).at(2) << std::endl;
 
     scinti_backcenter << this->pt_x_ + (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::cos(this->dir_phi_), this->pt_y_ + (-this->depth_ / 2) * std::sin(this->dir_theta_) * std::sin(this->dir_phi_), this->pt_z_ + (-this->depth_ / 2) * std::cos(this->dir_theta_);
     // std::cout << "scinti_backcenter: " << scinti_backcenter(0) << ", " << scinti_backcenter(1) << ", " << scinti_backcenter(2) << std::endl;
@@ -197,14 +191,10 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     double back_t = (scinti_centerline(0) * (scinti_backcenter(0) - ptcl.pt_x_) + scinti_centerline(1) * (scinti_backcenter(1) - ptcl.pt_y_) + scinti_centerline(2) * (scinti_backcenter(2) - ptcl.pt_z_)) / ((scinti_centerline(0) * traject(0)) + (scinti_centerline(1) * traject(1)) + (scinti_centerline(2) * traject(2)));
     scinti_back_intersec << ptcl.pt_x_ + traject(0) * back_t, ptcl.pt_y_ + traject(1) * back_t, ptcl.pt_z_ + traject(2) * back_t;
 
-    backdist = scinti_back_intersec - scinti_backcenter;
-    if (std::abs(backdist.norm()) <= this->rad_)
-    {
-        return_point.at(1).at(0) = scinti_back_intersec(0);
-        return_point.at(1).at(1) = scinti_back_intersec(1);
-        return_point.at(1).at(2) = scinti_back_intersec(2);
-        // std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
-    }
+    return_point.at(1).at(0) = scinti_back_intersec(0);
+    return_point.at(1).at(1) = scinti_back_intersec(1);
+    return_point.at(1).at(2) = scinti_back_intersec(2);
+    // std::cout << "back: " << return_point.at(1).at(0) << ", " << return_point.at(1).at(1) << ", " << return_point.at(1).at(2) << std::endl;
 
     Eigen::Vector3d p, p2, vecs, v;
     p << scinti_frontcenter(0) - ptcl.pt_x_, scinti_frontcenter(1) - ptcl.pt_y_, scinti_frontcenter(2) - ptcl.pt_z_;
