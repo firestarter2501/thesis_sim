@@ -44,10 +44,11 @@ int main()
         bool tmp_react_flag = true;
         bool absorp_flag = false;
         /*以下に使用するオブジェクトを定義*/
-        // block block1;
-        // react_flag.push_back(true);
 
         scinti scinti1;
+        react_flag.push_back(true);
+        
+        block block1;
         react_flag.push_back(true);
 
         scinti scinti2;
@@ -62,14 +63,18 @@ int main()
                 break;
             }
             /*以下に使用するオブジェクトを配置*/
-            // block1.react("initcs_pb", "block1", ptcl, tmp_react_flag, absorp_flag);
-            // react_flag.at(0) = tmp_react_flag;
 
+            std::cout << "-----scinti1-----" << std::endl;
             scinti1.scintillation("scinti1", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
             react_flag.at(0) = tmp_react_flag;
 
-            scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+            std::cout << "-----block1-----" << std::endl;
+            block1.react("initcs_pb", "block1", ptcl, tmp_react_flag, absorp_flag);
             react_flag.at(1) = tmp_react_flag;
+
+            std::cout << "-----scinti2-----" << std::endl;
+            scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+            react_flag.at(2) = tmp_react_flag;
 
             /*---------------------------*/
         }
