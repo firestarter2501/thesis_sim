@@ -64,6 +64,8 @@ std::vector<std::vector<double>> block::intersec(particle ptcl)
     double bottom_t = (z_centerline(0) * (bottom_center(0) - ptcl.pt_x_) + z_centerline(1) * (bottom_center(1) - ptcl.pt_y_) + z_centerline(2) * (bottom_center(2) - ptcl.pt_z_)) / ((z_centerline(0) * traject(0)) + (z_centerline(1) * traject(1)) + (z_centerline(2) * traject(2)));
     bottom_intersec << ptcl.pt_x_ + traject(0) * bottom_t, ptcl.pt_y_ + traject(1) * bottom_t, ptcl.pt_z_ + traject(2) * bottom_t;
     return_point.push_back({bottom_intersec(0), bottom_intersec(1), bottom_intersec(2)});
+
+    return return_point;
 }
 
 std::vector<bool> block::intersecenablecheck(std::vector<std::vector<double>> intersecvec, particle ptcl)
@@ -71,7 +73,7 @@ std::vector<bool> block::intersecenablecheck(std::vector<std::vector<double>> in
     std::vector<bool> returnvec;
     for (vsize_t i = 0; i < intersecvec.size(); i++)
     {
-        if ((this->pt_x_-(this->depth_\2) <= intersecvec.at(i).at(0) && intersecvec.at(i).at(0) <= this->pt_x_+(this->depth_\2)) && (this->pt_y_-(this->width_\2) <= intersecvec.at(i).at(1) && intersecvec.at(i).at(1) <= this->pt_y_+(this->width_\2)) && (this->pt_z_-(this->height_\2) <= intersecvec.at(i).at(2) && intersecvec.at(i).at(2) <= this->pt_z_+(this->height_\2)))
+        if ((this->pt_x_-(this->depth_/2) <= intersecvec.at(i).at(0) && intersecvec.at(i).at(0) <= this->pt_x_+(this->depth_/2)) && (this->pt_y_-(this->width_/2) <= intersecvec.at(i).at(1) && intersecvec.at(i).at(1) <= this->pt_y_+(this->width_/2)) && (this->pt_z_-(this->height_/2) <= intersecvec.at(i).at(2) && intersecvec.at(i).at(2) <= this->pt_z_+(this->height_/2)))
         {
             returnvec.push_back(true);
         }
@@ -85,7 +87,9 @@ std::vector<bool> block::intersecenablecheck(std::vector<std::vector<double>> in
 
 double block::ptclinsidecheck(particle ptcl)
 {
-    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
+    Eigen::Vector3d ptclpoint;
+    ptclpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+    std::vector<std::vector<double>> intersec = block::intersec(ptcl);
     std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
     int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
 
@@ -109,7 +113,7 @@ double block::ptclinsidecheck(particle ptcl)
     }
 }
 
-std::string scinti::showfacetype(int type)
+std::string block::showfacetype(int type)
 {
     if (type == 0)
     {
