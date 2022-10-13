@@ -5,6 +5,7 @@
 #include "simfunc.h"
 #include "particle.h"
 #include "scinti.h"
+#include "block.h"
 
 using vsize_t = std::vector<int>::size_type;
 
@@ -43,11 +44,14 @@ int main()
         bool tmp_react_flag = true;
         bool absorp_flag = false;
         /*以下に使用するオブジェクトを定義*/
+        // block block1;
+        // react_flag.push_back(true);
+
         scinti scinti1;
         react_flag.push_back(true);
 
-        // scinti scinti2;
-        // react_flag.push_back(true);
+        scinti scinti2;
+        react_flag.push_back(true);
 
         /*---------------------------*/
 
@@ -58,11 +62,17 @@ int main()
                 break;
             }
             /*以下に使用するオブジェクトを配置*/
+            // block1.react("initcs_pb", "block1", ptcl, tmp_react_flag, absorp_flag);
+            // react_flag.at(0) = tmp_react_flag;
+
             scinti1.scintillation("scinti1", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
             react_flag.at(0) = tmp_react_flag;
 
-            // scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
-            // react_flag.at(1) = tmp_react_flag;
+            if (ray_list.back().ene_ <= ptcl.ene_)
+            {
+                scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
+                react_flag.at(1) = tmp_react_flag;
+            }
 
             /*---------------------------*/
         }

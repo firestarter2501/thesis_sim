@@ -21,7 +21,7 @@ std::vector<bool> scinti::intersecenablecheck(std::vector<std::vector<double>> i
         ptcldir.normalize();
         intersecdir.normalize();
         dirnorm = intersecdir - ptcldir;
-        std::cout << "dirnorm.norm(): " << dirnorm.norm() << std::endl;
+        // std::cout << "dirnorm.norm(): " << dirnorm.norm() << std::endl;
         if (std::abs(centerdist.norm()) <= std::sqrt(2) * this->rad_ && dirnorm.norm() < 0.000001)
         {
             returnvec.push_back(true);
@@ -333,4 +333,8 @@ void scinti::scintillation(std::string scintidata, std::string csdata, particle 
             }
         }
     }
+    // if (0 < ptcl.ene_ && !absorp_flag)
+    // {
+    //     react_flag = true;
+    // }
 }

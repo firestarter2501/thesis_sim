@@ -135,7 +135,7 @@ std::string block::showfacetype(int type)
     {
         return "top";
     }
-    else if (type == 3)
+    else if (type == 5)
     {
         return "bottom";
     }
@@ -273,4 +273,8 @@ void block::react(std::string blockdata, std::string csdata, particle &ptcl, boo
             }
         }
     }
+    // if (0 < ptcl.ene_ && !absorp_flag)
+    // {
+    //     react_flag = true;
+    // }
 }
