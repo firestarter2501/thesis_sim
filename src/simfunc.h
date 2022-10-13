@@ -28,3 +28,7 @@ int randchoice(std::vector<double> probvec);
 double lineareq(double ene, double slope, double intersec);
 
 void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len);
+
+void initcs(std::string conffilepath, std::vector<std::vector<double>> &crosssec_table);
+
+double crosssec(double ene, int type, std::vector<std::vector<double>> crosssec_table);

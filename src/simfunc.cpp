@@ -153,3 +153,40 @@ double lineareq(double ene, double slope, double intersec)
 {
     return (ene*slope)+intersec;
 }
+
+void initcs(std::string conffilepath, std::vector<std::vector<double>> &crosssec_table)
+{
+    std::ifstream datafile(conffilepath);
+    std::string line;
+    while(getline(datafile, line))
+    {
+        std::istringstream stream(line);
+        std::string field;
+        std::vector<double> tmpvec;
+        while(getline(stream, field, '\t'))
+        {
+            tmpvec.push_back(std::stod(field));
+        }
+        crosssec_table.push_back(tmpvec);
+        tmpvec = {};
+    }
+}
+
+double crosssec(double ene, int type, std::vector<std::vector<double>> crosssec_table)
+{
+    if (crosssec_table.at(crosssec_table.size()-1).at(0) <= ene)
+    {
+        return 0;
+    }
+    int ene_line = 0;
+    while (crosssec_table.at(ene_line+1).at(0) < ene)
+    {
+        ene_line++;
+    }
+    
+    // std::cout << "ene:" << ene << " ene_line:" << ene_line << std::endl;
+
+    double alpha = (ene-crosssec_table.at(ene_line).at(0))/(crosssec_table.at(ene_line+1).at(0)-crosssec_table.at(ene_line).at(0)),
+        cs_tmp = crosssec_table.at(ene_line).at(type)+((crosssec_table.at(ene_line+1).at(type)-crosssec_table.at(ene_line).at(type))*alpha);
+    return cs_tmp;
+}
