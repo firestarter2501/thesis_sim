@@ -326,7 +326,7 @@ void scinti::scintillation(std::string scintidata, std::string csdata, particle 
 
         if (!react_flag && 0 < this->ene_buffer_)
         {
-#pragma omp critical
+            #pragma omp critical
             {
                 scinti_data << this->ene_buffer_ << "\n";
                 std::cout << "sum_ene check&add done" << std::endl;
