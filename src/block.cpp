@@ -6,40 +6,195 @@
 
 using vsize_t = std::vector<int>::size_type;
 
-void block::initcs(std::string conffilepath)
+void block::initblock(double pt_x, double pt_y, double pt_z, double height, double width, double depth, double z, double dens, double atomweight)
 {
-    std::ifstream datafile(conffilepath);
-    std::string line;
-    while(getline(datafile, line))
-    {
-        std::istringstream stream(line);
-        std::string field;
-        std::vector<double> tmpvec;
-        while(getline(stream, field, '\t'))
-        {
-            tmpvec.push_back(std::stod(field));
-        }
-        this->crosssec_table_.push_back(tmpvec);
-        tmpvec = {};
-    }
+    this->pt_x_ = pt_x;
+    this->pt_y_ = pt_y;
+    this->pt_z_ = pt_z;
+    this->height_ = height;
+    this->width_ = width;
+    this->depth_ = depth;
+    this->z_ = z;
+    this->dens_ = dens;
+    this->ndens_ = (dens / atomweight) * NUMA;
+    this->atomweight_ = atomweight;
 }
 
-double block::crosssec(double ene, int type)
+std::vector<std::vector<double>> block::intersec(particle ptcl)
 {
-    if (this->crosssec_table_.at(this->crosssec_table_.size()-1).at(0) <= ene)
+    std::vector<std::vector<double>> return_point;
+
+    Eigen::Vector3d traject;
+
+    traject << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
+    traject.normalize();
+
+    Eigen::Vector3d x_centerline, front_center, front_intersec, back_center, back_intersec;
+    x_centerline << 1, 0, 0;
+    front_center << this->pt_x_+(this->depth_/2), this->pt_y_, this->pt_z_;
+    double front_t = (x_centerline(0) * (front_center(0) - ptcl.pt_x_) + x_centerline(1) * (front_center(1) - ptcl.pt_y_) + x_centerline(2) * (front_center(2) - ptcl.pt_z_)) / ((x_centerline(0) * traject(0)) + (x_centerline(1) * traject(1)) + (x_centerline(2) * traject(2)));
+    front_intersec << ptcl.pt_x_ + traject(0) * front_t, ptcl.pt_y_ + traject(1) * front_t, ptcl.pt_z_ + traject(2) * front_t;
+    return_point.push_back({front_intersec(0), front_intersec(1), front_intersec(2)});
+    
+    back_center << this->pt_x_-(this->depth_/2), this->pt_y_, this->pt_z_;
+    double back_t = (x_centerline(0) * (back_center(0) - ptcl.pt_x_) + x_centerline(1) * (back_center(1) - ptcl.pt_y_) + x_centerline(2) * (front_center(2) - ptcl.pt_z_)) / ((x_centerline(0) * traject(0)) + (x_centerline(1) * traject(1)) + (x_centerline(2) * traject(2)));
+    back_intersec << ptcl.pt_x_ + traject(0) * back_t, ptcl.pt_y_ + traject(1) * back_t, ptcl.pt_z_ + traject(2) * back_t;
+    return_point.push_back({back_intersec(0), back_intersec(1), back_intersec(2)});
+
+    Eigen::Vector3d y_centerline, left_center, left_intersec, right_center, right_intersec;
+    y_centerline << 0, 1, 0;
+    left_center << this->pt_x_, this->pt_y_-(this->width_/2), this->pt_z_;
+    double left_t = (y_centerline(0) * (left_center(0) - ptcl.pt_x_) + y_centerline(1) * (left_center(1) - ptcl.pt_y_) + y_centerline(2) * (left_center(2) - ptcl.pt_z_)) / ((y_centerline(0) * traject(0)) + (y_centerline(1) * traject(1)) + (y_centerline(2) * traject(2)));
+    left_intersec << ptcl.pt_x_ + traject(0) * left_t, ptcl.pt_y_ + traject(1) * left_t, ptcl.pt_z_ + traject(2) * left_t;
+    return_point.push_back({left_intersec(0), left_intersec(1), left_intersec(2)});
+    
+    right_center << this->pt_x_, this->pt_y_+(this->width_/2), this->pt_z_;
+    double right_t = (y_centerline(0) * (right_center(0) - ptcl.pt_x_) + y_centerline(1) * (right_center(1) - ptcl.pt_y_) + y_centerline(2) * (right_center(2) - ptcl.pt_z_)) / ((y_centerline(0) * traject(0)) + (y_centerline(1) * traject(1)) + (y_centerline(2) * traject(2)));
+    right_intersec << ptcl.pt_x_ + traject(0) * right_t, ptcl.pt_y_ + traject(1) * right_t, ptcl.pt_z_ + traject(2) * right_t;
+    return_point.push_back({right_intersec(0), right_intersec(1), right_intersec(2)});
+
+    Eigen::Vector3d z_centerline, top_center, top_intersec, bottom_center, bottom_intersec;
+    z_centerline << 0, 0, 1;
+    top_center << this->pt_x_, this->pt_y_, this->pt_z_+(this->height_/2);
+    double top_t = (z_centerline(0) * (top_center(0) - ptcl.pt_x_) + z_centerline(1) * (top_center(1) - ptcl.pt_y_) + z_centerline(2) * (top_center(2) - ptcl.pt_z_)) / ((z_centerline(0) * traject(0)) + (z_centerline(1) * traject(1)) + (z_centerline(2) * traject(2)));
+    top_intersec << ptcl.pt_x_ + traject(0) * top_t, ptcl.pt_y_ + traject(1) * top_t, ptcl.pt_z_ + traject(2) * top_t;
+    return_point.push_back({top_intersec(0), top_intersec(1), top_intersec(2)});
+    
+    bottom_center << this->pt_x_, this->pt_y_, this->pt_z_-(this->height_/2);
+    double bottom_t = (z_centerline(0) * (bottom_center(0) - ptcl.pt_x_) + z_centerline(1) * (bottom_center(1) - ptcl.pt_y_) + z_centerline(2) * (bottom_center(2) - ptcl.pt_z_)) / ((z_centerline(0) * traject(0)) + (z_centerline(1) * traject(1)) + (z_centerline(2) * traject(2)));
+    bottom_intersec << ptcl.pt_x_ + traject(0) * bottom_t, ptcl.pt_y_ + traject(1) * bottom_t, ptcl.pt_z_ + traject(2) * bottom_t;
+    return_point.push_back({bottom_intersec(0), bottom_intersec(1), bottom_intersec(2)});
+}
+
+std::vector<bool> block::intersecenablecheck(std::vector<std::vector<double>> intersecvec, particle ptcl)
+{
+    std::vector<bool> returnvec;
+    for (vsize_t i = 0; i < intersecvec.size(); i++)
+    {
+        if ((this->pt_x_-(this->depth_\2) <= intersecvec.at(i).at(0) && intersecvec.at(i).at(0) <= this->pt_x_+(this->depth_\2)) && (this->pt_y_-(this->width_\2) <= intersecvec.at(i).at(1) && intersecvec.at(i).at(1) <= this->pt_y_+(this->width_\2)) && (this->pt_z_-(this->height_\2) <= intersecvec.at(i).at(2) && intersecvec.at(i).at(2) <= this->pt_z_+(this->height_\2)))
+        {
+            returnvec.push_back(true);
+        }
+        else
+        {
+            returnvec.push_back(false);
+        }
+    }
+    return returnvec;
+}
+
+double block::ptclinsidecheck(particle ptcl)
+{
+    std::vector<std::vector<double>> intersec = scinti::intersec(ptcl);
+    std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
+    int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
+
+    if (ec_truecount != 2)
     {
         return 0;
     }
-    int ene_line = 0;
-    while (this->crosssec_table_.at(ene_line+1).at(0) < ene)
+    else
     {
-        ene_line++;
+        auto ec_true1 = std::find(enablecheck.begin(), enablecheck.end(), true);
+        int type1 = std::distance(enablecheck.begin(), ec_true1);
+        auto ec_true2 = std::find(++ec_true1, enablecheck.end(), true);
+        int type2 = std::distance(enablecheck.begin(), ec_true2);
+        Eigen::Vector3d type1vec, type2vec, traject1vec, traject2vec;
+        type1vec << intersec.at(type1).at(0), intersec.at(type1).at(1), intersec.at(type1).at(2);
+        type2vec << intersec.at(type2).at(0), intersec.at(type2).at(1), intersec.at(type2).at(2);
+        traject1vec = type1vec - ptclpoint;
+        traject2vec = type2vec - ptclpoint;
+        std::cout << "ptclinsidecheck: " << std::min({std::abs(traject1vec.norm()), std::abs(traject2vec.norm())}) << std::endl;
+        return std::min({std::abs(traject1vec.norm()), std::abs(traject2vec.norm())});
     }
-    
-    // std::cout << "ene:" << ene << " ene_line:" << ene_line << std::endl;
+}
 
-    double alpha = (ene-this->crosssec_table_.at(ene_line).at(0))/(this->crosssec_table_.at(ene_line+1).at(0)-this->crosssec_table_.at(ene_line).at(0)),
-        cs_tmp = this->crosssec_table_.at(ene_line).at(type)+((this->crosssec_table_.at(ene_line+1).at(type)-this->crosssec_table_.at(ene_line).at(type))*alpha);
-    return cs_tmp;
+std::string scinti::showfacetype(int type)
+{
+    if (type == 0)
+    {
+        return "front";
+    }
+    else if (type == 1)
+    {
+        return "back";
+    }
+    else if (type == 2)
+    {
+        return "left";
+    }
+    else if (type == 3)
+    {
+        return "right";
+    }
+    else if (type == 4)
+    {
+        return "top";
+    }
+    else if (type == 3)
+    {
+        return "bottom";
+    }
+    else
+    {
+        return "facetypeerror";
+    }
+}
+
+double block::intersec_dist(particle ptcl)
+{
+    std::vector<std::vector<double>> intersec = block::intersec(ptcl);
+    std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
+
+    // intersecの座標表示
+    for (vsize_t i = 0; i < intersec.size(); i++)
+    {
+        std::cout << showfacetype(i) << ": ";
+        for (vsize_t j = 0; j < intersec.at(0).size(); j++)
+        {
+            std::cout << intersec.at(i).at(j) << "\t";
+        }
+        std::cout << enablecheck.at(i) << "\n";
+    }
+
+    int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
+    if (ec_truecount == 0)
+    {
+        std::cout << "outside(all false)" << std::endl;
+        return -1;
+    }
+    else if (ec_truecount == 1)
+    {
+        auto ec_true = std::find(enablecheck.begin(), enablecheck.end(), true);
+        int type = std::distance(enablecheck.begin(), ec_true);
+        Eigen::Vector3d ptclvec, intersecvec, trajectvec;
+        ptclvec << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+        intersecvec << intersec.at(type).at(0), intersec.at(type).at(1), intersec.at(type).at(2);
+        trajectvec = intersecvec - ptclvec;
+        std::cout << "ptcl & " << showfacetype(type) << " dist: " << trajectvec.norm() << std::endl;
+        return trajectvec.norm();
+    }
+    else if (ec_truecount == 2)
+    {
+        auto ec_true1 = std::find(enablecheck.begin(), enablecheck.end(), true);
+        int type1 = std::distance(enablecheck.begin(), ec_true1);
+        auto ec_true2 = std::find(++ec_true1, enablecheck.end(), true);
+        int type2 = std::distance(enablecheck.begin(), ec_true2);
+        Eigen::Vector3d type1vec, type2vec, trajectvec;
+        type1vec << intersec.at(type1).at(0), intersec.at(type1).at(1), intersec.at(type1).at(2);
+        type2vec << intersec.at(type2).at(0), intersec.at(type2).at(1), intersec.at(type2).at(2);
+        trajectvec = type2vec - type1vec;
+        std::cout << showfacetype(type1) << " & " << showfacetype(type2) << " dist: " << trajectvec.norm() << std::endl;
+        return trajectvec.norm();
+    }
+    else
+    {
+        std::cout << "error(too many true)" << std::endl;
+        return -1;
+    }
+}
+
+void block::react(std::string initblock, std::string initcs, particle &ptcl, bool &react_flag, bool &absorp_flag)
+{
 
 }
