@@ -198,7 +198,79 @@ double block::intersec_dist(particle ptcl)
     }
 }
 
-void block::react(std::string initblock, std::string initcs, particle &ptcl, bool &react_flag, bool &absorp_flag)
+void block::react(std::string blockdata, std::string csdata, particle &ptcl, bool &react_flag, bool &absorp_flag)
 {
+    std::ifstream blockdataconf("../data/" + blockdata + ".conf");
+    std::vector<double> blockdataconf_list;
+    std::string initline;
+    while (std::getline(blockdataconf, initline))
+    {
+        blockdataconf_list.push_back(std::stod(initline));
+        // std::cout << initline << std::endl;
+    }
+    initcs("../data/" + csdata + ".conf", this->crosssec_table_);
+    this->initblock(blockdataconf_list.at(0), blockdataconf_list.at(1), blockdataconf_list.at(2), blockdataconf_list.at(3), blockdataconf_list.at(4), blockdataconf_list.at(5), blockdataconf_list.at(6), blockdataconf_list.at(7), blockdataconf_list.at(8));
 
+    react_flag = true;
+    int react_count = 0;
+    while (react_flag == true)
+    {
+        double traject_dist = this->intersec_dist(ptcl),
+               pe_cs = crosssec(ptcl.ene_, 1, this->crosssec_table_),
+               pe_len = reactlen(pe_cs, this->dens_),
+               cs_ang = cs_angle(ptcl.ene_),
+               cs_cs = crosssec(ptcl.ene_, 2, this->crosssec_table_),
+               cs_len = reactlen(cs_cs, this->dens_),
+               pp_cs = crosssec(ptcl.ene_, 3, this->crosssec_table_),
+               pp_len = reactlen(pp_cs, this->dens_);
+
+        if (traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1 /* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/ /* || react_count >= 1*/)
+        {
+            react_flag = false;
+            std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
+        }
+        else
+        {
+            react_count++;
+            if (pe_len <= cs_len && pe_len <= pp_len)
+            {
+                react_flag = false;
+                absorp_flag = true;
+                std::cout << "---pe---" << std::endl;
+            }
+            else if (cs_len <= pe_len && cs_len <= pp_len)
+            {
+                // Eigen::Vector3d beforepoint, afterpoint, moveddist;
+                ptcl.ene_ = scatphotonene(ptcl.ene_, cs_ang);
+                // beforepoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                ptcl.move(this->ptclinsidecheck(ptcl) + cs_len);
+                // afterpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                // moveddist = afterpoint - beforepoint;
+                // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
+                ptcl.turn(cs_ang);
+                react_flag = true;
+                std::cout << "---cs---" << std::endl;
+                std::cout << " cs_len: " << cs_len << " cs_ang: " << cs_ang << std::endl;
+            }
+            else if (pp_len <= pe_len && pp_len <= cs_len)
+            {
+                // Eigen::Vector3d beforepoint, afterpoint, moveddist;
+                ptcl.ene_ = MEC2;
+                ptcl.initptcl(ptcl.ene_, ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_);
+                // beforepoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                ptcl.move(this->ptclinsidecheck(ptcl) + pp_len);
+                // afterpoint << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
+                // moveddist = afterpoint - beforepoint;
+                // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
+                react_flag = true;
+                std::cout << "---pp---" << std::endl;
+                std::cout << " pp_len: " << pp_len << std::endl;
+            }
+            else
+            {
+                std::cout << "judge error" << std::endl;
+                react_flag = false;
+            }
+        }
+    }
 }

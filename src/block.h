@@ -22,5 +22,5 @@ class block
         void initblock(double pt_x, double pt_y, double pt_z, double height, double width, double depth, double z, double dens, double atomweight);
         double intersec_dist(particle ptcl);
         double ptclinsidecheck(particle ptcl);
-        void react(std::string initblock, std::string initcs, particle &ptcl, bool &react_flag, bool &absorp_flag);
+        void react(std::string blockdata, std::string csdata, particle &ptcl, bool &react_flag, bool &absorp_flag);
 };
