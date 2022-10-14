@@ -73,7 +73,13 @@ std::vector<bool> block::intersecenablecheck(std::vector<std::vector<double>> in
     std::vector<bool> returnvec;
     for (vsize_t i = 0; i < intersecvec.size(); i++)
     {
-        if ((this->pt_x_-(this->depth_/2) <= intersecvec.at(i).at(0) && intersecvec.at(i).at(0) <= this->pt_x_+(this->depth_/2)) && (this->pt_y_-(this->width_/2) <= intersecvec.at(i).at(1) && intersecvec.at(i).at(1) <= this->pt_y_+(this->width_/2)) && (this->pt_z_-(this->height_/2) <= intersecvec.at(i).at(2) && intersecvec.at(i).at(2) <= this->pt_z_+(this->height_/2)))
+        Eigen::Vector3d ptcldir, intersecdir, dirnorm;
+        ptcldir << std::sin(ptcl.dir_theta_) * std::cos(ptcl.dir_phi_), std::sin(ptcl.dir_theta_) * std::sin(ptcl.dir_phi_), std::cos(ptcl.dir_theta_);
+        intersecdir << intersecvec.at(i).at(0) - ptcl.pt_x_, intersecvec.at(i).at(1) - ptcl.pt_y_, intersecvec.at(i).at(2) - ptcl.pt_z_;
+        ptcldir.normalize();
+        intersecdir.normalize();
+        dirnorm = intersecdir - ptcldir;
+        if (dirnorm.norm() < 0.000001 && (this->pt_x_-(this->depth_/2) <= intersecvec.at(i).at(0) && intersecvec.at(i).at(0) <= this->pt_x_+(this->depth_/2)) && (this->pt_y_-(this->width_/2) <= intersecvec.at(i).at(1) && intersecvec.at(i).at(1) <= this->pt_y_+(this->width_/2)) && (this->pt_z_-(this->height_/2) <= intersecvec.at(i).at(2) && intersecvec.at(i).at(2) <= this->pt_z_+(this->height_/2)))
         {
             returnvec.push_back(true);
         }
@@ -223,6 +229,8 @@ void block::react(std::string blockdata, std::string csdata, particle &ptcl, boo
                cs_len = reactlen(cs_cs, this->dens_),
                pp_cs = crosssec(ptcl.ene_, 3, this->crosssec_table_),
                pp_len = reactlen(pp_cs, this->dens_);
+        
+        std::cout << "pe_cs: " << pe_cs << ", cs_cs: " << cs_cs << ", pp_cs: " << pp_cs << std::endl;
 
         if (traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1 /* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/ /* || react_count >= 1*/)
         {
