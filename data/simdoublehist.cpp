@@ -16,9 +16,9 @@ h2->Fill(x2);
 h2->SetLineColor(4);
 h2->Draw("same");
 gPad->SetLogy(1);
-TLegend *legend = new TLegend( 0.8, 0.68, 0.99, 0.78) ; //（）の中は位置の指定（左下の x , y 、右上の x , y ）
-legend->AddEntry( h1, "1" , "l") ; // AddEntry( pointer , "interpretation" , "option" )
-legend->AddEntry( h2, "2" , "l") ; // option は　"f"=box, "l"="L"=line, "p"=marker
+TLegend *legend = new TLegend( 0.8, 0.68, 0.99, 0.78) ;
+legend->AddEntry( h1, "scinti1" , "l") ;
+legend->AddEntry( h2, "scinti2" , "l") ;
 // legend->SetFillColor(0);
 legend->Draw() ;
 }
