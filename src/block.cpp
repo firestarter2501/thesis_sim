@@ -114,7 +114,7 @@ double block::ptclinsidecheck(particle ptcl)
         type2vec << intersec.at(type2).at(0), intersec.at(type2).at(1), intersec.at(type2).at(2);
         traject1vec = type1vec - ptclpoint;
         traject2vec = type2vec - ptclpoint;
-        std::cout << "ptclinsidecheck: " << std::min({std::abs(traject1vec.norm()), std::abs(traject2vec.norm())}) << std::endl;
+        //*std::cout << "ptclinsidecheck: " << std::min({std::abs(traject1vec.norm()), std::abs(traject2vec.norm())}) << std::endl;
         return std::min({std::abs(traject1vec.norm()), std::abs(traject2vec.norm())});
     }
 }
@@ -159,18 +159,18 @@ double block::intersec_dist(particle ptcl)
     // intersecの座標表示
     for (vsize_t i = 0; i < intersec.size(); i++)
     {
-        std::cout << showfacetype(i) << ": ";
+        //*std::cout << showfacetype(i) << ": ";
         for (vsize_t j = 0; j < intersec.at(0).size(); j++)
         {
-            std::cout << intersec.at(i).at(j) << "\t";
+            //*std::cout << intersec.at(i).at(j) << "\t";
         }
-        std::cout << enablecheck.at(i) << "\n";
+        //*std::cout << enablecheck.at(i) << "\n";
     }
 
     int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
     if (ec_truecount == 0)
     {
-        std::cout << "outside(all false)" << std::endl;
+        //*std::cout << "outside(all false)" << std::endl;
         return -1;
     }
     else if (ec_truecount == 1)
@@ -181,7 +181,7 @@ double block::intersec_dist(particle ptcl)
         ptclvec << ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_;
         intersecvec << intersec.at(type).at(0), intersec.at(type).at(1), intersec.at(type).at(2);
         trajectvec = intersecvec - ptclvec;
-        std::cout << "ptcl & " << showfacetype(type) << " dist: " << trajectvec.norm() << std::endl;
+        //*std::cout << "ptcl & " << showfacetype(type) << " dist: " << trajectvec.norm() << std::endl;
         return trajectvec.norm();
     }
     else if (ec_truecount == 2)
@@ -194,12 +194,12 @@ double block::intersec_dist(particle ptcl)
         type1vec << intersec.at(type1).at(0), intersec.at(type1).at(1), intersec.at(type1).at(2);
         type2vec << intersec.at(type2).at(0), intersec.at(type2).at(1), intersec.at(type2).at(2);
         trajectvec = type2vec - type1vec;
-        std::cout << showfacetype(type1) << " & " << showfacetype(type2) << " dist: " << trajectvec.norm() << std::endl;
+        //*std::cout << showfacetype(type1) << " & " << showfacetype(type2) << " dist: " << trajectvec.norm() << std::endl;
         return trajectvec.norm();
     }
     else
     {
-        std::cout << "error(too many true)" << std::endl;
+        //*std::cout << "error(too many true)" << std::endl;
         return -1;
     }
 }
@@ -230,12 +230,12 @@ void block::react(std::string blockdata, std::string csdata, particle &ptcl, boo
                pp_cs = crosssec(ptcl.ene_, 3, this->crosssec_table_),
                pp_len = reactlen(pp_cs, this->dens_);
         
-        std::cout << "pe_cs: " << pe_cs << ", cs_cs: " << cs_cs << ", pp_cs: " << pp_cs << std::endl;
+        //*std::cout << "pe_cs: " << pe_cs << ", cs_cs: " << cs_cs << ", pp_cs: " << pp_cs << std::endl;
 
         if (traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1 /* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/ /* || react_count >= 1*/)
         {
             react_flag = false;
-            std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
+            //*std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
         }
         else
         {
@@ -244,7 +244,7 @@ void block::react(std::string blockdata, std::string csdata, particle &ptcl, boo
             {
                 react_flag = false;
                 absorp_flag = true;
-                std::cout << "---pe---" << std::endl;
+                //*std::cout << "---pe---" << std::endl;
             }
             else if (cs_len <= pe_len && cs_len <= pp_len)
             {
@@ -257,8 +257,8 @@ void block::react(std::string blockdata, std::string csdata, particle &ptcl, boo
                 // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                 ptcl.turn(cs_ang);
                 react_flag = true;
-                std::cout << "---cs---" << std::endl;
-                std::cout << " cs_len: " << cs_len << " cs_ang: " << cs_ang << std::endl;
+                //*std::cout << "---cs---" << std::endl;
+                //*std::cout << " cs_len: " << cs_len << " cs_ang: " << cs_ang << std::endl;
             }
             else if (pp_len <= pe_len && pp_len <= cs_len)
             {
@@ -271,12 +271,12 @@ void block::react(std::string blockdata, std::string csdata, particle &ptcl, boo
                 // moveddist = afterpoint - beforepoint;
                 // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                 react_flag = true;
-                std::cout << "---pp---" << std::endl;
-                std::cout << " pp_len: " << pp_len << std::endl;
+                //*std::cout << "---pp---" << std::endl;
+                //*std::cout << " pp_len: " << pp_len << std::endl;
             }
             else
             {
-                std::cout << "judge error" << std::endl;
+                //*std::cout << "judge error" << std::endl;
                 react_flag = false;
             }
         }

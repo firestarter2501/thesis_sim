@@ -29,54 +29,54 @@ int main()
         ray_list.push_back(particle());
         ray_list.back().initptcl(initptclconf_list.at(0+(num*4)), initptclconf_list.at(1+(num*4)), initptclconf_list.at(2+(num*4)), initptclconf_list.at(3+(num*4)));
     }
-    std::cout << "loaded " << ray_list.size() << " photon." << std::endl;
-    std::cout << "please define run loop num" << std::endl;
+    //*std::cout << "loaded " << ray_list.size() << " photon." << std::endl;
+    //*std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
-    std::cout << "run loop defined " << run_count << std::endl;
+    //*std::cout << "run loop defined " << run_count << std::endl;
+
+    /*出力ファイル定義*/
+    std::ofstream scinti1ofstr("../data/scinti1.dat");
+    std::ofstream scinti2ofstr("../data/scinti2.dat");
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
-        std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
+        //*std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
         particle ptcl = ray_list.back();
         ptcl.initptcl(ptcl.ene_, ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_);
-        std::vector<bool> react_flag;
-        bool tmp_react_flag = true;
-        bool absorp_flag = false;
-        /*以下に使用するオブジェクトを定義*/
 
+        /*オブジェクト初期化*/
         scinti scinti1;
-        react_flag.push_back(true);
-        
-        block block1;
-        react_flag.push_back(true);
+        double scinti1tmp = 1;
 
         scinti scinti2;
-        react_flag.push_back(true);
+        double scinti2tmp = 1;
 
-        /*---------------------------*/
-
-        while (0 < std::count(react_flag.begin(), react_flag.end(), true))
+        while (scinti1tmp+scinti2tmp > 0)
         {
-            if (absorp_flag)
+            if (ptcl.ene_ <= 0)
             {
                 break;
             }
-            /*以下に使用するオブジェクトを配置*/
 
-            std::cout << "-----scinti1-----" << std::endl;
-            scinti1.scintillation("scinti1", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
-            react_flag.at(0) = tmp_react_flag;
+            /*オブジェクトとロジックを配置*/
+            //*std::cout << "-----scinti1-----" << std::endl;
+            scinti1tmp = scinti1.scintillation("scinti1", "initcs_nai", ptcl);
 
-            std::cout << "-----block1-----" << std::endl;
-            block1.react("initcs_pb", "block1", ptcl, tmp_react_flag, absorp_flag);
-            react_flag.at(1) = tmp_react_flag;
+            //*std::cout << "-----scinti2-----" << std::endl;
+            scinti2tmp = scinti2.scintillation("scinti2", "initcs_nai", ptcl);
 
-            std::cout << "-----scinti2-----" << std::endl;
-            scinti1.scintillation("scinti2", "initcs_nai", ptcl, tmp_react_flag, absorp_flag);
-            react_flag.at(2) = tmp_react_flag;
+            //*std::cout << "scinti1tmp: " << scinti1tmp << ", scinti2tmp: " << scinti2tmp << std::endl;
 
-            /*---------------------------*/
+            if (scinti1tmp > 0 && scinti2tmp > 0)
+            {
+                //*std::cout << "enable" << std::endl;
+                #pragma omp critical
+                {
+                scinti1ofstr << scinti1tmp << "\n";
+                scinti2ofstr << scinti2tmp << "\n";
+                }
+            }
         }
     }
 }
