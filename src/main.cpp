@@ -52,7 +52,7 @@ int main()
         scinti scinti2;
         double scinti2tmp = 1;
 
-        while (scinti1tmp+scinti2tmp > 0)
+        while (scinti1tmp+scinti2tmp > -2)
         {
             if (ptcl.ene_ <= 0)
             {

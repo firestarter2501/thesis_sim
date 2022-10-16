@@ -257,6 +257,7 @@ double scinti::scintillation(std::string scintidata, std::string csdata, particl
 
     bool react_flag = true;
     int react_count = 0;
+    this->ene_buffer_ = 0;
     while (react_flag == true)
     {
         double traject_dist = this->intersec_dist(ptcl),
