@@ -35,9 +35,9 @@ int main()
     //*std::cout << "run loop defined " << run_count << std::endl;
 
     /*出力ファイル定義*/
-    // std::ofstream scintiofstr("../data/scinti.dat");
-    std::ofstream scinti1ofstr("../data/scinti1.dat");
-    std::ofstream scinti2ofstr("../data/scinti2.dat");
+    std::ofstream scintiofstr("../data/scinti.dat");
+    // std::ofstream scinti1ofstr("../data/scinti1.dat");
+    // std::ofstream scinti2ofstr("../data/scinti2.dat");
 
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
@@ -70,9 +70,9 @@ int main()
                 //*std::cout << "enable" << std::endl;
                 #pragma omp critical
                 {
-                // scintiofstr << scinti1tmp << "\t" << scinti2tmp << "\n";
-                scinti1ofstr << scinti1tmp << "\n";
-                scinti2ofstr << scinti2tmp << "\n";
+                scintiofstr << scinti1tmp << "\t" << scinti2tmp << "\n";
+                // scinti1ofstr << scinti1tmp << "\n";
+                // scinti2ofstr << scinti2tmp << "\n";
                 }
             }
         }
