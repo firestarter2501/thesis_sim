@@ -63,6 +63,11 @@ int main()
             //*std::cout << "-----scinti1-----" << std::endl;
             scinti1tmp = scinti1.scintillation("scinti1", "initcs_nai", ptcl);
 
+            if (ptcl.ene_ <= 0)
+            {
+                break;
+            }
+
             //*std::cout << "-----scinti2-----" << std::endl;
             scinti2tmp = scinti2.scintillation("scinti2", "initcs_nai", ptcl);
 
