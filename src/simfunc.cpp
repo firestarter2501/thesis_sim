@@ -126,7 +126,7 @@ double normdist(double mean, double sdev)
     std::random_device seed_gen;
     std::default_random_engine engine(seed_gen());
     std::normal_distribution<> dist(mean, sdev);
-    return dist(engine);
+    return std::abs(dist(engine));
 }
 
 void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, double cs_len, double pp_len)

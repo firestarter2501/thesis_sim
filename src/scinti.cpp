@@ -269,7 +269,7 @@ double scinti::scintillation(std::string scintidata, std::string csdata, particl
                pp_cs = crosssec(ptcl.ene_, 3, this->crosssec_table_),
                pp_len = reactlen(pp_cs, this->dens_);
 
-        if (traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1 /* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/ /* || react_count >= 1*/)
+        if (traject_dist < std::min({pe_len, cs_len, pp_len}) || traject_dist == -1 || ptcl.ene_ <= 0 /* || (scinti_num == 1 && photon.back().ene_ == ray_list.back().ene_)*/ /* || react_count >= 1*/)
         {
             react_flag = false;
             //*std::cout << "outside or too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;

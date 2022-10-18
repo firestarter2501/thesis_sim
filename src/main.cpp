@@ -48,10 +48,10 @@ int main()
 
         /*オブジェクト初期化*/
         scinti scinti1;
-        double scinti1tmp = 1;
+        double scinti1tmp = 0;
 
         scinti scinti2;
-        double scinti2tmp = 1;
+        double scinti2tmp = 0;
 
         while (scinti1tmp+scinti2tmp > -2 && ptcl.ene_ > 0)
         {
