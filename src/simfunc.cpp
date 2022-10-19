@@ -118,7 +118,7 @@ double reactlen(double crosssec, double dens)
     std::random_device randseed_gen;
     std::mt19937 randengine(randseed_gen());
     std::uniform_real_distribution<> initprob(0.0, 1.0);
-    return -log(1 - initprob(randengine)) / (crosssec * dens);
+    return -log(1 - initprob(randengine)) / (crosssec * dens * dens);
 }
 
 double normdist(double mean, double sdev)
