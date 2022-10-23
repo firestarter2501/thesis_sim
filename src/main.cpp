@@ -57,11 +57,15 @@ int main()
         {
 
             /*オブジェクトとロジックを配置*/
-            std::cout << "-----scinti1-----" << std::endl;
-            scinti1tmp = scinti1.scintillation("scinti1", "initcs_nai", ptcl);
 
             std::cout << "-----scinti2-----" << std::endl;
             scinti2tmp = scinti2.scintillation("scinti2_30deg", "initcs_nai", ptcl);
+            
+            std::cout << "-----scinti1-----" << std::endl;
+            scinti1tmp = scinti1.scintillation("scinti1", "initcs_nai", ptcl);
+
+            // std::cout << "-----scinti2-----" << std::endl;
+            // scinti2tmp = scinti2.scintillation("scinti2_30deg", "initcs_nai", ptcl);
 
             std::cout << "scinti1tmp: " << scinti1tmp << ", scinti2tmp: " << scinti2tmp << std::endl;
 
