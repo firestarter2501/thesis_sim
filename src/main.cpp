@@ -29,10 +29,10 @@ int main()
         ray_list.push_back(particle());
         ray_list.back().initptcl(initptclconf_list.at(0+(num*4)), initptclconf_list.at(1+(num*4)), initptclconf_list.at(2+(num*4)), initptclconf_list.at(3+(num*4)));
     }
-    //*std::cout << "loaded " << ray_list.size() << " photon." << std::endl;
-    //*std::cout << "please define run loop num" << std::endl;
+    std::cout << "loaded " << ray_list.size() << " photon." << std::endl;
+    std::cout << "please define run loop num" << std::endl;
     std::cin >> run_count;
-    //*std::cout << "run loop defined " << run_count << std::endl;
+    std::cout << "run loop defined " << run_count << std::endl;
 
     /*出力ファイル定義*/
     std::ofstream scintiofstr("../data/scinti.dat");
@@ -42,7 +42,7 @@ int main()
     #pragma omp parallel for
     for (int run = 0; run < run_count; run++)
     {
-        //*std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
+        std::cout << std::endl << "-----------------------\nrun: " << run << std::endl;
         particle ptcl = ray_list.back();
         ptcl.initptcl(ptcl.ene_, ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_);
 
@@ -57,17 +57,17 @@ int main()
         {
 
             /*オブジェクトとロジックを配置*/
-            //*std::cout << "-----scinti1-----" << std::endl;
+            std::cout << "-----scinti1-----" << std::endl;
             scinti1tmp = scinti1.scintillation("scinti1", "initcs_nai", ptcl);
 
-            //*std::cout << "-----scinti2-----" << std::endl;
+            std::cout << "-----scinti2-----" << std::endl;
             scinti2tmp = scinti2.scintillation("scinti2_30deg", "initcs_nai", ptcl);
 
-            //*std::cout << "scinti1tmp: " << scinti1tmp << ", scinti2tmp: " << scinti2tmp << std::endl;
+            std::cout << "scinti1tmp: " << scinti1tmp << ", scinti2tmp: " << scinti2tmp << std::endl;
 
             if (scinti1tmp > 0 && scinti2tmp > 0)
             {
-                //*std::cout << "enable" << std::endl;
+                std::cout << "enable" << std::endl;
                 #pragma omp critical
                 {
                 scintiofstr << scinti1tmp << "\t" << scinti2tmp << "\n";
