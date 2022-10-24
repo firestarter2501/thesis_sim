@@ -95,20 +95,20 @@ double scinti::intersec_dist(particle ptcl)
     std::vector<bool> enablecheck = intersecenablecheck(intersec, ptcl);
 
     // intersecの座標表示
-    for (vsize_t i = 0; i < intersec.size(); i++)
-    {
-        std::cout << showfacetype(i) << ": ";
-        for (vsize_t j = 0; j < intersec.at(0).size(); j++)
-        {
-            std::cout << intersec.at(i).at(j) << "\t";
-        }
-        std::cout << enablecheck.at(i) << "\n";
-    }
+    // for (vsize_t i = 0; i < intersec.size(); i++)
+    // {
+    //     std::cout << showfacetype(i) << ": ";
+    //     for (vsize_t j = 0; j < intersec.at(0).size(); j++)
+    //     {
+    //         std::cout << intersec.at(i).at(j) << "\t";
+    //     }
+    //     std::cout << enablecheck.at(i) << "\n";
+    // }
 
     int ec_truecount = std::count(enablecheck.begin(), enablecheck.end(), true);
     if (ec_truecount == 0)
     {
-        std::cout << "outside(all false)" << std::endl;
+        // std::cout << "outside(all false)" << std::endl;
         return -1;
     }
     else if (ec_truecount == 1)
@@ -142,7 +142,7 @@ double scinti::intersec_dist(particle ptcl)
     }
 }
 
-void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight, double pmtsdevslope, double pmtsdevintersec)
+void scinti::addscintidata(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight, double pmtsdevslope, double pmtsdevintersec)
 {
     this->pt_x_ = pt_x;
     this->pt_y_ = pt_y;
@@ -158,6 +158,20 @@ void scinti::initscinti(double pt_x, double pt_y, double pt_z, double theta, dou
     this->pmtsdevslope = pmtsdevslope;
     this->pmtsdevintersec = pmtsdevintersec;
     this->ene_buffer_ = 0;
+}
+
+void scinti::initscinti(std::string scintidata, std::string csdata)
+{
+    std::ifstream initscinticonf("../data/" + scintidata + ".conf");
+    std::vector<double> initscinticonf_list;
+    std::string initline;
+    while (std::getline(initscinticonf, initline))
+    {
+        initscinticonf_list.push_back(std::stod(initline));
+        // std::cout << initline << std::endl;
+    }
+    initcs("../data/" + csdata + ".conf", this->crosssec_table_);
+    this->addscintidata(initscinticonf_list.at(0), initscinticonf_list.at(1), initscinticonf_list.at(2), initscinticonf_list.at(3) * M_PI, initscinticonf_list.at(4) * M_PI, initscinticonf_list.at(5), initscinticonf_list.at(6), initscinticonf_list.at(7), initscinticonf_list.at(8), initscinticonf_list.at(9), initscinticonf_list.at(10));
 }
 
 std::vector<std::vector<double>> scinti::intersec(particle ptcl)
@@ -242,19 +256,8 @@ std::vector<std::vector<double>> scinti::intersec(particle ptcl)
     return return_point;
 }
 
-double scinti::scintillation(std::string scintidata, std::string csdata, particle &ptcl)
+double scinti::scintillation(particle &ptcl)
 {
-    std::ifstream initscinticonf("../data/" + scintidata + ".conf");
-    std::vector<double> initscinticonf_list;
-    std::string initline;
-    while (std::getline(initscinticonf, initline))
-    {
-        initscinticonf_list.push_back(std::stod(initline));
-        // std::cout << initline << std::endl;
-    }
-    initcs("../data/" + csdata + ".conf", this->crosssec_table_);
-    this->initscinti(initscinticonf_list.at(0), initscinticonf_list.at(1), initscinticonf_list.at(2), initscinticonf_list.at(3) * M_PI, initscinticonf_list.at(4) * M_PI, initscinticonf_list.at(5), initscinticonf_list.at(6), initscinticonf_list.at(7), initscinticonf_list.at(8), initscinticonf_list.at(9), initscinticonf_list.at(10));
-
     bool react_flag = true;
     int react_count = 0;
     this->ene_buffer_ = 0;
@@ -272,7 +275,7 @@ double scinti::scintillation(std::string scintidata, std::string csdata, particl
         if (0 < traject_dist && traject_dist < std::min({pe_len, cs_len, pp_len}) && ptcl.ene_ > 0)
         {
             react_flag = false;
-            ptcl.move(this->ptclinsidecheck(ptcl) + traject_dist);
+            ptcl.move(this->ptclinsidecheck(ptcl) + traject_dist + 1);
             std::cout << "too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
             std::cout << "ene_buffer_: " << this->ene_buffer_ << std::endl;
         }

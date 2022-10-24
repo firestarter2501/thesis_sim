@@ -46,32 +46,42 @@ int main()
         particle ptcl = ray_list.back();
         ptcl.initptcl(ptcl.ene_, ptcl.pt_x_, ptcl.pt_y_, ptcl.pt_z_);
 
-        /*オブジェクト初期化*/
+        /*オブジェクトとロジックを配置*/
         scinti scinti1;
-        double scinti1tmp = 0;
+        scinti1.initscinti("scinti1", "initcs_nai");
+        double scinti1_dist = 0, scinti1tmp = 0;
 
         scinti scinti2;
-        double scinti2tmp = 0;
+        scinti2.initscinti("scinti2_30deg", "initcs_nai");
+        double scinti2_dist = 0, scinti2tmp = 0;
 
-        while (scinti1tmp+scinti2tmp > -2 && ptcl.ene_ > 0)
+        while (scinti1_dist + scinti2_dist > -2 && ptcl.ene_ > 0)
         {
+            scinti1_dist = scinti1.intersec_dist(ptcl);
+            scinti2_dist = scinti2.intersec_dist(ptcl);
+            std::cout << "scinti1.intersec_dist(ptcl): " << scinti1_dist << ", scinti2.intersec_dist(ptcl): " << scinti2_dist << std::endl;
+            if (0 < scinti1_dist && scinti2_dist < 0)
+            {
+                std::cout << "p1" << std::endl;
+                std::cout << "-----scinti1-----" << std::endl;
+                scinti1tmp = scinti1.scintillation(ptcl);
 
-            /*オブジェクトとロジックを配置*/
+                std::cout << "-----scinti2-----" << std::endl;
+                scinti2tmp = scinti2.scintillation(ptcl);
+            }
+            else if (scinti1_dist < 0 && 0 < scinti2_dist)
+            {
+                std::cout << "p2" << std::endl;
+                std::cout << "-----scinti2-----" << std::endl;
+                scinti2tmp = scinti2.scintillation(ptcl);
 
-            std::cout << "-----scinti2-----" << std::endl;
-            scinti2tmp = scinti2.scintillation("scinti2_30deg", "initcs_nai", ptcl);
+                std::cout << "-----scinti1-----" << std::endl;
+                scinti1tmp = scinti1.scintillation(ptcl);
+            }
             
-            std::cout << "-----scinti1-----" << std::endl;
-            scinti1tmp = scinti1.scintillation("scinti1", "initcs_nai", ptcl);
-
-            // std::cout << "-----scinti2-----" << std::endl;
-            // scinti2tmp = scinti2.scintillation("scinti2_30deg", "initcs_nai", ptcl);
-
-            std::cout << "scinti1tmp: " << scinti1tmp << ", scinti2tmp: " << scinti2tmp << std::endl;
-
             if (scinti1tmp > 0 && scinti2tmp > 0)
             {
-                std::cout << "enable" << std::endl;
+                std::cout << "enable data" << std::endl;
                 #pragma omp critical
                 {
                 scintiofstr << scinti1tmp << "\t" << scinti2tmp << "\n";

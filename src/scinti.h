@@ -23,8 +23,9 @@ class scinti
             pmtsdevintersec,
             ene_buffer_;
         std::vector<std::vector<double>> crosssec_table_;
-        void initscinti(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight, double pmtsdevslope, double pmtsdevintersec);
+        void initscinti(std::string data, std::string csfile);
+        void addscintidata(double pt_x, double pt_y, double pt_z, double theta, double phi, double depth, double z, double dens, double atomweight, double pmtsdevslope, double pmtsdevintersec);
         double intersec_dist(particle ptcl);
         double ptclinsidecheck(particle ptcl);
-        double scintillation(std::string scintidata, std::string csdata, particle &ptcl);
+        double scintillation(particle &ptcl);
 };
