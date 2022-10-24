@@ -53,7 +53,7 @@ int main()
         double scinti1_dist = 0, scinti1tmp = 0;
 
         scinti scinti2;
-        scinti2.initscinti("scinti2_30deg", "initcs_nai");
+        scinti2.initscinti("scinti2_60deg", "initcs_nai");
         double scinti2_dist = 0, scinti2tmp = 0;
 
         while (scinti1_dist + scinti2_dist > -2 && ptcl.ene_ > 0)
