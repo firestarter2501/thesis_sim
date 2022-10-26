@@ -15,7 +15,7 @@ double particle::limtozero(double num)
 void particle::initptcl(double ene, double x, double y, double z)
 {
     std::random_device randseed_gen;
-    std::mt19937 randengine(randseed_gen());
+    std::mt19937_64 randengine(randseed_gen());
     std::uniform_real_distribution<> inittheta(-1.0, 1.0);
     std::uniform_real_distribution<> initphi(0.0, 2.0);
     this->ene_ = ene;
@@ -63,7 +63,7 @@ void particle::turn(double angle)
 {
     // std::cout << "loadeddeg: " << this->dir_theta_ << ", " << this->dir_phi_ << std::endl;
     std::random_device randseed_gen;
-    std::mt19937 randengine(randseed_gen());
+    std::mt19937_64 randengine(randseed_gen());
     std::uniform_real_distribution<> initrotate(0, 2);
 
     // ˆÈ‰º™R‚³‚ñ•û®

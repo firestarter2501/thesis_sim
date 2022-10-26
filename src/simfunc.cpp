@@ -60,7 +60,7 @@ double kleinnishinaeq(double ene, double angle)
 double cs_angle(double ene)
 {
     std::random_device randseed_gen;
-    std::mt19937 randengine(randseed_gen());
+    std::mt19937_64 randengine(randseed_gen());
     std::uniform_real_distribution<> initprob(0.0, 1.0);
     std::uniform_real_distribution<> initangle(0.0, M_PI);
     double max_crosssec = kleinnishinaeq(ene, 0.0),
@@ -116,7 +116,7 @@ void cs_angle_test(int num)
 double reactlen(double crosssec, double dens)
 {
     std::random_device randseed_gen;
-    std::mt19937 randengine(randseed_gen());
+    std::mt19937_64 randengine(randseed_gen());
     std::uniform_real_distribution<> initprob(0.0, 1.0);
     return -log(1 - initprob(randengine)) / (crosssec * dens * dens);
 }
@@ -141,7 +141,7 @@ void showinfo(std::vector<particle> photon, double traject_dist, double pe_len, 
 int randchoice(std::vector<double> probvec)
 {
     std::random_device seed_gen;
-    std::mt19937 engine(seed_gen());
+    std::mt19937_64 engine(seed_gen());
     std::discrete_distribution<std::size_t> dist(
         probvec.begin(),
         probvec.end()
