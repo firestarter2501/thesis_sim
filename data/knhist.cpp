@@ -20,6 +20,8 @@ h1->Draw();
 h2->Draw("same");
 // h3->Draw("same");
 gPad->SetLogy(1);
+h1->SetStats(0);
+h2->SetStats(0);
 TLegend *legend = new TLegend( 0.8, 0.68, 0.99, 0.78) ;
 legend->AddEntry( h1, "scinti1" , "l") ;
 legend->AddEntry( h2, "scinti2" , "l") ;
