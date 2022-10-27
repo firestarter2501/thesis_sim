@@ -61,7 +61,7 @@ int main()
             scinti1_dist = scinti1.intersec_dist(ptcl);
             scinti2_dist = scinti2.intersec_dist(ptcl);
             //*std::cout << "scinti1.intersec_dist(ptcl): " << scinti1_dist << ", scinti2.intersec_dist(ptcl): " << scinti2_dist << std::endl;
-            if (0 < scinti1_dist && scinti2_dist < 0)
+            if (0 < scinti1_dist && scinti2_dist <= 0)
             {
                 //*std::cout << "-----scinti1-----" << std::endl;
                 scinti1tmp = scinti1.scintillation(ptcl);
@@ -69,7 +69,7 @@ int main()
                 //*std::cout << "-----scinti2-----" << std::endl;
                 scinti2tmp = scinti2.scintillation(ptcl);
             }
-            else if (scinti1_dist < 0 && 0 < scinti2_dist)
+            else if (scinti1_dist <= 0 && 0 < scinti2_dist)
             {
                 //*std::cout << "-----scinti2-----" << std::endl;
                 scinti2tmp = scinti2.scintillation(ptcl);
