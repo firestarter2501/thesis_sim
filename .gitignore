@@ -1,8 +1,6 @@
 *.out
 *.d
 *.o
-*.dat
 *.png
 .vscode
 .DS_Store
-*.log
