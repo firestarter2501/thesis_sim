@@ -9,9 +9,12 @@ TH1F*h3=new TH1F("sum","",128,0,768);
 ifstream ifs("./scinti.dat");
 while(ifs>>x1>>x2)
 {
-h1->Fill(x1);
-h2->Fill(x2);
-h3->Fill(x1+x2);
+    if (575 < x1+x2 && x1+x2 < 750)
+    {
+        h1->Fill(x1);
+        h2->Fill(x2);
+        h3->Fill(x1+x2);
+    }
 }
 h1->SetLineColor(2);
 h2->SetLineColor(4);
