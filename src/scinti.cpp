@@ -275,7 +275,7 @@ double scinti::scintillation(particle &ptcl)
         if (0 < traject_dist && traject_dist < std::min({pe_len, cs_len, pp_len}) && ptcl.ene_ > 0)
         {
             react_flag = false;
-            ptcl.move(this->ptclinsidecheck(ptcl) + traject_dist + 1);
+            ptcl.move(this->ptclinsidecheck(ptcl) + traject_dist);
             //*std::cout << "too short(traject_dist: " << traject_dist << ", pe_len: " << pe_len << ", cs_len: " << cs_len << ", pp_len: " << pp_len << std::endl;
             //*std::cout << "ene_buffer_: " << this->ene_buffer_ << std::endl;
         }

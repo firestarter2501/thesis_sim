@@ -77,7 +77,12 @@ int main()
                 //*std::cout << "-----scinti1-----" << std::endl;
                 scinti1tmp = scinti1.scintillation(ptcl);
             }
-
+            else
+            {
+                //*std::cout << "error" << std::endl;
+                break;
+            }
+            
             if (scinti1tmp > 0 && scinti2tmp > 0)
             {
                 //*std::cout << "enable data" << std::endl;
