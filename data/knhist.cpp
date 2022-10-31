@@ -9,7 +9,7 @@ TH1F*h3=new TH1F("sum","",128,0,768);
 ifstream ifs("./scinti_150deg.dat");
 while(ifs>>x1>>x2)
 {
-    if (661-50 < x1+x2 && x1+x2 < 661+50 && 100 < x1 && 100 < x2)
+    if (661-50 < x1+x2 && x1+x2 < 661+50 /*&& 80 < x1 && 80 < x2*/)
     {
         h1->Fill(x1);
         h2->Fill(x2);
