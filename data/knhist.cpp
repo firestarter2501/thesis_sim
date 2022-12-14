@@ -6,8 +6,8 @@ TCanvas*c1=new TCanvas("sim");
 // TH1F*h1=new TH1F("scinti1","",128,0,768);
 // TH1F*h2=new TH1F("scinti2","",128,0,768);
 // TH1F*h3=new TH1F("sum","",128,0,768);
-TH2S*hist2d=new TH2S("hist","hist2d",128,0,768,128,0,768);
-ifstream ifs("./scinti_120deg.dat");
+TH2S*hist2d=new TH2S("hist","sim-hist2d",128,0,768,128,0,768);
+ifstream ifs("./scinti_60deg.dat");
 while(ifs>>x1>>x2)
 {
     // if (661-50 < x1+x2 && x1+x2 < 661+50 /*&& 80 < x1 && 80 < x2*/)
