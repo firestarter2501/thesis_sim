@@ -6,7 +6,7 @@ TCanvas*c1=new TCanvas("sim");
 TH1F*h1=new TH1F("scinti1","",128,0,768);
 TH1F*h2=new TH1F("scinti2","",128,0,768);
 // TH1F*h3=new TH1F("sum","",128,0,768);
-ifstream ifs1("./scinti_all.dat");
+ifstream ifs1("./scinti.dat");
 ifstream ifs2("./scinti_first.dat");
 while(ifs1>>x1)
 {
