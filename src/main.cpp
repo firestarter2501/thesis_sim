@@ -57,6 +57,10 @@ int main()
                 scintiofstr << scinti1tmp << "\n";
                 }
             }
+            else
+            {
+                break;
+            }
         }
     }
     scintiofstr.close();
