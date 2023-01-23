@@ -2,7 +2,7 @@ PROG := sim.out
 SRCS := $(wildcard *.cpp)
 OBJS := $(SRCS:%.cpp=%.o)
 DEPS := $(SRCS:%.cpp=%.d)
-OMPS := -O3 -fopenmp -mavx
+# OMPS := -O3 -fopenmp -mavx
 
 CC := g++
 CCFLAGS := -std=c++17

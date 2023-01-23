@@ -15,9 +15,9 @@ int main()
     std::vector<double> initptclconf_list;
     std::ifstream initptclconf("../data/initptcl.conf");
     std::ofstream ofstr("../data/sim.log");
-    // std::streambuf* strbuf;
+    std::streambuf* strbuf;
     std::string initline;
-    // strbuf = std::cout.rdbuf(ofstr.rdbuf());
+    strbuf = std::cout.rdbuf(ofstr.rdbuf());
     int run_count = 0;
     while (std::getline(initptclconf, initline))
     {

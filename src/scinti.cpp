@@ -294,7 +294,7 @@ double scinti::scintillation(particle &ptcl)
                 this->ene_buffer_ += normdist(ptcl.ene_, lineareq(ptcl.ene_, this->pmtsdevslope, this->pmtsdevintersec));
                 ptcl.ene_ = 0;
                 react_flag = false;
-                //*std::cout << "---pe---" << std::endl;
+                std::cout << "---pe---" << std::endl;
                 //*std::cout << "ene_buffer: " << this->ene_buffer_ << std::endl;
             }
             else if (cs_len <= pe_len && cs_len <= pp_len)
@@ -309,7 +309,7 @@ double scinti::scintillation(particle &ptcl)
                 // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                 ptcl.turn(cs_ang);
                 react_flag = true;
-                //*std::cout << "---cs---" << std::endl;
+                std::cout << "---cs---" << std::endl;
                 //*std::cout << "ene_buffer_: " << this->ene_buffer_ << " cs_len: " << cs_len << " cs_ang: " << cs_ang << std::endl;
             }
             else if (pp_len <= pe_len && pp_len <= cs_len)
@@ -323,7 +323,7 @@ double scinti::scintillation(particle &ptcl)
                 // moveddist = afterpoint - beforepoint;
                 // std::cout << "moved dist: " << std::abs(moveddist.norm()) << std::endl;
                 react_flag = true;
-                //*std::cout << "---pp---" << std::endl;
+                std::cout << "---pp---" << std::endl;
                 //*std::cout << "ene_buffer_: " << this->ene_buffer_ << " pp_len: " << pp_len << std::endl;
             }
             else
@@ -335,8 +335,9 @@ double scinti::scintillation(particle &ptcl)
 
         if (!react_flag && 0 < this->ene_buffer_)
         {
-                return this->ene_buffer_;
-                //*std::cout << "sum_ene check&add done" << std::endl;
+            std::cout << "react_count: " << react_count << std::endl;
+            return this->ene_buffer_;
+            //*std::cout << "sum_ene check&add done" << std::endl;
         }
     }
     // if (0 < ptcl.ene_ && !absorp_flag)
