@@ -14,11 +14,11 @@ TCanvas*c1=new TCanvas("data","",640,512);
 // TH1F*h2=new TH1F("scinti2","",128,0,300);
 // TH1F*h3=new TH1F("sum","",128,0,300);
 TH2S*hist2d=new TH2S("hist","sim",768,0,768,768,0,768);
-double deg1 = 2*TMath::Pi()/6, la = 11.17, lb = 20, lc = sqrt((la*la)+(lb*lb)-(2*la*lb*cos(deg1)));
+double deg1 = 6*TMath::Pi()/6, la = 11.17, lb = 20, lc = sqrt((la*la)+(lb*lb)-(2*la*lb*cos(deg1)));
 double deg2 = TMath::Pi()-acos(((lb*lb)+(lc*lc)-(la*la))/(2*lb*lc)), cutrange = 50;
 double ene1 = 661.6-(661.6/(1+(661.6/510.9)*(1-cos(deg1)))), ene2 = (661.6/(1+(661.6/510.9)*(1-cos(deg1))));
 double ene3 = (661.6/(1+(661.6/510.9)*(1-cos(deg2)))), ene4 = 661.6-(661.6/(1+(661.6/510.9)*(1-cos(deg2))));
-ifstream ifs("./scinti_120deg.dat");
+ifstream ifs("./scinti_0deg.dat");
 while(ifs>>x1>>x2)
 {
     if (661.6-cutrange < (x1*pmt1slope+pmt1intersec)+(x2*pmt2slope+pmt2intersec) && (x1*pmt1slope+pmt1intersec)+(x2*pmt2slope+pmt2intersec) < 661.6+cutrange /*&& 100 < x1 && 100 < x2*/)
