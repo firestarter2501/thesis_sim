@@ -65,7 +65,6 @@ void particle::turn(double angle)
     std::mt19937 randengine(randseed_gen());
     std::uniform_real_distribution<> initrotate(0, 2);
 
-    // ˆÈ‰º™R‚³‚ñ•û®
     // Eigen::Vector3d t, n, q, b, nt;
     // t << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_) * std::sin(this->dir_phi_), std::cos(this->dir_theta_);
     // t.normalize();
