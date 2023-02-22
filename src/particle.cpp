@@ -81,7 +81,6 @@ void particle::turn(double angle)
     // this->dir_theta_ += acos(nt(2)/nt.norm());
     // this->dir_phi_ += atan(nt(1)/nt(0));
 
-    // ˆÈ‰ºEigen‰ñ“]s—ñ•û®
     Eigen::Vector3d t, added_t, rotated_t, disttmp;
     double randangle, tmp_theta, tmp_phi;
     t << std::sin(this->dir_theta_) * std::cos(this->dir_phi_), std::sin(this->dir_theta_) * std::sin(this->dir_phi_), std::cos(this->dir_theta_);
